@@ -56,7 +56,8 @@ const GlobalHeaderRight = () => {
         <QuestionCircleOutlined />
       </span>
       <Avatar />
-      <SelectLang className={styles.action} />
+      {/*国际化切换*/}
+      {/*<SelectLang className={styles.action} />*/}
     </Space>
   );
 };

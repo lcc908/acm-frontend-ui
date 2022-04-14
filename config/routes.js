@@ -20,9 +20,16 @@ export default [
   },
   {
     path: '/welcome',
-    name: 'welcome',
+    name: '欢迎',
     icon: 'smile',
     component: './Welcome',
+  },
+  {
+    path: '/welcome1',
+    name: '欢迎2',
+    disabled: true,
+    icon: 'smile',
+    // component: './Welcome',
   },
   {
     path: '/admin',
