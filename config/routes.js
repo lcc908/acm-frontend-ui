@@ -18,18 +18,42 @@ export default [
       },
     ],
   },
+  // {
+  //   path: '/welcome',
+  //   name: '首页',
+  //   icon: 'smile',
+  //   component: './Welcome',
+  // },
   {
-    path: '/welcome',
-    name: '欢迎',
-    icon: 'smile',
-    component: './Welcome',
+    path: '/index',
+    name: '首页',
+    icon: 'home',
+    component: './index',
+  },
+  {
+    path: '/welcome12',
+    name: '仪表盘',
+    icon: 'dashboard',
+    component: './404',
   },
   {
     path: '/welcome1',
-    name: '欢迎2',
+    name: '任务中心',
     disabled: true,
-    icon: 'smile',
+    icon: 'menu',
     // component: './Welcome',
+  },
+  {
+    path: '/welcome13',
+    name: '在线迁移',
+    icon: 'InsertRowAbove',
+    component: './404',
+  },
+  {
+    path: '/welcome14',
+    name: '离线迁移',
+    icon: 'InsertRowRight',
+    component: './404',
   },
   {
     path: '/admin',
@@ -57,7 +81,7 @@ export default [
   },
   {
     path: '/',
-    redirect: '/welcome',
+    redirect: '/index',
   },
   {
     component: './404',

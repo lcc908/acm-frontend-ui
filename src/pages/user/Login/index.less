@@ -17,15 +17,45 @@
     margin-right: 24px;
   }
 }
-
+.leftBanner {
+  width: 739px;
+  height: 438px;
+  max-width: 1200px;
+  margin-right: 50px;
+  box-shadow: 0 1px 2px -2px #00000029, 0 3px 6px #0000001f, 0 5px 12px 4px #00000017;
+  //height: 600px;
+  //background-color: pink;
+  .contentStyle {
+    width: 100%;
+    height: 100%;
+    //height: 60vh;
+    //width: 500px;
+    color: #fff;
+    lineHeight: 160px;
+    textAlign: center;
+    background: #364d79;
+  }
+  //flex: 1;
+}
+.rightLogin {
+  background-color: #fff;
+  //opacity: 0.5;
+  padding: 0 20px;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px -2px #00000029, 0 3px 6px #0000001f, 0 5px 12px 4px #00000017;
+}
 .content {
-  flex: 1;
+  //flex: 1;
+  display: flex;
+  //justify-content: space-around;
+  justify-content: center;
+  //main:0 20px;
   padding: 32px 0;
 }
 
 @media (min-width: @screen-md-min) {
   .container {
-    background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
+    //background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
     background-repeat: no-repeat;
     background-position: center 110px;
     background-size: 100%;
