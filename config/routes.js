@@ -61,17 +61,17 @@ export default [
     icon: 'crown',
     access: 'canAdmin',
     component: './Admin',
-    routes: [
-      {
-        path: '/admin/sub-page',
-        name: 'sub-page',
-        icon: 'smile',
-        component: './Welcome',
-      },
-      {
-        component: './404',
-      },
-    ],
+    // routes: [
+    //   {
+    //     path: '/admin/sub-page',
+    //     name: 'sub-page',
+    //     icon: 'smile',
+    //     component: './Welcome',
+    //   },
+    //   {
+    //     component: './404',
+    //   },
+    // ],
   },
   {
     name: 'list.table-list',
