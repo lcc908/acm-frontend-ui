@@ -7,7 +7,7 @@ import {
   UserOutlined,
   WeiboCircleOutlined,
 } from '@ant-design/icons';
-import { Alert, message, Tabs, Carousel  } from 'antd';
+import { Alert, message, Tabs, Carousel } from 'antd';
 import { ProFormCaptcha, ProFormCheckbox, ProFormText, LoginForm } from '@ant-design/pro-form';
 import { useIntl, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
@@ -81,14 +81,22 @@ const Login = () => {
       </div>
       <div className={styles.content}>
         <div className={styles.leftBanner}>
-          <Carousel>
+          <Carousel autoplay>
             {/*autoplay*/}
             <div>
-              <img src="https://p4.lefile.cn/fes/cms/2022/04/06/ctoq1epe04eask33vk0lg5lykmt1m4817538.png" className={styles.contentStyle} alt=""/>
+              <img
+                src="https://p4.lefile.cn/fes/cms/2022/04/06/ctoq1epe04eask33vk0lg5lykmt1m4817538.png"
+                className={styles.contentStyle}
+                alt=""
+              />
               {/*<h3 className={styles.contentStyle}>1</h3>*/}
             </div>
             <div>
-              <img src="https://p3.lefile.cn/fes/cms/2022/04/06/0wwrkvxfpqa8iko3o67sz0ag6cxzm5362790.png" className={styles.contentStyle} alt=""/>
+              <img
+                src="https://p3.lefile.cn/fes/cms/2022/04/06/0wwrkvxfpqa8iko3o67sz0ag6cxzm5362790.png"
+                className={styles.contentStyle}
+                alt=""
+              />
               {/*<h3 className={styles.contentStyle}>2</h3>*/}
             </div>
           </Carousel>
@@ -106,14 +114,8 @@ const Login = () => {
             }}
           >
             <Tabs activeKey={type} onChange={setType}>
-              <Tabs.TabPane
-                key="account"
-                tab={'默认登录'}
-              />
-              <Tabs.TabPane
-                key="mobile"
-                tab={'企业AD登录'}
-              />
+              <Tabs.TabPane key="account" tab={'默认登录'} />
+              <Tabs.TabPane key="mobile" tab={'企业AD登录'} />
             </Tabs>
             {status === 'error' && loginType === 'account' && (
               <LoginMessage

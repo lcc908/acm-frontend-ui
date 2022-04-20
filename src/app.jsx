@@ -60,6 +60,9 @@ export const layout = ({ initialState, setInitialState }) => {
         history.push(loginPath);
       }
     },
+    menu: {
+      type: 'group',
+    },
     links: isDev
       ? [
           <Link key="openapi" to="/umi/plugin/openapi" target="_blank">

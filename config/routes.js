@@ -44,10 +44,10 @@ export default [
     // component: './Welcome',
   },
   {
-    path: '/welcome13',
+    path: '/onlineMigration',
     name: '在线迁移',
     icon: 'InsertRowAbove',
-    component: './404',
+    component: './onlineMigration',
   },
   {
     path: '/welcome14',
