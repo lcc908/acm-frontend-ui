@@ -14,15 +14,21 @@
   align-items: center;
   justify-content: space-between;
 }
+.leftCard {
+  margin-right: 25px;
+}
 .rightCard {
+  display: flex;
+  flex-direction: column;
+  margin-left: 25px;
   :global {
     .ant-card-body {
-      //height: 200px;
+      height: 100%;
     }
   }
 }
 .centerIcon {
-  margin: 0 20px;
+  //margin: 0 20px;
   color: #1890ff;
   font-size: 34px;
 }
@@ -32,6 +38,9 @@
       display: flex;
       justify-content: center;
       margin-top: 40px;
+    }
+    .ant-pro-steps-form-container,.ant-pro-steps-form-steps-container {
+      margin: 0;
     }
   }
 }

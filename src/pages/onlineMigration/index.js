@@ -1,9 +1,10 @@
 import React, { useRef, useState } from 'react';
-import { Card, Result, Button, Descriptions, Divider, message, Form } from 'antd';
+import { Card, Result, Button, Divider, message, Form } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
-import ProForm, { ProFormDigit, ProFormSelect, ProFormText, StepsForm } from '@ant-design/pro-form';
+import {ProFormSwitch, ProFormText, StepsForm} from '@ant-design/pro-form';
 // import OneStep from "@/pages/onlineMigration/components/oneStep";
 import OneStep from './components/oneStep';
+import TwoStep from './components/twoStep';
 import styles from './style.less';
 
 const waitTime = (time = 100) => {
@@ -36,20 +37,22 @@ const StepForm = () => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(0); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(1); //当前表单的步骤数，从 0 开始
   const [form] = Form.useForm();
 
   const formMapRef = useRef();
   const oneFormRef = useRef();
   const twoFormRef = useRef();
+  const threeFormRef = useRef();
   const handleSubmitZanCun = (props) => {
     const { step, form } = props;
     if (step === 0) {
       console.log('这是第一步', oneFormRef.current.getFieldValue());
     }
     if (step === 1) {
-      console.log('这是第二步', twoFormRef.current.getFieldValue());
+      console.log('这是第二步', twoFormRef?.current?.getFieldValue());
     }
+
     // console.log(form);
 
     // console.log(formRef.current.getFieldValue());
@@ -93,9 +96,14 @@ const StepForm = () => {
             render: (props, dom) => {
               if (props.step === 0) {
                 return (
-                  <Button type="primary" onClick={() => props.onSubmit?.()}>
+                  [
+                    <Button type="primary" key="goToTree33" onClick={() => handleSubmitZanCun(props)}>
+                      暂存
+                    </Button>,
+                    <Button type="primary" key="asd2123" onClick={() => props.onSubmit?.()}>
                     下一步
                   </Button>
+                  ]
                 );
               }
               if (props.step < 2) {
@@ -134,15 +142,14 @@ const StepForm = () => {
         >
           <StepsForm.StepForm
             formRef={oneFormRef}
-            form={form}
             title="第一步"
             layout="horizontal"
             name={'one'}
             stepProps={{
               description: '基础配置信息',
             }}
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 16 }}
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 20 }}
             initialValues={stepData}
             onFinish={async (values) => {
               console.log(values);
@@ -150,18 +157,32 @@ const StepForm = () => {
               return true;
             }}
           >
-            <OneStep
-            // oneFormRef={oneFormRef}
-            // form={form}
-            // stepData={}
-            />
+            <OneStep />
           </StepsForm.StepForm>
 
           <StepsForm.StepForm
-            title="第二步"
             formRef={twoFormRef}
+            title="第二步"
+            layout="horizontal"
+            name="two"
             stepProps={{
               description: '源主机诊断',
+            }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
+            onFinish={async (values) => {
+              // console.log(values);
+              // setStepData(values);
+              return true;
+            }}
+          >
+            <TwoStep />
+          </StepsForm.StepForm>
+          <StepsForm.StepForm
+            title="第三步"
+            formRef={threeFormRef}
+            stepProps={{
+              description: '目标主机LiveCD',
             }}
             onFinish={async (values) => {
               // console.log(values);
@@ -171,12 +192,30 @@ const StepForm = () => {
           >
             <ProFormText width="sm" name="id2" label="主合同编号2" />
           </StepsForm.StepForm>
+
+          {/*<StepsForm.StepForm*/}
+          {/*  title="第四步"*/}
+          {/*  // formRef={twoFormRef}*/}
+          {/*  stepProps={{*/}
+          {/*    description: '源主机诊断',*/}
+          {/*  }}*/}
+          {/*  onFinish={async (values) => {*/}
+          {/*    // console.log(values);*/}
+          {/*    // setStepData(values);*/}
+          {/*    return true;*/}
+          {/*  }}*/}
+          {/*>*/}
+          {/*  <ProFormText width="sm" name="id2" label="主合同编号2" />*/}
+          {/*</StepsForm.StepForm>*/}
+
           <StepsForm.StepForm title="完成">
             <StepResult
               onFinish={async () => {
                 setCurrent(0);
-                formRef.current?.resetFields();
+                console.log(1);
+                // formMapRef.current?.resetFields();
                 oneFormRef.current?.resetFields();
+                return true;
               }}
             >
               {/*<StepDescriptions stepData={stepData} />*/}

@@ -62,6 +62,7 @@ export const layout = ({ initialState, setInitialState }) => {
     },
     menu: {
       type: 'group',
+      locale:false
     },
     links: isDev
       ? [

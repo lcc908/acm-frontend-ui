@@ -19,12 +19,12 @@ export default (props) => {
         title="源主机信息"
         actions={[<Button type="primary">连通性检查</Button>]}
         headStyle={{ fontWeight: 'bold' }}
-        // style={{width: 450}}
+        style={{width:550,height:556}}
+        className={styles.leftCard}
         // bordered={false}
       >
         {/*<ProFormText name="xitong" label="系统类型"/>*/}
         <ProFormSelect
-          width="md"
           name="machine_type"
           label="系统类型"
           options={[
@@ -34,7 +34,7 @@ export default (props) => {
         />
         <ProFormText name="ip" label="ip地址" />
         <ProFormText name="name" label="用户名" />
-        <ProFormText.Password width="md" name="password" label="密码" />
+        <ProFormText.Password name="password" label="密码" />
         <ProFormText name="name" label="端口" />
         <ProFormRadio.Group
           label="迁移方式"
@@ -57,15 +57,16 @@ export default (props) => {
       </div>
       <Card
         title="目标平台"
-        actions={[<p>支持三种格式上传: .txt，.sh和.yaml</p>]}
-        style={{ width: 450 }}
+        // actions={[<p>支持三种格式上传: .txt，.sh和.yaml</p>]}
+        // style={{ width: 450 }}
+        // style={{height:556}}
+        style={{width:550,height:556}}
         className={styles.rightCard}
         headStyle={{ fontWeight: 'bold' }}
         // bordered={false}
       >
         <ProFormSelect
-          width="md"
-          name="machine_type"
+          name="machine_type1"
           label="平台类型"
           options={[
             { value: 'SR650', label: 'SR650' },

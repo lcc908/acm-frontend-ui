@@ -31,7 +31,7 @@ export default [
     component: './index',
   },
   {
-    path: '/welcome12',
+    path: '/welcome122',
     name: '仪表盘',
     icon: 'dashboard',
     component: './404',
