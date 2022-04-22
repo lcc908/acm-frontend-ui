@@ -18,8 +18,8 @@ export default (props) => {
         style={{width:550,height:556}}
         className={styles.leftCard}
         // style={{height:556}}
-        headerBordered
-        bordered
+        // headerBordered
+        // bordered
         // colSpan={12}
       >
         <Timeline pending="Recording...">
@@ -41,8 +41,8 @@ export default (props) => {
         className={styles.rightCard}
         headStyle={{ fontWeight: 'bold' }}
         actions={[<Button type="primary">安装Agent</Button>]}
-        headerBordered
-        bordered
+        // headerBordered
+        // bordered
         // colSpan={12}
       >
         <ProFormSelect
@@ -72,17 +72,6 @@ export default (props) => {
         />
         <ProFormSwitch name="switch" label="防火墙启用" />
         <div style={{marginTop:80,textAlign:"center"}}>
-          {/*<p>安装进度</p>*/}
-          {/*<Progress*/}
-          {/*  type="circle"*/}
-          {/*  strokeColor={{*/}
-          {/*    '0%': '#108ee9',*/}
-          {/*    '100%': '#87d068',*/}
-          {/*  }}*/}
-          {/*  percent={70}*/}
-          {/*  size="small"*/}
-          {/*  status="active"*/}
-          {/*/>*/}
           <Progress
             // type="circle"
             strokeColor={{
@@ -97,8 +86,6 @@ export default (props) => {
           />
         </div>
       </Card>
-    {/*</ProCard>*/}
-
     </div>
   );
 };

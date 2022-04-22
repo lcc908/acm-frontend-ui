@@ -5,7 +5,10 @@ import {ProFormSwitch, ProFormText, StepsForm} from '@ant-design/pro-form';
 // import OneStep from "@/pages/onlineMigration/components/oneStep";
 import OneStep from './components/oneStep';
 import TwoStep from './components/twoStep';
+import ThreeStep from './components/threeStep';
+import FourStep from './components/fourStep';
 import styles from './style.less';
+// import FourStep from "@/pages/onlineMigration/components/fourStep";
 
 const waitTime = (time = 100) => {
   return new Promise((resolve) => {
@@ -37,13 +40,16 @@ const StepForm = () => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(1); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(3); //当前表单的步骤数，从 0 开始
   const [form] = Form.useForm();
 
   const formMapRef = useRef();
   const oneFormRef = useRef();
   const twoFormRef = useRef();
   const threeFormRef = useRef();
+  const fourFormRef = useRef();
+  const fiveFormRef = useRef();
+
   const handleSubmitZanCun = (props) => {
     const { step, form } = props;
     if (step === 0) {
@@ -52,7 +58,12 @@ const StepForm = () => {
     if (step === 1) {
       console.log('这是第二步', twoFormRef?.current?.getFieldValue());
     }
-
+    if (step === 2) {
+      console.log('这是第三步', threeFormRef?.current?.getFieldValue());
+    }
+    if (step === 3) {
+      console.log('这是第四步', fourFormRef?.current?.getFieldValue());
+    }
     // console.log(form);
 
     // console.log(formRef.current.getFieldValue());
@@ -106,7 +117,7 @@ const StepForm = () => {
                   ]
                 );
               }
-              if (props.step < 2) {
+              if (props.step < 5) {
                 return [
                   <Button key="pre1" onClick={() => props.onPre?.()}>
                     上一步
@@ -133,7 +144,7 @@ const StepForm = () => {
               //     </Button>,
               //   ];
               // }
-              if (props.step === 2) {
+              if (props.step === 5) {
                 return null;
               }
               return dom;
@@ -184,13 +195,45 @@ const StepForm = () => {
             stepProps={{
               description: '目标主机LiveCD',
             }}
+            // layout="horizontal"
             onFinish={async (values) => {
               // console.log(values);
               // setStepData(values);
               return true;
             }}
           >
-            <ProFormText width="sm" name="id2" label="主合同编号2" />
+            <ThreeStep />
+          </StepsForm.StepForm>
+          <StepsForm.StepForm
+            title="第四步"
+            formRef={fourFormRef}
+            stepProps={{
+              description: '信息校验',
+            }}
+            // layout="horizontal"
+            onFinish={async (values) => {
+              // console.log(values);
+              // setStepData(values);
+              return true;
+            }}
+          >
+            <FourStep />
+          </StepsForm.StepForm>
+
+          <StepsForm.StepForm
+            title="第五步"
+            formRef={fiveFormRef}
+            stepProps={{
+              description: '增量数据迁移',
+            }}
+            // layout="horizontal"
+            onFinish={async (values) => {
+              // console.log(values);
+              // setStepData(values);
+              return true;
+            }}
+          >
+            <FourStep />
           </StepsForm.StepForm>
 
           {/*<StepsForm.StepForm*/}
