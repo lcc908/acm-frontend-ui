@@ -10,7 +10,7 @@ import ProCard from '@ant-design/pro-card'
 export default (props) => {
   const { oneFormRef, form, stepData } = props;
   return (
-    <div className={styles.cardList}>
+    <>
       <Card
         title="目标主机配置与迁移"
         headStyle={{ fontWeight: 'bold' }}
@@ -34,6 +34,6 @@ export default (props) => {
           <Timeline.Item color="red">2022-03-5 14:13:11 失败状态</Timeline.Item>
         </Timeline>
       </Card>
-    </div>
+    </>
   );
 };

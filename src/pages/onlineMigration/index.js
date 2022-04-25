@@ -3,10 +3,11 @@ import { Card, Result, Button, Divider, message, Form } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
 import {ProFormSwitch, ProFormText, StepsForm} from '@ant-design/pro-form';
 // import OneStep from "@/pages/onlineMigration/components/oneStep";
-import OneStep from './components/oneStep';
-import TwoStep from './components/twoStep';
-import ThreeStep from './components/threeStep';
-import FourStep from './components/fourStep';
+import OneStep from './one-step';
+import TwoStep from './two-step';
+import ThreeStep from './three-step';
+import FourStep from './four-step';
+import FiveStep from './five-step';
 import styles from './style.less';
 // import FourStep from "@/pages/onlineMigration/components/fourStep";
 
@@ -36,11 +37,11 @@ const StepResult = (props) => {
   );
 };
 
-const StepForm = () => {
+const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(3); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(4); //当前表单的步骤数，从 0 开始
   const [form] = Form.useForm();
 
   const formMapRef = useRef();
@@ -63,6 +64,9 @@ const StepForm = () => {
     }
     if (step === 3) {
       console.log('这是第四步', fourFormRef?.current?.getFieldValue());
+    }
+    if (step === 4) {
+      console.log('这是第五步', fiveFormRef?.current?.getFieldValue());
     }
     // console.log(form);
 
@@ -168,7 +172,7 @@ const StepForm = () => {
               return true;
             }}
           >
-            <OneStep />
+            <OneStep {...props}/>
           </StepsForm.StepForm>
 
           <StepsForm.StepForm
@@ -223,6 +227,7 @@ const StepForm = () => {
           <StepsForm.StepForm
             title="第五步"
             formRef={fiveFormRef}
+            layout="horizontal"
             stepProps={{
               description: '增量数据迁移',
             }}
@@ -233,7 +238,7 @@ const StepForm = () => {
               return true;
             }}
           >
-            <FourStep />
+            <FiveStep fiveFormRef={fiveFormRef}/>
           </StepsForm.StepForm>
 
           {/*<StepsForm.StepForm*/}
