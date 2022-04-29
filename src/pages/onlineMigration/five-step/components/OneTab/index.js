@@ -50,7 +50,7 @@ export default (props) => {
     <>
       <div className={styles.oneTabContainer}>
         <Row gutter={8}>
-          <Col span={18}>
+          <Col md={18} lg={18} xl={18} xxl={20}>
             <Form.Item label="应用类型" shouldUpdate>
               {(form) => {
                 return (
@@ -58,7 +58,7 @@ export default (props) => {
                     <Select
                       mode="multiple"
                       allowClear
-                      style={{width: '100%'}}
+                      // style={{width: '100%'}}
                       placeholder="请选择应用"
                       onChange={handleChange}
                     >
@@ -69,7 +69,7 @@ export default (props) => {
               }}
             </Form.Item>
           </Col>
-          <Col span={6}>
+          <Col md={6} lg={6} xl={6} xxl={4}>
             <Button danger onClick={handleClickStopButton}>
               停止应用
             </Button>

@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
-import { Card, Result, Button, Divider, message, Form } from 'antd';
-import { PageContainer } from '@ant-design/pro-layout';
+import React, {useRef, useState} from 'react';
+import {Card, Result, Button, Divider, message, Form} from 'antd';
+import {PageContainer} from '@ant-design/pro-layout';
 import {ProFormSwitch, ProFormText, StepsForm} from '@ant-design/pro-form';
 // import OneStep from "@/pages/onlineMigration/components/oneStep";
 import OneStep from './one-step';
@@ -52,7 +52,7 @@ const StepForm = (props) => {
   const fiveFormRef = useRef();
 
   const handleSubmitZanCun = (props) => {
-    const { step, form } = props;
+    const {step, form} = props;
     if (step === 0) {
       console.log('这是第一步', oneFormRef.current.getFieldValue());
     }
@@ -112,25 +112,25 @@ const StepForm = (props) => {
               if (props.step === 0) {
                 return (
                   [
-                    <Button type="primary" key="goToTree33" onClick={() => handleSubmitZanCun(props)}>
+                    <Button style={{marginTop:35}} type="primary" key="goToTree33" onClick={() => handleSubmitZanCun(props)}>
                       暂存
                     </Button>,
-                    <Button type="primary" key="asd2123" onClick={() => props.onSubmit?.()}>
-                    下一步
-                  </Button>
+                    <Button style={{marginTop:35}} type="primary" key="asd2123" onClick={() => props.onSubmit?.()}>
+                      下一步
+                    </Button>
                   ]
                 );
               }
               if (props.step < 5) {
                 return [
-                  <Button key="pre1" onClick={() => props.onPre?.()}>
+                  <Button key="pre1" style={{marginTop:35}} onClick={() => props.onPre?.()}>
                     上一步
                   </Button>,
-                  <Button type="primary" key="goToTree" onClick={() => handleSubmitZanCun(props)}>
+                  <Button type="primary" style={{marginTop:35}} key="goToTree" onClick={() => handleSubmitZanCun(props)}>
                     暂存
                   </Button>,
                   // <Button type="primary" key="goToTree3" onClick={() => handleSubmit2(props)}>
-                  <Button type="primary" key="goToTree3" onClick={() => handleSubmit(props)}>
+                  <Button type="primary" style={{marginTop:35}} key="goToTree3" onClick={() => handleSubmit(props)}>
                     下一步
                   </Button>,
                 ];
@@ -163,8 +163,8 @@ const StepForm = (props) => {
             stepProps={{
               description: '基础配置信息',
             }}
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 20 }}
+            labelCol={{span: 4}}
+            wrapperCol={{span: 20}}
             initialValues={stepData}
             onFinish={async (values) => {
               console.log(values);
@@ -183,19 +183,20 @@ const StepForm = (props) => {
             stepProps={{
               description: '源主机诊断',
             }}
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 18 }}
+            labelCol={{span: 6}}
+            wrapperCol={{span: 18}}
             onFinish={async (values) => {
               // console.log(values);
               // setStepData(values);
               return true;
             }}
           >
-            <TwoStep />
+            <TwoStep/>
           </StepsForm.StepForm>
           <StepsForm.StepForm
             title="第三步"
             formRef={threeFormRef}
+            layout="horizontal"
             stepProps={{
               description: '目标主机LiveCD',
             }}
@@ -206,7 +207,7 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <ThreeStep />
+            <ThreeStep/>
           </StepsForm.StepForm>
           <StepsForm.StepForm
             title="第四步"
@@ -221,7 +222,7 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <FourStep />
+            <FourStep/>
           </StepsForm.StepForm>
 
           <StepsForm.StepForm

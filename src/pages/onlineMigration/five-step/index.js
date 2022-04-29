@@ -42,9 +42,9 @@ export default (props) => {
     setActiveTabKey(key);
   };
   return (
-    <>
       <Card
-        style={{minWidth:960,maxWidth:1200,height:556}}
+        // style={{minWidth:960,maxWidth:1200,height:556}}
+        style={{width:'100%'}}
         title="增量数据导入"
         // extra={<a href="#">More</a>}
         tabList={tabList}
@@ -55,6 +55,5 @@ export default (props) => {
       >
         {contentList[activeTabKey]}
       </Card>
-    </>
   );
 };

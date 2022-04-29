@@ -14,8 +14,8 @@ export default (props) => {
       <Card
         title="目标主机配置与迁移"
         headStyle={{ fontWeight: 'bold' }}
-        style={{minWidth:960,maxWidth:1200,height:556}}
-        className={styles.leftCard}
+        // style={{minWidth:960,maxWidth:1200,height:556}}
+        // className={styles.leftCard}
         // headerBordered
         // bordered
         // colSpan={12}

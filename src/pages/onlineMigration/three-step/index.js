@@ -36,7 +36,7 @@ export default (props) => {
       title: '操作',
       key: 'action',
       render: (text, record) => (
-        <Space size="middle">
+        <Space size="middle" style={{display:'inline-flex'}}>
           <a>编辑</a>
           <a>Delete</a>
         </Space>
@@ -74,7 +74,6 @@ export default (props) => {
             <ProFormText
               name="name"
               label="主机名"
-              width="md"
               placeholder="由诊断报告信息自动填入"
             />
           </Col>
@@ -88,7 +87,6 @@ export default (props) => {
                   label: '盖章后生效',
                 },
               ]}
-              width="md"
             />
           </Col>
           <Col span={8}>
@@ -101,7 +99,6 @@ export default (props) => {
                   label: '履行完终止',
                 },
               ]}
-              width="md"
             />
           </Col>
         </Row>
@@ -110,7 +107,6 @@ export default (props) => {
             <ProFormText
               name="name"
               label="操作人员"
-              width="md"
               placeholder="由登陆用户自动填入，可手动修改"
             />
           </Col>
@@ -118,7 +114,6 @@ export default (props) => {
             <ProFormText
               name="chapter"
               label="系统账号"
-              width="md"
               placeholder="默认为root"
             />
           </Col>
@@ -132,7 +127,6 @@ export default (props) => {
                   label: '履行完终止',
                 },
               ]}
-              width="md"
               placeholder="根据租户自动填入网络名称"
             />
           </Col>

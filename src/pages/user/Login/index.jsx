@@ -9,7 +9,6 @@ import { useIntl, history, FormattedMessage, useModel } from 'umi';
 import Footer from '@/components/Footer';
 import { login } from '@/services/ant-design-pro/api';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
-import Banner from './banner'
 import styles from './index.less';
 
 const LoginMessage = ({ content }) => (
