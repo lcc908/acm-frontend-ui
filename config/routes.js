@@ -31,10 +31,10 @@ export default [
     component: './index',
   },
   {
-    path: '/welcome122',
+    path: '/dashboard',
     name: '仪表盘',
-    icon: 'dashboard',
-    component: './404',
+    icon: 'smile',
+    component: './dashboard',
   },
   {
     path: '/welcome1',
