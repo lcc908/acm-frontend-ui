@@ -28,12 +28,11 @@ const Login = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const intl = useIntl();
   const fetchUserInfo = async () => {
-    // const userInfo = await initialState?.fetchUserInfo?.();
-    //
-    // if (userInfo) {
-    //   await setInitialState((s) => ({ ...s, currentUser: userInfo }));
-    // }
-    await setInitialState((s) => ({ ...s, currentUser: 'userInfo' }));
+    const userInfo = await initialState?.fetchUserInfo?.();
+
+    if (userInfo) {
+      await setInitialState((s) => ({ ...s, currentUser: userInfo }));
+    }
   };
 
   const handleSubmit = async (values) => {
@@ -44,7 +43,7 @@ const Login = () => {
     message.success(defaultLoginSuccessMessage);
     await fetchUserInfo();
     history.push('/');
-    return;
+    return false;
     try {
       // 登录
       const msg = await login({ ...values, type });

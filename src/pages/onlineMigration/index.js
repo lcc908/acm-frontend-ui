@@ -229,10 +229,11 @@ const StepForm = (props) => {
             title="第五步"
             formRef={fiveFormRef}
             layout="horizontal"
+            // labelCol={{ span: 4 }}
+            // wrapperCol={{ span: 14 }}
             stepProps={{
               description: '增量数据迁移',
             }}
-            // layout="horizontal"
             onFinish={async (values) => {
               // console.log(values);
               // setStepData(values);

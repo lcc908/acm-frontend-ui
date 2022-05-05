@@ -9,6 +9,7 @@ import ProForm, {
 const { Option } = Select;
 import styles from './style.less';
 import OneTab from "@/pages/onlineMigration/five-step/components/OneTab";
+import TwoTab from "@/pages/onlineMigration/five-step/components/TwoTab";
 
 const tabList = [
   {
@@ -30,11 +31,11 @@ const tabList = [
 ];
 export default (props) => {
   const { oneFormRef, form, stepData,fiveFormRef } = props;
-  const [activeTabKey, setActiveTabKey] = useState('tab1');
+  const [activeTabKey, setActiveTabKey] = useState('tab2');
 
   const contentList = {
     tab1: <OneTab fiveFormRef={fiveFormRef}/>,
-    tab2: <p>content2</p>,
+    tab2: <TwoTab />,
     tab3: <p>content3</p>,
     tab4: <p>content4</p>,
   };
