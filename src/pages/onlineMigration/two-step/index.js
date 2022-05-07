@@ -35,8 +35,9 @@ export default (props) => {
       <Col span={12}>
         <Card
           title="安装客户端"
-          style={{height:556}}
-          className={styles.rightCard}
+          // style={{height:556}}
+          // className={styles.rightCard}
+          bodyStyle={{height:440}}
           headStyle={{ fontWeight: 'bold' }}
           actions={[<Button type="primary">安装Agent</Button>]}
         >

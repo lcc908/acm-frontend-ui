@@ -12,12 +12,13 @@ import ProForm, {
 import styles from './style.less';
 
 export default (props) => {
-  const { oneFormRef, form, stepData } = props;
+  const { oneFormRef, form, stepData,fiveFormRef } = props;
   return (
     <div className={styles.cardList}>
       <Row>
         <Col span={12}>
           <ProForm
+            formRef={fiveFormRef}
             layout="horizontal"
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 14 }}

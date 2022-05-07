@@ -19,10 +19,11 @@ export default (props) => {
         <Col span={11}>
           <Card
             title="源主机信息"
-            actions={[<Button type="primary">连通性检查</Button>]}
             headStyle={{ fontWeight: 'bold' }}
-            style={{height:556}}
-            className={styles.leftCard}
+            // style={{height:556}}
+            // className={styles.leftCard}
+            bodyStyle={{height:440}}
+            actions={[<Button type="primary">连通性检查</Button>]}
           >
             {/*<ProFormText name="xitong" label="系统类型"/>*/}
             <ProFormSelect

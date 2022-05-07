@@ -197,6 +197,8 @@ const StepForm = (props) => {
             title="第三步"
             formRef={threeFormRef}
             layout="horizontal"
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             stepProps={{
               description: '目标主机LiveCD',
             }}
@@ -228,9 +230,9 @@ const StepForm = (props) => {
           <StepsForm.StepForm
             title="第五步"
             formRef={fiveFormRef}
-            layout="horizontal"
+            // layout="horizontal"
             // labelCol={{ span: 4 }}
-            // wrapperCol={{ span: 14 }}
+            // wrapperCol={{ span: 20 }}
             stepProps={{
               description: '增量数据迁移',
             }}
