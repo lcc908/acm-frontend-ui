@@ -1,12 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { Card, Timeline, Button, Progress , Row, Col, Table,Space } from 'antd';
+import { Card, Timeline, Button, Progress, Row, Col, Table, Space } from 'antd';
 import ProForm, {
   ProFormText,
   ProFormSelect,
   ProFormSwitch,
   ProFormRadio,
 } from '@ant-design/pro-form';
-import ProCard from '@ant-design/pro-card'
+import ProCard from '@ant-design/pro-card';
 import styles from '../style.less';
 
 export default (props) => {
@@ -36,7 +36,7 @@ export default (props) => {
       title: '操作',
       key: 'action',
       render: (text, record) => (
-        <Space size="middle" style={{display:'inline-flex'}}>
+        <Space size="middle" style={{ display: 'inline-flex' }}>
           <a>编辑</a>
           <a>Delete</a>
         </Space>
@@ -68,14 +68,10 @@ export default (props) => {
   ];
   return (
     <>
-      <ProCard title="目标主机信息" headStyle={{ fontWeight: 'bold' }}>
+      <Card title="目标主机信息" headStyle={{ fontWeight: 'bold' }}>
         <Row gutter={24}>
           <Col span={8}>
-            <ProFormText
-              name="name"
-              label="主机名"
-              placeholder="由诊断报告信息自动填入"
-            />
+            <ProFormText name="name" label="主机名" placeholder="由诊断报告信息自动填入" />
           </Col>
           <Col span={8}>
             <ProFormSelect
@@ -111,11 +107,7 @@ export default (props) => {
             />
           </Col>
           <Col span={8}>
-            <ProFormText
-              name="chapter"
-              label="系统账号"
-              placeholder="默认为root"
-            />
+            <ProFormText name="chapter" label="系统账号" placeholder="默认为root" />
           </Col>
           <Col span={8}>
             <ProFormSelect
@@ -131,8 +123,8 @@ export default (props) => {
             />
           </Col>
         </Row>
-        <Table columns={columns} dataSource={data} pagination={false} title={() => '磁盘列表'}/>
-      </ProCard>
+        <Table columns={columns} dataSource={data} pagination={false} title={() => '磁盘列表'} />
+      </Card>
     </>
   );
 };

@@ -37,23 +37,33 @@ export default [
     component: './dashboard',
   },
   {
-    path: '/welcome1',
-    name: '任务中心',
-    disabled: true,
-    icon: 'menu',
-    // component: './Welcome',
-  },
-  {
     path: '/onlineMigration',
     name: '在线迁移',
     icon: 'InsertRowAbove',
     component: './onlineMigration',
   },
   {
-    path: '/welcome14',
+    path: '/offline',
     name: '离线迁移',
     icon: 'InsertRowRight',
-    component: './404',
+    routes:[
+      {
+        path: '/offline',
+        redirect: '/offline/host',
+      },
+      {
+        name: '物理主机',
+        icon: 'smile',
+        path: '/offline/host',
+        component: './offlineMigration/host',
+      },
+      {
+        name: 'VMware',
+        icon: 'smile',
+        path: '/offline/vm',
+        component: './404',
+      },
+    ]
   },
   {
     path: '/admin',
@@ -61,23 +71,6 @@ export default [
     icon: 'crown',
     access: 'canAdmin',
     component: './Admin',
-    // routes: [
-    //   {
-    //     path: '/admin/sub-page',
-    //     name: 'sub-page',
-    //     icon: 'smile',
-    //     component: './Welcome',
-    //   },
-    //   {
-    //     component: './404',
-    //   },
-    // ],
-  },
-  {
-    name: 'list.table-list',
-    icon: 'table',
-    path: '/list',
-    component: './TableList',
   },
   {
     path: '/',
