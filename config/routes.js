@@ -52,6 +52,13 @@ export default [
         redirect: '/offline/host',
       },
       {
+
+        name: '选择源主机',
+        icon: 'smile',
+        path: '/offline/source',
+        component: './offlineMigration/source',
+      },
+      {
         name: '物理主机',
         icon: 'smile',
         path: '/offline/host',
