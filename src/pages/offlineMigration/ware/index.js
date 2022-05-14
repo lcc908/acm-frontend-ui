@@ -41,7 +41,7 @@ const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(0); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(1); //当前表单的步骤数，从 0 开始
   const [disabled, setDisabled] = useState(true);
   const [form] = Form.useForm();
 
@@ -59,7 +59,8 @@ const StepForm = (props) => {
       console.log('这是第一步', oneFormRef.current.getFieldValue());
     }
     if (step === 1) {
-      console.log('这是第二步', twoFormRef?.current?.getFieldValue());
+      console.log('这是第二步', twoFormRef?.current?.getFieldsFormatValue());
+      console.log(twoFormRef?.current?.getFieldsFormatValue().datetime);
     }
     if (step === 2) {
       console.log('这是第三步', threeFormRef?.current?.getFieldValue());
@@ -172,11 +173,10 @@ const StepForm = (props) => {
           <StepsForm.StepForm
             formRef={oneFormRef}
             title="第一步"
-            // layout="horizontal"
-            name={'one'}
             stepProps={{
-              description: 'LiveCD制作与挂载',
+              description: '主机列表',
             }}
+            layout="horizontal"
             // labelCol={{span: 4}}
             // wrapperCol={{span: 18}}
             initialValues={stepData}
@@ -210,7 +210,7 @@ const StepForm = (props) => {
             title="第三步"
             formRef={threeFormRef}
             stepProps={{
-              description: '数据迁移',
+              description: '汇总信息',
             }}
             onFinish={async (values) => {
               // console.log(values);
@@ -224,7 +224,7 @@ const StepForm = (props) => {
             title="第四步"
             formRef={fourFormRef}
             stepProps={{
-              description: '上传镜像',
+              description: '任务日志',
             }}
             labelCol={{ span: 5 }}
             wrapperCol={{ span: 19 }}

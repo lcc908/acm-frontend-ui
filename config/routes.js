@@ -49,7 +49,7 @@ export default [
     routes:[
       {
         path: '/offline',
-        redirect: '/offline/host',
+        redirect: '/offline/source',
       },
       {
 
@@ -68,7 +68,7 @@ export default [
         name: 'VMware',
         icon: 'smile',
         path: '/offline/vm',
-        component: './404',
+        component: './offlineMigration/ware',
       },
     ]
   },
