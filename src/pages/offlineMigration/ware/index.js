@@ -6,8 +6,6 @@ import OneStep from './one-step';
 import TwoStep from './two-step';
 import ThreeStep from './three-step';
 import FourStep from './four-step';
-import FiveStep from './five-step';
-import SixStep from './six-step';
 import styles from './style.less';
 // import FourStep from "@/pages/onlineMigration/components/fourStep";
 
@@ -41,7 +39,7 @@ const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(2); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(0); //当前表单的步骤数，从 0 开始
   const [disabled, setDisabled] = useState(true);
   const [form] = Form.useForm();
 
@@ -50,8 +48,6 @@ const StepForm = (props) => {
   const twoFormRef = useRef();
   const threeFormRef = useRef();
   const fourFormRef = useRef();
-  const fiveFormRef = useRef();
-  const sixFormRef = useRef();
 
   const handleSubmitZanCun = (props) => {
     const { step, form } = props;
@@ -139,7 +135,7 @@ const StepForm = (props) => {
                   </Button>,
                 ];
               }
-              if (props.step < 6) {
+              if (props.step < 4) {
                 return [
                   <Button key="pre1" style={{ marginTop: 35 }} onClick={() => props.onPre?.()}>
                     上一步
@@ -163,7 +159,7 @@ const StepForm = (props) => {
                   </Button>,
                 ];
               }
-              if (props.step === 6) {
+              if (props.step === 4) {
                 return null;
               }
               return dom;
@@ -226,8 +222,6 @@ const StepForm = (props) => {
             stepProps={{
               description: '任务日志',
             }}
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 19 }}
             layout="horizontal"
             onFinish={async (values) => {
               // console.log(values);
@@ -237,41 +231,6 @@ const StepForm = (props) => {
           >
             <FourStep fourFormRef={fourFormRef} />
           </StepsForm.StepForm>
-
-          <StepsForm.StepForm
-            title="第五步"
-            formRef={fiveFormRef}
-            layout="horizontal"
-            // layout="horizontal"
-            // labelCol={{ span: 4 }}
-            // wrapperCol={{ span: 20 }}
-            stepProps={{
-              description: '创建虚拟机',
-            }}
-            onFinish={async (values) => {
-              // console.log(values);
-              // setStepData(values);
-              return true;
-            }}
-          >
-            <FiveStep fiveFormRef={fiveFormRef} />
-          </StepsForm.StepForm>
-
-          <StepsForm.StepForm
-            title="第六步"
-            formRef={sixFormRef}
-            stepProps={{
-              description: '应用切换',
-            }}
-            onFinish={async (values) => {
-              // console.log(values);
-              // setStepData(values);
-              return true;
-            }}
-          >
-            <SixStep sixFormRef={sixFormRef} />
-          </StepsForm.StepForm>
-
           <StepsForm.StepForm title="完成">
             <StepResult
               onFinish={async () => {

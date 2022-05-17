@@ -1,90 +1,95 @@
 import React, { useRef, useState } from 'react';
-import {Card, Row, Col, Descriptions, Divider, message, Form, Timeline, Button, Progress} from 'antd';
-import {
+import {Collapse , Button} from 'antd';
+import ProForm,{
   ProFormSelect,
-  ProFormText,
-  ProFormSwitch, ProFormUploadButton,
 } from '@ant-design/pro-form';
-import styles from '../style.less';
+import { LoadingOutlined,CloseCircleTwoTone,CheckCircleTwoTone } from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card'
+
+const { Panel } = Collapse;
+
 export default (props) => {
   const { fourFormRef, form, stepData } = props;
-  const rules = [{ required: true, message: '这是必填项' }];
-  const handleClick = () => {
-    console.log('这是第四步', fourFormRef?.current?.getFieldValue());
+  const text = `
+  A dog is a type of domesticated animal.
+  Known for its loyalty and faithfulness,
+  it can be found as a welcome guest in many households across the world.
+`;
+  const callback = (key) => {
+    console.log(key);
+
   }
+  const genExtra = (data) => {
+    if(data === 1) {
+      return <LoadingOutlined
+        onClick={event => {
+          // If you don't want click extra trigger collapse, you can prevent this:
+          event.stopPropagation();
+        }}
+      />
+    }
+    if(data === 2) {
+      return <CloseCircleTwoTone twoToneColor="#ff4d4f"
+        onClick={event => {
+          // If you don't want click extra trigger collapse, you can prevent this:
+          event.stopPropagation();
+        }}
+      />
+    }
+    return <CheckCircleTwoTone twoToneColor="#52c41a"
+      onClick={event => {
+        // If you don't want click extra trigger collapse, you can prevent this:
+        event.stopPropagation();
+      }}
+    />
+  };
   return (
     <>
       <ProCard
-        title="目标主机配置与迁移"
+        title="任务日志"
         headerBordered
         bordered
-        actions={[<Button type="primary" onClick={handleClick}>上传镜像</Button>]}
       >
-        <Row gutter={24} justify={'center'} align={'middle'}>
-          <Col span={12}>
-            <ProFormText
-              name="a"
-              label="镜像名称"
-              // rules={rules}
-            />
-            <ProFormText
-              name="b"
-              label="源格式"
-              disabled
-              // rules={rules}
-            />
-            <ProFormSwitch name="switch" label="转换镜像格式" />
-            <ProFormSelect
-              name="c"
-              label="目标格式"
-              options={[
-                {
-                  value: '1',
-                  label: '1',
-                },
-              ]}
-            />
-            <ProFormSelect
-              name="d"
-              label="存储位置"
-              options={[
-                {
-                  value: '1',
-                  label: '1',
-                },
-              ]}
-            />
-            <ProFormSelect
-              name="e"
-              label="目标平台"
-              options={[
-                {
-                  value: '1',
-                  label: '1',
-                },
-              ]}
-            />
-          </Col>
-          <Col span={12} style={{textAlign:'center'}}>
-            <p>镜像上传进度</p>
-            <Progress
-              strokeColor={{
-                '0%': '#108ee9',
-                '100%': '#87d068',
-              }}
-              type="circle"
-              percent={70}
-              size="small"
-              status="active"
-              strokeWidth={10}
-              className={styles.progress}
-            />
-          </Col>
-          {/*<Col>*/}
-          {/*  <Button type="primary" onClick={handleClick}>上传镜像</Button>*/}
-          {/*</Col>*/}
-        </Row>
+        <ProForm.Group>
+          <ProFormSelect
+            width="md"
+            fieldProps={{
+              labelInValue: true,
+            }}
+            // request={async () => [
+            //   { label: '全部', value: 'all' },
+            //   { label: '未解决', value: 'open' },
+            //   { label: '已解决', value: 'closed' },
+            //   { label: '解决中', value: 'processing' },
+            // ]}
+            options={[
+              { label: '10.122.79.101', value: 'all' },
+              { label: '10.122.79.101', value: 'open' },
+              { label: '10.122.79.101', value: 'closed' },
+              { label: '10.122.79.101', value: 'processing' },
+            ]}
+            name="useMode"
+            label="IP"
+            addonAfter={
+              <Button type="primary">更新</Button>
+            }
+          />
+        </ProForm.Group>
+        <Collapse onChange={callback}>
+          <Panel header="This is panel header 1" key="1"extra={genExtra(1)}>
+            <Collapse defaultActiveKey="1">
+              <Panel header="This is panel nest panel" key="1">
+                <p>{text}</p>
+              </Panel>
+            </Collapse>
+          </Panel>
+          <Panel header="This is panel header 2" key="2" extra={genExtra(2)}>
+            <p>{text}</p>
+          </Panel>
+          <Panel header="This is panel header 3" key="3" extra={genExtra(3)}>
+            <p>{text}</p>
+          </Panel>
+        </Collapse>
       </ProCard>
     </>
   );

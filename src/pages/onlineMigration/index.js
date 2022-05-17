@@ -41,7 +41,7 @@ const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(4); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(0); //当前表单的步骤数，从 0 开始
   const [form] = Form.useForm();
 
   const formMapRef = useRef();
