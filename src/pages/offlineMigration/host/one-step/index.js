@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Card, Button, Progress, Row, Col } from 'antd';
+import {Card, Button, Progress, Row, Col, message} from 'antd';
 import ProCard from '@ant-design/pro-card';
 import { ProFormText, ProFormSelect, ProFormSwitch, ProFormRadio } from '@ant-design/pro-form';
 import { CloudDownloadOutlined } from '@ant-design/icons';
@@ -8,8 +8,16 @@ import styles from './style.less';
 export default (props) => {
   const { oneFormRef, form, handleNextState } = props;
   const rules = [{ required: true, message: '这是必填项' }];
-  const handleClick = () => {
-    console.log('我点击了暂存按钮', oneFormRef.current.getFieldValue());
+  const handleClick = async () => {
+    console.log(oneFormRef.current);
+    // console.log(oneFormRef.current.validateFields());
+    // const val1 = await oneFormRef.current?.validateFields();
+    // console.log(val1);
+    // console.log('我点击了暂存按钮', oneFormRef.current.getFieldValue());
+    oneFormRef.current?.validateFieldsReturnFormatValue?.().then((values) => {
+      console.log('校验表单并返回格式化后的所有数据：', values);
+      message.success('提交成功')
+    });
     // handleNextState()
   };
   return (
@@ -20,7 +28,7 @@ export default (props) => {
             <ProFormText
               name="a"
               label="IP地址"
-              // rules={rules}
+              rules={rules}
             />
           </Col>
           <Col span={8}>
@@ -33,14 +41,14 @@ export default (props) => {
                   label: '1',
                 },
               ]}
-              // rules={rules}
+              rules={rules}
             />
           </Col>
           <Col span={8}>
             <ProFormText
               name="c"
               label="子网掩码"
-              // rules={rules}
+              rules={rules}
             />
           </Col>
         </Row>
@@ -49,20 +57,21 @@ export default (props) => {
             <ProFormText
               name="d"
               label="网关"
-              // rules={rules}
+              rules={rules}
             />
           </Col>
           <Col span={8}>
             <ProFormText
               name="e"
               label="镜像名称"
-              // rules={rules}
+              rules={rules}
             />
           </Col>
         </Row>
         <Row>
           <ProFormRadio.Group
             name="radio-group"
+            rules={rules}
             options={[
               {
                 label: '上传到共享文件存储',

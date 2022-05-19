@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { Card, Timeline, Button, Progress, Row, Col, message, Form } from 'antd';
 import ProForm, {
   ProFormSelect,
@@ -11,7 +11,35 @@ import styles from './style.less';
 
 export default (props) => {
   const { twoFormRef, form, handleNextState } = props;
+  const [xitGb,setXitGb] = useState(true);
+  const [sjGb,setSjGb] = useState(true);
+  const [checkBox,setCheckBox] = useState([])
   const rules = [{ required: true, message: '这是必填项' }];
+  const handleChange = (val) => {
+    console.log(val[0]);
+    if(val[0]) {
+      setXitGb(false);
+      return false;
+    }
+    console.log(1);
+    setXitGb(true);
+    twoFormRef.current?.setFieldsValue({
+      c1:''
+    })
+  }
+  const handleChangeSJ = (val) => {
+    if(val[0]) {
+      setSjGb(false);
+      return false;
+    }
+    setSjGb(true);
+    twoFormRef.current?.setFieldsValue({
+      c2:''
+    })
+  }
+  useEffect(()=>{
+    console.log(checkBox);
+  },[checkBox])
   return (
     <>
       <ProCard title="任务信息" headerBordered bordered>
@@ -20,7 +48,7 @@ export default (props) => {
             <ProFormText
               name="a"
               label="任务名称"
-              // rules={rules}
+              rules={rules}
             />
           </Col>
           <Col span={8}>
@@ -111,27 +139,33 @@ export default (props) => {
         <Row className={styles.checkboxGroup}>
           <Col>
             <ProFormCheckbox.Group
-              name="checkbox-group"
+              name="checkbox-group1"
               options={[
                 {
                   value: '1',
                   label: '系统盘',
                 },
               ]}
-              addonAfter={<ProFormText name="c" />}
+              addonAfter={<ProFormText name="c1" disabled={xitGb} />}
+              fieldProps={{
+                onChange:handleChange
+              }}
             />
           </Col>
           <Col span={24} style={{ margin: 5 }}></Col>
           <Col>
             <ProFormCheckbox.Group
-              name="checkbox-group"
+              name="checkbox-group2"
               options={[
                 {
                   value: '2',
                   label: '数据盘',
                 },
               ]}
-              addonAfter={<ProFormText name="c" />}
+              addonAfter={<ProFormText name="c2" disabled={sjGb} />}
+              fieldProps={{
+                onChange:handleChangeSJ
+              }}
             />
           </Col>
         </Row>
