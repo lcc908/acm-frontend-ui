@@ -3,6 +3,7 @@ import {Card, Button, Progress, Row, Col, Popconfirm} from 'antd';
 import ProCard from '@ant-design/pro-card';
 import ProTable, {TableDropdown} from '@ant-design/pro-table';
 import {CloudDownloadOutlined} from '@ant-design/icons';
+import styles from './style.less'
 
 export default (props) => {
   const {oneFormRef, form, handleNextState} = props;
@@ -124,7 +125,12 @@ export default (props) => {
   }
 
   return (
-    <ProCard title="主机列表" headerBordered bordered>
+    <ProCard
+      title="主机列表"
+      headerBordered
+      bordered
+      className={styles.oneStep}
+    >
       <ProTable
         columns={columns}
         rowKey="key"
@@ -151,14 +157,14 @@ export default (props) => {
             >
               {searchText}
             </Button>,
-            <Button
-              key="resetText"
-              onClick={() => {
-                form?.resetFields();
-              }}
-            >
-              {resetText}
-            </Button>
+            // <Button
+            //   key="resetText"
+            //   onClick={() => {
+            //     form?.resetFields();
+            //   }}
+            // >
+            //   {resetText}
+            // </Button>
           ]
         }}
         // columnsStateMap={columnsStateMap}
