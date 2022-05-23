@@ -1,8 +1,8 @@
-import { SettingDrawer } from '@ant-design/pro-layout';
 import { PageLoading } from '@ant-design/pro-layout';
 import { history, Link } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
+import { SettingDrawer } from '@ant-design/pro-layout';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import defaultSettings from '../config/defaultSettings';
@@ -20,8 +20,9 @@ export const initialStateConfig = {
 export async function getInitialState() {
   const fetchUserInfo = async () => {
     try {
-      const msg = await queryCurrentUser();
-      return msg.data;
+      // const msg = await queryCurrentUser();
+      // console.log(msg);
+      // return msg.data;
     } catch (error) {
       // history.push(loginPath);
     }
@@ -30,10 +31,10 @@ export async function getInitialState() {
   }; // 如果不是登录页面，执行
 
   if (history.location.pathname !== loginPath) {
-    const currentUser = await fetchUserInfo();
+    // const currentUser = await fetchUserInfo(); //获取用户信息
     return {
       fetchUserInfo,
-      currentUser,
+      currentUser:{name:localStorage.getItem('userToken')},
       settings: defaultSettings,
     };
   }
@@ -48,21 +49,17 @@ export const layout = ({ initialState, setInitialState }) => {
   return {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
-    //水印
-    // waterMarkProps: {
-    //   content: initialState?.currentUser?.name,
-    // },
     footerRender: () => <Footer />,
     onPageChange: () => {
-      // const { location } = history; // 如果没有登录，重定向到 login
-      //
-      // if (!initialState?.currentUser && location.pathname !== loginPath) {
-      //   history.push(loginPath);
-      // }
+      const { location } = history; // 如果没有登录，重定向到 login
+
+      if (!initialState?.currentUser && location.pathname !== loginPath) {
+        // history.push(loginPath);
+      }
     },
     menu: {
       // type: 'group',
-      locale:false
+      locale:false,
     },
     links: isDev
       ? [

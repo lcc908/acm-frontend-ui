@@ -7,7 +7,7 @@ import { Alert, message, Tabs, Carousel } from 'antd';
 import { ProFormCheckbox, ProFormText, LoginForm } from '@ant-design/pro-form';
 import { useIntl, history, FormattedMessage, useModel } from 'umi';
 import Footer from '@/components/Footer';
-import { login } from '@/services/ant-design-pro/api';
+import { login } from '@/services/login';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 import styles from './index.less';
 
@@ -29,35 +29,29 @@ const Login = () => {
   const intl = useIntl();
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
-
+    console.log(userInfo);
     if (userInfo) {
       await setInitialState((s) => ({ ...s, currentUser: userInfo }));
     }
   };
 
   const handleSubmit = async (values) => {
-    const defaultLoginSuccessMessage = intl.formatMessage({
-      id: 'pages.login.success',
-      defaultMessage: '登录成功！',
-    });
-    message.success(defaultLoginSuccessMessage);
-    await fetchUserInfo();
-    history.push('/');
-    return false;
     try {
       // 登录
-      const msg = await login({ ...values, type });
-
-      if (msg.status === 'ok') {
+      // const msg = await login({ ...values, type });
+      const msg = await login({ ...values });
+      console.log(msg);
+      if (msg.code === 200) {
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
         message.success(defaultLoginSuccessMessage);
-        await fetchUserInfo();
+        localStorage.setItem('userToken',msg.data.token)
+        // await fetchUserInfo(); //获取用户信息
         /** 此方法会跳转到 redirect 参数所在的位置 */
-
         if (!history) return;
+        console.log(history);
         const { query } = history.location;
         const { redirect } = query;
         history.push(redirect || '/');
@@ -65,8 +59,7 @@ const Login = () => {
       }
 
       console.log(msg); // 如果失败去设置用户错误信息
-
-      setUserLoginState(msg);
+      // setUserLoginState(msg);
     } catch (error) {
       const defaultLoginFailureMessage = intl.formatMessage({
         id: 'pages.login.failure',
@@ -174,22 +167,22 @@ const Login = () => {
                     ]}
                   />
                 </>
-                <div
-                  style={{
-                    marginBottom: 24,
-                  }}
-                >
-                  <ProFormCheckbox noStyle name="autoLogin">
-                    <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录" />
-                  </ProFormCheckbox>
-                  <a
-                    style={{
-                      float: 'right',
-                    }}
-                  >
-                    {/*<FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" />*/}
-                  </a>
-                </div>
+                {/*<div*/}
+                {/*  style={{*/}
+                {/*    marginBottom: 24,*/}
+                {/*  }}*/}
+                {/*>*/}
+                {/*  <ProFormCheckbox noStyle name="autoLogin">*/}
+                {/*    <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录" />*/}
+                {/*  </ProFormCheckbox>*/}
+                {/*  <a*/}
+                {/*    style={{*/}
+                {/*      float: 'right',*/}
+                {/*    }}*/}
+                {/*  >*/}
+                {/*    /!*<FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" />*!/*/}
+                {/*  </a>*/}
+                {/*</div>*/}
               </LoginForm>
             </div>
           </div>
