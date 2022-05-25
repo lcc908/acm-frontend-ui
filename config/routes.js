@@ -33,7 +33,7 @@ export default [
   {
     path: '/dashboard',
     name: '仪表盘',
-    icon: 'smile',
+    icon: 'dashboard',
     component: './dashboard',
   },
   {
@@ -69,6 +69,28 @@ export default [
         icon: 'smile',
         path: '/offline/vm',
         component: './offlineMigration/ware',
+      },
+    ]
+  },
+  {
+    path: '/account',
+    name: '个人中心',
+    icon: 'user',
+    // component: './account',
+    routes: [
+      {
+        path: '/account',
+        redirect: '/account/general-user',
+      },
+      {
+        name: '普通用户列表',
+        path: '/account/general-user',
+        component: './account/general-user',
+      },
+      {
+        name: '集成企业AD',
+        path: '/account/ad-user',
+        component: './account/ad-user',
       },
     ]
   },
