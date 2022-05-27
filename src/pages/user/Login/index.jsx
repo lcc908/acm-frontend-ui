@@ -24,7 +24,7 @@ const LoginMessage = ({ content }) => (
 
 const Login = () => {
   const [userLoginState, setUserLoginState] = useState({});
-  const [type, setType] = useState('account');
+  const [type, setType] = useState('user');
   const { initialState, setInitialState } = useModel('@@initialState');
   const intl = useIntl();
   const fetchUserInfo = async () => {
@@ -38,15 +38,11 @@ const Login = () => {
   const handleSubmit = async (values) => {
     try {
       // 登录
-      // const msg = await login({ ...values, type });
-      const msg = await login({ ...values });
+      const msg = await login({ ...values, type });
+      // const msg = await login({ ...values });
       console.log(msg);
       if (msg.code === 200) {
-        const defaultLoginSuccessMessage = intl.formatMessage({
-          id: 'pages.login.success',
-          defaultMessage: '登录成功！',
-        });
-        message.success(defaultLoginSuccessMessage);
+        message.success('登录成功');
         localStorage.setItem('userToken',msg.data.token)
         // await fetchUserInfo(); //获取用户信息
         /** 此方法会跳转到 redirect 参数所在的位置 */
@@ -110,8 +106,8 @@ const Login = () => {
                 }}
               >
                 <Tabs activeKey={type} onChange={setType}>
-                  <Tabs.TabPane key="account" tab={'默认登录'} />
-                  <Tabs.TabPane key="mobile" tab={'企业AD登录'} />
+                  <Tabs.TabPane key="user" tab={'默认登录'} />
+                  <Tabs.TabPane key="ldap" tab={'企业AD登录'} />
                 </Tabs>
                 {status === 'error' && loginType === 'account' && (
                   <LoginMessage

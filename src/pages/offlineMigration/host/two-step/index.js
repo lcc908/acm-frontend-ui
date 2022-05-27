@@ -59,6 +59,13 @@ export default (props) => {
               // rules={rules}
             />
           </Col>
+          <Col span={8}>
+            <ProFormText
+              name="a"
+              label="目标平台权限"
+              // rules={rules}
+            />
+          </Col>
           <Col span={24}>
             <ProForm.Group label="自定义脚本">
               <ProFormSelect

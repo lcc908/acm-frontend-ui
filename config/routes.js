@@ -76,7 +76,6 @@ export default [
     path: '/account',
     name: '个人中心',
     icon: 'user',
-    // component: './account',
     routes: [
       {
         path: '/account',
@@ -95,12 +94,39 @@ export default [
     ]
   },
   {
-    path: '/admin',
-    name: 'admin',
-    icon: 'crown',
-    access: 'canAdmin',
-    component: './Admin',
+    path: '/authority',
+    name: '权限认证',
+    icon: 'user',
+    routes: [
+      {
+        path: '/authority',
+        redirect: '/authority/host-permissions',
+      },
+      {
+        name: '主机权限列表',
+        path: '/authority/host-permissions',
+        component: './authority/host-permissions',
+      },
+      {
+        name: '平台权限列表',
+        path: '/authority/platform-permissions',
+        component: './authority/platform-permissions',
+      },
+    ]
   },
+  {
+    path: '/log-audit',
+    name: '日志审计',
+    icon: 'InsertRowAbove',
+    component: './LogAudit',
+  },
+  // {
+  //   path: '/admin',
+  //   name: 'admin',
+  //   icon: 'crown',
+  //   access: 'canAdmin',
+  //   component: './Admin',
+  // },
   {
     path: '/',
     redirect: '/index',

@@ -55,3 +55,11 @@ npm test
 ## More
 
 You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).
+
+## 问题
+创建和初始化项目的时候报错：Can't resolve 'btoa' in 'D:\myapp\node_modules\swagger-ui-react'
+解决方法：
+```bash
+yarn add swagger-ui-react
+yarn start
+```
