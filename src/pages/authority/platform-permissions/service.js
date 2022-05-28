@@ -1,7 +1,7 @@
 import { request } from 'umi';
-// /api/v1/host_permission
-export async function getHostPermission(params) {
-  return request('/api/v1/host',{
+//平台权限列表 GET /api/v1/platform/permission
+export async function getPermission(params) {
+  return request('/api/v1/platform/permission',{
     params:{...params}
   });
 }

@@ -41,15 +41,37 @@ export default (props) => {
       onVisibleChange={setModalVisit}
     >
       <ProFormSelect
-        name="os_type"
-        label="平台类型"
+        name="platform_type"
+        label="系统类型"
         width='xl'
-        request={async () => [
-          { label: '全部', value: 'all' },
-          { label: '未解决', value: 'open' },
-          { label: '已解决', value: 'closed' },
-          { label: '解决中', value: 'processing' },
-        ]}
+        request={async () =>
+          [
+            {
+              "label": "CentOS Linux release 7.9.2009",
+              "value": "centos7.9"
+            },
+            {
+              "label": "Redhat Enterprice Linux release 7.9",
+              "value": "redhat7.9"
+            },
+            {
+              "label": "Windows Server 2016 CH std",
+              "value": "windows2016cn"
+            },
+            {
+              "label": "Windows Server 2022 CH std",
+              "value": "windows2022cn"
+            },
+            {
+              "label": "SUSE Linux Enterprise Server 15 SP2 for SAP (x86_64)",
+              "value": "sles15sp2"
+            },
+            {
+              "label": "Ubuntu 20.04 LTS",
+              "value": "ubuntu20.04lts"
+            }
+          ]
+        }
         // placeholder="Please select a country"
         // rules={[{ required: true, message: 'Please select your country!' }]}
       />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState,useRef } from 'react';
 import { Form, message } from 'antd';
 import { ModalForm, ProFormText, ProFormRadio, ProFormSelect } from '@ant-design/pro-form';
-import {addHostPermission} from "@/pages/authority/host-permissions/service";
+import {addHostPermission, putHostPermission} from "@/pages/authority/host-permissions/service";
 
 const waitTime = (time) => {
   return new Promise((resolve) => {
@@ -25,12 +25,16 @@ export default (props) => {
   }, [editData]);
 
   const handleOk = async (values) => {
-    // let formData = new FormData();
-    // for (let i in values) {
-    //   formData.append(i,values[i])
-    // }
-    const res = await addHostPermission(values);
-    console.log(res);
+    let res;
+    const val = {...values}
+    if(editData?.id) {
+      val.id = editData.id;
+      res = await putHostPermission(val);
+    }else {
+      res = await addHostPermission(values);
+    }
+    // const res = await addHostPermission(values);
+    // console.log(res);
     if (res.code === 200) {
       message.success('提交成功');
       handleClickModalOk(true);

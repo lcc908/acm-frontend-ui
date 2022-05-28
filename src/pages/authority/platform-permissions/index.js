@@ -4,6 +4,7 @@ import {PageContainer} from '@ant-design/pro-layout';
 import ProTable, {TableDropdown} from '@ant-design/pro-table';
 import {message, Button, Dropdown, Menu, Modal} from 'antd';
 import AddAndEdit from "@/pages/authority/platform-permissions/addAndEdit";
+import {getPermission} from "@/pages/authority/platform-permissions/service";
 
 const waitTime = (time=100) => {
   return new Promise((resolve) => {
@@ -17,20 +18,20 @@ export default (props) => {
   const [isModalVisible, setModalVisit] = useState(false);
   const [editorRowData, setEditorRowData] = useState({}); //编辑数据
   const [params, setParams] = useState({
-    page_number: 1,
-    page_size: 10,
-    sort: "+id",
+    // page_number: 1,
+    // page_size: 10,
+    // sort: "+id",
   })
   const actionRef = useRef();
   const columns = [
     {
       title: '权限ID',
-      dataIndex: 'ip_address',
+      dataIndex: 'id',
       align: 'center',
     },
     {
       title: '平台类型',
-      dataIndex: 'os_type',
+      dataIndex: 'platform_type',
       align: 'center',
       hideInSearch: true,
     },
@@ -42,15 +43,19 @@ export default (props) => {
     },
     {
       title: '名称',
-      dataIndex: 'updated_at',
+      dataIndex: 'platform_name',
       align: 'center',
       hideInSearch: true,
     },
     {
       title: '状态',
-      dataIndex: 'updated_at',
+      dataIndex: 'enabled',
       align: 'center',
       hideInSearch: true,
+      valueEnum: {
+        1: { text: '激活', status: 'Success' },
+        0: { text: '禁用', status: 'Error' },
+      },
     },
     {
       title: '更新日期',
@@ -123,10 +128,10 @@ export default (props) => {
         params={
           params
         }
-        // request={() => {
-        //   return getWhiteDataList(params)
-        // }}
-        dataSource={data}
+        request={() => {
+          return getPermission(params)
+        }}
+        // dataSource={data}
         // cardProps={{ title: '用户列表', bordered: true }}
         headerTitle='主机列表'
         search={false}
