@@ -17,6 +17,8 @@ const waitTime = (time=100) => {
 export default (props) => {
   const [isModalVisible, setModalVisit] = useState(false);
   const [editorRowData, setEditorRowData] = useState({}); //编辑数据
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectRowsData, setSelectRowsData] = useState([]);
   const [params, setParams] = useState({
     // page_number: 1,
     // page_size: 10,
@@ -119,6 +121,12 @@ export default (props) => {
     setModalVisit(false);
   };
 
+  const onSelectChange = (selectedRowKeys, selectedRows) => {
+    // setButtonDisableds(true)
+    setSelectRowsData([...selectedRows])
+    setSelectedRowKeys([...selectedRowKeys])
+  }
+
   return (
     <PageContainer>
       <ProTable
@@ -136,6 +144,11 @@ export default (props) => {
         headerTitle='主机列表'
         search={false}
         pagination={false}
+        rowSelection={{
+          selectedRowKeys: selectedRowKeys,
+          onChange: onSelectChange
+          // alwaysShowAlert:true
+        }}
         toolBarRender={() => [
           <Button
             key="1"
