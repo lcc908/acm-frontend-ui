@@ -4,108 +4,60 @@ import ProCard from '@ant-design/pro-card';
 import ProTable, {TableDropdown} from '@ant-design/pro-table';
 import {CloudDownloadOutlined} from '@ant-design/icons';
 import styles from './style.less'
+import {getVmWareListVm} from '../service'
 
 export default (props) => {
-  const {oneFormRef, form, handleNextState} = props;
+  const {oneFormRef, handleNextState,onChangeDisabled} = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectRowsData, setSelectRowsData] = useState([]);
   const [params, setParams] = useState({
-    page_number: 1,
-    page_size: 10,
-    sort: "+id",
+    platform_id:'6',
+    vm_name: '',
+    ip: '',
   })
 
   const columns = [
     {
       title: 'OS类型',
-      dataIndex: 'name',
+      dataIndex: 'os',
+      align: 'center',
+      hideInSearch: true,
+    },
+    {
+      title: '虚机名称',
+      dataIndex: 'vmname',
+      align: 'center',
       ellipsis: true,
-      align: 'center',
-      hideInSearch: true,
+      // hideInSearch: true,
     },
     {
-      title: '实例名称',
-      dataIndex: 'age',
-      align: 'center',
-      hideInSearch: true,
-    },
-    {
-      title: '挂载点',
+      title: 'CPU配置',
       dataIndex: 'address',
       align: 'center',
       hideInSearch: true,
     },
     {
-      title: '套餐配置',
+      title: '内存配置',
       dataIndex: 'tags',
       align: 'center',
       hideInSearch: true,
     },
     {
       title: '状态',
-      dataIndex: 'type',
+      dataIndex: 'power_state',
       align: 'center',
       valueEnum: {
-        running: { text: '运行中', status: 'Processing' },
-        close: { text: '已关闭', status: 'Default' },
-        error: { text: '异常', status: 'Error' },
+        poweredOn: { text: '运行中', status: 'Success' },
+        poweredOff: { text: '已关闭', status: 'Error' },
       },
+      hideInSearch: true,
     },
     {
       title: 'IP地址',
-      dataIndex: 'tags',
+      dataIndex: 'ip',
       align: 'center',
     },
-    {
-      title: '操作',
-      key: 'action',
-      valueType: 'option',
-      align: 'center',
-      // render: (text, record, _, action) => [
-      //   <a
-      //     key="editable"
-      //     onClick={() => {
-      //       action?.startEditable?.(record.key);
-      //     }}
-      //   >
-      //     编辑
-      //   </a>,
-      //   <Popconfirm title="确定删除此行数据?" onConfirm={() => {
-      //     setDataSource(dataSource.filter((item) => item.key !== record.key));
-      //   }}>
-      //     <a>删除</a>
-      //   </Popconfirm>
-      // ],
-    },
   ];
-  const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: '1 Lake Park',
-      tags: 2,
-      type: "running"
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'Lake Park',
-      tags: 1,
-      type: "close"
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: '1 Lake Park',
-      tags: 3,
-      type: "error"
-    },
-
-  ];
-
   useEffect(()=>{
     console.log(params);
   },[params])
@@ -114,35 +66,34 @@ export default (props) => {
   }
 
   const onSelectChange = (selectedRowKeys, selectedRows) => {
-    // if (selectedRows.length > 0) {
-    //   setButtonDisableds(false);
-    // } else {
-    //   setButtonDisableds(true)
-    // }
-    // // setButtonDisableds(true)
     setSelectRowsData([...selectedRows])
     setSelectedRowKeys([...selectedRowKeys])
+    if(selectedRowKeys.length > 0) {
+      onChangeDisabled(false)
+    } else {
+      onChangeDisabled(true)
+    }
+  }
+
+  const beforeSearchSubmit = (val) => {
+    const {vmname,ip} = val;
+    setParams({...params,vm_name:vmname,ip})
   }
 
   return (
     <ProCard
-      title="主机列表"
+      title="虚拟机列表"
       headerBordered
       bordered
       className={styles.oneStep}
     >
       <ProTable
         columns={columns}
-        rowKey="key"
+        rowKey="vmname"
         params={
           params
         }
-        // rowKey={record => record.vm_uuid}
-        // params={
-        //   params
-        // }
-        // scroll={{x: 2000}}
-        // beforeSearchSubmit={beforeSearchSubmit}
+        beforeSearchSubmit={beforeSearchSubmit}
         search={{
           // labelWidth: 100,
           // span: 8,
@@ -151,40 +102,30 @@ export default (props) => {
               key="searchText"
               type="primary"
               onClick={() => {
-                // console.log(params);
                 form?.submit();
               }}
             >
               {searchText}
             </Button>,
-            // <Button
-            //   key="resetText"
-            //   onClick={() => {
-            //     form?.resetFields();
-            //   }}
-            // >
-            //   {resetText}
-            // </Button>
           ]
         }}
         // columnsStateMap={columnsStateMap}
-        // request={(par) => {
-        //   return getStorageAPI(params)
-        // }}
-        // rowSelection={{
-        //   selectedRowKeys: selectedRowKeys,
-        //   onChange: onSelectChange
-        // }}
-        toolBarRender={false}
-        // dataSource={data}
-        request={async (params ) => {
-          console.log(params);
-          return {
-            data: data,
-            total: 3,
-            success: true,
-          }
+        request={(par) => {
+          return getVmWareListVm(params)
         }}
+        rowSelection={{
+          selectedRowKeys: selectedRowKeys,
+          onChange: onSelectChange
+        }}
+        toolBarRender={false}
+        // request={async (params ) => {
+        //   console.log(params);
+        //   return {
+        //     data: data,
+        //     total: 3,
+        //     success: true,
+        //   }
+        // }}
         pagination={{
           position: ['bottomCenter'],
           showQuickJumper: true,

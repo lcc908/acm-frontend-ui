@@ -98,6 +98,10 @@ const StepForm = (props) => {
     props.onSubmit?.();
     // console.log(props.form.getFieldValue());
   };
+  const onChangeDisabled = (par) => {
+    console.log(par);
+    setDisabled(par)
+  }
   return (
     <PageContainer content="将一个冗长或用户不熟悉的表单任务分成多个步骤，指导用户完成。">
       <Card bordered={false} className={styles.spacrFrom}>
@@ -130,6 +134,7 @@ const StepForm = (props) => {
                     type="primary"
                     key="asd2123"
                     onClick={() => props.onSubmit?.()}
+                    disabled={disabled}
                   >
                     下一步
                   </Button>,
@@ -182,7 +187,11 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <OneStep oneFormRef={oneFormRef} handleNextState={handleNextState} />
+            <OneStep
+              oneFormRef={oneFormRef}
+              handleNextState={handleNextState}
+              onChangeDisabled={onChangeDisabled}
+            />
           </StepsForm.StepForm>
 
           <StepsForm.StepForm

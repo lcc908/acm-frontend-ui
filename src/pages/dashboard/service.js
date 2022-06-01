@@ -1,7 +1,7 @@
 import { request } from 'umi';
 // GET 任务列表 /api/v1/migration_task
 export async function queryFakeList(params) {
-  return request('/api/get_list', {
+  return request('/api/v1/migration_task', {
     params,
   });
 }

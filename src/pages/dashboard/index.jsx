@@ -32,11 +32,11 @@ const Info = ({ title, value, bordered }) => (
   </div>
 );
 
-const ListContent = ({ data: { owner, createdAt, percent, status } }) => (
+const ListContent = ({ data: { created_by, createdAt, percent, status } }) => (
   <div className={styles.listContent}>
     <div className={styles.listContentItem}>
       <span>Owner</span>
-      <p>{owner}</p>
+      <p>{created_by}</p>
     </div>
     <div className={styles.listContentItem}>
       <span>开始时间</span>
@@ -65,7 +65,7 @@ export const BasicList = () => {
     mutate,
   } = useRequest(() => {
     return queryFakeList({
-      count: 7,
+      // count: 7,
     });
   });
   const { run: postRun } = useRequest(
@@ -87,7 +87,7 @@ export const BasicList = () => {
       },
     },
   );
-  const list = listData?.list || [];
+  const list = listData || [];
   const paginationProps = {
     showSizeChanger: true,
     showQuickJumper: true,
@@ -178,7 +178,7 @@ export const BasicList = () => {
           <Card
             className={styles.listCard}
             bordered={false}
-            title="基本列表"
+            title="任务列表"
             style={{
               marginTop: 24,
             }}
@@ -210,7 +210,7 @@ export const BasicList = () => {
                 >
                   <List.Item.Meta
                     avatar={<Avatar src={item.logo} shape="square" size="large" />}
-                    title={<a href={item.href}>{item.title}</a>}
+                    title={<a href={item.href}>{item.name}</a>}
                     description={item.subDescription}
                   />
                   <ListContent data={item} />
