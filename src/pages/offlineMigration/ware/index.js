@@ -41,6 +41,8 @@ const StepForm = (props) => {
   });
   const [current, setCurrent] = useState(0); //当前表单的步骤数，从 0 开始
   const [disabled, setDisabled] = useState(true);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]); //第一步：选择的虚拟机列表名称
+
   const [form] = Form.useForm();
 
   const formMapRef = useRef();
@@ -98,8 +100,10 @@ const StepForm = (props) => {
     props.onSubmit?.();
     // console.log(props.form.getFieldValue());
   };
-  const onChangeDisabled = (par) => {
-    console.log(par);
+  //第一步方法：控制下一步按钮和存储选择的虚拟机
+  const onChangeDisabled = (par,selectedRowKeys) => {
+    console.log(selectedRowKeys);
+    setSelectedRowKeys([...selectedRowKeys])
     setDisabled(par)
   }
   return (
@@ -209,7 +213,10 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <TwoStep twoFormRef={twoFormRef} />
+            <TwoStep
+              twoFormRef={twoFormRef}
+              selectedRowKeys={selectedRowKeys}
+            />
           </StepsForm.StepForm>
           <StepsForm.StepForm
             title="第三步"

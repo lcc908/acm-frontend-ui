@@ -69,7 +69,7 @@ export default (props) => {
     setSelectRowsData([...selectedRows])
     setSelectedRowKeys([...selectedRowKeys])
     if(selectedRowKeys.length > 0) {
-      onChangeDisabled(false)
+      onChangeDisabled(false,selectedRowKeys)
     } else {
       onChangeDisabled(true)
     }
@@ -77,6 +77,7 @@ export default (props) => {
 
   const beforeSearchSubmit = (val) => {
     const {vmname,ip} = val;
+    console.log(1);
     setParams({...params,vm_name:vmname,ip})
   }
 
@@ -87,9 +88,10 @@ export default (props) => {
       bordered
       className={styles.oneStep}
     >
-      <ProTable
+        <ProTable
         columns={columns}
         rowKey="vmname"
+        revalidateOnFocus={false}
         params={
           params
         }
@@ -118,14 +120,6 @@ export default (props) => {
           onChange: onSelectChange
         }}
         toolBarRender={false}
-        // request={async (params ) => {
-        //   console.log(params);
-        //   return {
-        //     data: data,
-        //     total: 3,
-        //     success: true,
-        //   }
-        // }}
         pagination={{
           position: ['bottomCenter'],
           showQuickJumper: true,

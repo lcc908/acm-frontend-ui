@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { Row, Col, Cascader , Form, Select} from 'antd';
 import ProForm, {
   ProFormSelect,
@@ -47,7 +47,7 @@ const options = [
 
 
 export default (props) => {
-  const { twoFormRef, form, handleNextState } = props;
+  const { twoFormRef, selectedRowKeys, handleNextState } = props;
   const [showDateTime,setShowDateTime] = useState(false)
   const rules = [{ required: true, message: '这是必填项' }];
   const onChange = (value) => {
@@ -60,6 +60,9 @@ export default (props) => {
   const changeSwitch = (val) => {
     setShowDateTime(val)
   }
+  useEffect(()=>{
+    console.log(selectedRowKeys);
+  },[selectedRowKeys])
   return (
     <>
       <ProCard title="任务信息" headerBordered bordered>
