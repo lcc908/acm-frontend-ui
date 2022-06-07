@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState,useRef } from 'react';
 import {Button, message} from 'antd';
 import ProForm, {
   ModalForm,
@@ -6,18 +6,21 @@ import ProForm, {
   ProFormDateRangePicker,
   ProFormSelect,
 } from '@ant-design/pro-form';
+import {getPermission} from "@/pages/authority/platform-permissions/service";
 
-const waitTime = (time) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
+// const waitTime = (time) => {
+//   return new Promise((resolve) => {
+//     setTimeout(() => {
+//       resolve(true);
+//     }, time);
+//   });
+// };
 
 export default (props) => {
-  const {modalVisit,closeModal,clickId,addCheck,handleOk} = props;
+  const {modalVisit,closeModal,clickId,addCheck,handleOk,platform_type} = props;
   const [fromVisit,setFromVisit] = useState(false)
+  const [selectList,setSelectList] = useState([])
+  const formRef = useRef();
   const handleChangeValue = (value) => {
     if(value === '2') {
       setFromVisit(true)
@@ -25,21 +28,39 @@ export default (props) => {
       setFromVisit(false)
     }
   }
+  const request = async (params) => {
+    const {data} = await getPermission({platform_type});
+    const arr = data.map(item =>{
+      return {label:item.platform_name,value:item.id}
+    });
+    arr.push({value: '2', label: '自定义'});
+    console.log(arr);
+    formRef?.current?.setFieldsValue({
+      typeList: arr[0].value,
+    });
+    return arr;
+  };
+  useEffect(()=>{
+    console.log(selectList);
+  },[selectList])
   return (
     <ModalForm
       title="源平台认证"
       visible={modalVisit}
       autoFocusFirstInput
+      formRef={formRef}
       modalProps={{
         onCancel: () => closeModal(),
+        destroyOnClose:true
       }}
       // onValuesChange={(changeValues) => handleChangeValue(changeValues)}
       submitTimeout={2000}
       onFinish={async (values) => {
-        await waitTime(2000);
+        // await waitTime(2000);
         console.log(values);
+        const {typeList} = values;
         message.success('提交成功');
-        addCheck(clickId);
+        addCheck(clickId,{id:typeList});
         handleOk()
         return true;
       }}
@@ -47,10 +68,12 @@ export default (props) => {
       <ProFormSelect
         name="typeList"
         label="权限列表"
-        options={[
-          { value: '1', label: '1' },
-          { value: '2', label: '自定义' },
-        ]}
+        request={request}
+        // options={[
+        //   { value: '1', label: '1' },
+        //   { value: '2', label: '自定义' },
+        // ]}
+        // initialValue={'629db04f99387effeb02b325'}
         onChange={(changeValues) => handleChangeValue(changeValues)}
       />
       {

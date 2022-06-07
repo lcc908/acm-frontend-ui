@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { Card, Result, Button, Divider, message, Form } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
 import { ProFormSwitch, ProFormText, StepsForm } from '@ant-design/pro-form';
@@ -9,6 +9,7 @@ import FourStep from './four-step';
 import FiveStep from './five-step';
 import SixStep from './six-step';
 import styles from './style.less';
+import { history } from 'umi';
 // import FourStep from "@/pages/onlineMigration/components/fourStep";
 
 const waitTime = (time = 100) => {
@@ -45,6 +46,9 @@ const StepForm = (props) => {
   const [disabled, setDisabled] = useState(true);
   const [form] = Form.useForm();
 
+  useEffect(()=>{
+    console.log(history);
+  },[])
   const formMapRef = useRef();
   const oneFormRef = useRef();
   const twoFormRef = useRef();

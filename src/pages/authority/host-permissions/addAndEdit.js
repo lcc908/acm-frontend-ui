@@ -2,13 +2,23 @@ import React, { useEffect, useState,useRef } from 'react';
 import { Form, message } from 'antd';
 import { ModalForm, ProFormText, ProFormRadio, ProFormSelect } from '@ant-design/pro-form';
 import {addHostPermission, putHostPermission} from "@/pages/authority/host-permissions/service";
-
+import {getAlldictList} from '@/pages/offlineMigration/source/service'
+import {getPermission} from "@/pages/authority/platform-permissions/service";
 const waitTime = (time) => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(true);
     }, time);
   });
+};
+
+const request = async (params) => {
+  console.log(params);
+  const {data} = await getAlldictList()
+  const arr = data.map(item =>{
+    return {label:item.name,value:item.id}
+  });
+  return arr;
 };
 
 export default (props) => {
@@ -57,7 +67,7 @@ export default (props) => {
     >
       <ProFormSelect
         name="os_type"
-        label="系统类型"
+        label="主机类型"
         width='xl'
         request={async () =>
           [
@@ -134,6 +144,16 @@ export default (props) => {
         width='xl'
         initialValue={'SSH'}
         rules={[{ required: true, message: '请选择连接类型！' }]}
+        request={request}
+        // placeholder="Please select a country"
+        // rules={[{ required: true, message: 'Please select your country!' }]}
+      />
+      <ProFormSelect
+        name="connect_type"
+        label="所属平台"
+        width='xl'
+        initialValue={'SSH'}
+        rules={[{ required: true, message: '请选择所属平台！' }]}
         request={async () => [
           { label: 'SSH', value: 'SSH' },
           { label: 'WINRM', value: 'WINRM' },

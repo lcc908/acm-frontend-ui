@@ -53,7 +53,7 @@ export default [
       },
       {
 
-        name: '选择源主机',
+        name: '选择源平台',
         icon: 'smile',
         path: '/offline/source',
         component: './offlineMigration/source',
