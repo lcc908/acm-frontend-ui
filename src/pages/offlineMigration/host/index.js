@@ -10,6 +10,7 @@ import FiveStep from './five-step';
 import SixStep from './six-step';
 import styles from './style.less';
 import { history } from 'umi';
+import {temporaryMigrationTask} from './service'
 // import FourStep from "@/pages/onlineMigration/components/fourStep";
 
 const waitTime = (time = 100) => {
@@ -42,8 +43,9 @@ const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(0); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(1); //当前表单的步骤数，从 0 开始
   const [disabled, setDisabled] = useState(true);
+  const [temporaryButton, setTemporaryButton] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(()=>{
@@ -57,13 +59,26 @@ const StepForm = (props) => {
   const fiveFormRef = useRef();
   const sixFormRef = useRef();
 
-  const handleSubmitZanCun = (props) => {
-    const { step, form } = props;
+  const handleSubmitZanCun = async (props) => {
+    const { step } = props;
+    setTemporaryButton(true); //设置暂存按钮loading 避免多次提交
+    const a = await waitTime(1000);
+    if(a) setTemporaryButton(false); //1秒之后loading消失
+    let response = {};
     if (step === 0) {
       console.log('这是第一步', oneFormRef.current.getFieldValue());
     }
     if (step === 1) {
-      console.log('这是第二步', twoFormRef?.current?.getFieldValue());
+      // console.log('这是第二步', twoFormRef?.current?.validateFields());
+      const obj = await twoFormRef?.current?.validateFieldsReturnFormatValue();
+      setTemporaryButton(false);
+      console.log(obj);
+      obj.source_host_ids = '629743c71e90bc07b4000001'; //临时写死
+      obj.migration_method = 'block';
+      obj.migration_type = 'offline';
+      obj.migration_category = 'full';
+      const res = await temporaryMigrationTask(obj);
+      response = {...res};
     }
     if (step === 2) {
       console.log('这是第三步', threeFormRef?.current?.getFieldValue());
@@ -77,6 +92,9 @@ const StepForm = (props) => {
     if (step === 5) {
       console.log('这是第六步', sixFormRef?.current?.getFieldValue());
     }
+    if(response.code === 200) {
+      message.success('暂存成功');
+    }
     // console.log(form);
 
     // console.log(formRef.current.getFieldValue());
@@ -86,11 +104,12 @@ const StepForm = (props) => {
     setDisabled(false);
   };
   const handleSubmit = async (props) => {
+    const { step } = props;
+    console.log(step);
     // console.log(formMapRef.current);
     // console.log(props.form.getFieldValue());
     let Arr = [];
     formMapRef.current.forEach((item) => {
-      // console.log(item.current.getFieldValue());
       Arr.push({
         ...item.current.getFieldValue(),
       });
@@ -102,6 +121,18 @@ const StepForm = (props) => {
       }
     }
     console.log(obj);
+    // console.log(props.step);
+    if (step === 1) {
+      // console.log('这是第二步', twoFormRef?.current?.validateFields());
+      const obj = await twoFormRef?.current?.validateFieldsReturnFormatValue();
+      console.log(obj);
+      obj.migration_method = 'block';
+      obj.migration_type = 'offline';
+      obj.migration_category = 'full';
+      obj.migration_status = 'RUNNING';
+      obj.id = 'task_id';
+      const res = await temporaryMigrationTask(obj);
+    }
     props.onSubmit?.();
     // console.log(props.form.getFieldValue());
   };
@@ -123,14 +154,14 @@ const StepForm = (props) => {
             render: (props, dom) => {
               if (props.step === 0) {
                 return [
-                  <Button
-                    style={{ marginTop: 35 }}
-                    type="primary"
-                    key="goToTree33"
-                    onClick={() => handleSubmitZanCun(props)}
-                  >
-                    暂存
-                  </Button>,
+                  // <Button
+                  //   style={{ marginTop: 35 }}
+                  //   type="primary"
+                  //   key="goToTree33"
+                  //   onClick={() => handleSubmitZanCun(props)}
+                  // >
+                  //   暂存
+                  // </Button>,
                   // <Button disabled={disabled} style={{marginTop:35}} type="primary" key="asd2123" onClick={() => props.onSubmit?.()}>
                   <Button
                     style={{ marginTop: 35 }}
@@ -152,6 +183,7 @@ const StepForm = (props) => {
                     style={{ marginTop: 35 }}
                     key="goToTree"
                     onClick={() => handleSubmitZanCun(props)}
+                    loading={temporaryButton}
                   >
                     暂存
                   </Button>,

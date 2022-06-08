@@ -5,9 +5,11 @@ import ProForm, {
   ProFormCheckbox,
   ProFormUploadButton,
   ProFormText,
+  ProFormTextArea,
 } from '@ant-design/pro-form';
 import ProCard from '@ant-design/pro-card';
 import styles from './style.less';
+import {getTemporaryMigrationTask} from '../service'
 
 export default (props) => {
   const { twoFormRef, form, handleNextState } = props;
@@ -39,14 +41,19 @@ export default (props) => {
   }
   useEffect(()=>{
     console.log(checkBox);
+    getData();
   },[checkBox])
+  const getData = async () => {
+    const res = await getTemporaryMigrationTask({id:'629743c71e90bc07b4000001'});
+    console.log(res);
+  }
   return (
     <>
       <ProCard title="任务信息" headerBordered bordered>
         <Row gutter={24}>
           <Col span={8}>
             <ProFormText
-              name="a"
+              name="name"
               label="任务名称"
               rules={rules}
             />
@@ -63,6 +70,14 @@ export default (props) => {
             <ProFormText
               name="a"
               label="目标平台权限"
+              // rules={rules}
+            />
+          </Col>
+          <Col span={8}>
+            <ProFormTextArea
+              name="description"
+              label="描述"
+              placeholder="请输入描述"
               // rules={rules}
             />
           </Col>
