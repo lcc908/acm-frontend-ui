@@ -96,12 +96,6 @@ export default (props) => {
               "value":"ubuntu20.04lts"
             }
           ]
-        //   [
-        //   { label: '全部', value: 'all' },
-        //   { label: '未解决', value: 'open' },
-        //   { label: '已解决', value: 'closed' },
-        //   { label: '解决中', value: 'processing' },
-        // ]
       }
         // placeholder="Please select a country"
         // rules={[{ required: true, message: '请选择系统类型！' }]}
@@ -142,14 +136,13 @@ export default (props) => {
         name="connect_type"
         label="连接类型"
         width='xl'
-        initialValue={'SSH'}
         rules={[{ required: true, message: '请选择连接类型！' }]}
         request={request}
         // placeholder="Please select a country"
         // rules={[{ required: true, message: 'Please select your country!' }]}
       />
       <ProFormSelect
-        name="connect_type"
+        name="connect_type1"
         label="所属平台"
         width='xl'
         initialValue={'SSH'}

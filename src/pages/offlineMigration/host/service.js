@@ -19,7 +19,7 @@ export async function makeLiveCd(params) {
 //暂存 POST /api/v1/migration_task
 export async function temporaryMigrationTask(params) {
   return request('/api/v1/migration_task', {
-    method: 'POST',
+    method: 'put',
     data: { ...params},
   });
 }

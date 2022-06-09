@@ -6,6 +6,12 @@ export async function getPermission(params) {
   });
 }
 
+//查询主机 get /api/v1/host
+export async function getHostData(params) {
+  return request(`/api/v1/host`,{
+    params:{...params}
+  });
+}
 //添加主机 POST /api/v1/host_permission
 export async function addHostPermission(params) {
   return request('/api/v1/host',{

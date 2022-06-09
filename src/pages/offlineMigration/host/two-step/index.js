@@ -9,10 +9,12 @@ import ProForm, {
 } from '@ant-design/pro-form';
 import ProCard from '@ant-design/pro-card';
 import styles from './style.less';
+import HostInfo from "@/pages/offlineMigration/host/two-step/hostInfo";
 import {getTemporaryMigrationTask} from '../service'
+import {getHostData} from "@/pages/authority/platform-permissions/service";
 
 export default (props) => {
-  const { twoFormRef, form, handleNextState } = props;
+  const { twoFormRef, handleNextState } = props;
   const [xitGb,setXitGb] = useState(true);
   const [sjGb,setSjGb] = useState(true);
   const [checkBox,setCheckBox] = useState([])
@@ -40,12 +42,17 @@ export default (props) => {
     })
   }
   useEffect(()=>{
-    console.log(checkBox);
     getData();
   },[checkBox])
   const getData = async () => {
-    const res = await getTemporaryMigrationTask({id:'629743c71e90bc07b4000001'});
-    console.log(res);
+    const {data} = await getTemporaryMigrationTask({host_id:'629743c71e90bc07b4000001'});
+    const res = data[0];
+    // handleSetTaskId(res.id)
+    localStorage.setItem('task_id',res.id)
+    twoFormRef.current?.setFieldsValue({
+      ...res,
+      // ...hostData
+    })
   }
   return (
     <>
@@ -104,60 +111,8 @@ export default (props) => {
         </Row>
       </ProCard>
       <ProCard title="源主机配置" headerBordered bordered className={styles.lastCard}>
-        <Row gutter={24}>
-          <Col span={8}>
-            <ProFormText
-              name="d"
-              label="序列号"
-              // rules={rules}
-            />
-          </Col>
-          <Col span={8}>
-            <ProFormText
-              name="e"
-              label="主机名称"
-              // rules={rules}
-            />
-          </Col>
-          <Col span={8}>
-            <ProFormText
-              name="f"
-              label="服务器厂商"
-              // rules={rules}
-            />
-          </Col>
-        </Row>
-        <Row gutter={24}>
-          <Col span={8}>
-            <ProFormText
-              name="f"
-              label="服务器厂商"
-              // rules={rules}
-            />
-          </Col>
-          <Col span={8}>
-            <ProFormText
-              name="g"
-              label="MEM配置"
-              // rules={rules}
-            />
-          </Col>
-          <Col span={8}>
-            <ProFormText
-              name="h"
-              label="操作系统"
-              // rules={rules}
-            />
-          </Col>
-          <Col span={8}>
-            <ProFormText
-              name="i"
-              label="网络信息"
-              // rules={rules}
-            />
-          </Col>
-        </Row>
-        <ProForm.Group label="行业分布" />
+        <HostInfo twoFormRef={twoFormRef}/>
+        <ProForm.Group label="磁盘信息(GiB)" />
         <Row className={styles.checkboxGroup}>
           <Col>
             <ProFormCheckbox.Group

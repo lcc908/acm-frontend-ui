@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { Card, Timeline, Button, Progress, Row, Col, Table, Space } from 'antd';
 import ProForm, {
   ProFormText,
@@ -8,9 +8,18 @@ import ProForm, {
 } from '@ant-design/pro-form';
 import ProCard from '@ant-design/pro-card';
 import styles from '../style.less';
+import {getTemporaryMigrationTask} from "@/pages/offlineMigration/host/service";
 
 export default (props) => {
-  const { threeFormRef, form, stepData } = props;
+  const { threeFormRef, taskId, stepData } = props;
+  useEffect(()=>{
+    getData();
+  },[])
+  const getData = async () => {
+    const taskId = localStorage.getItem('task_id')
+    const {data} = await getTemporaryMigrationTask({id:taskId});
+    console.log(data);
+  }
   return (
     <>
       <ProCard title="数据迁移" headerBordered bordered>

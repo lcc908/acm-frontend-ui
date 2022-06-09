@@ -105,6 +105,7 @@ const StepForm = (props) => {
   };
   const handleSubmit = async (props) => {
     const { step } = props;
+    const taskId = localStorage.getItem('task_id')
     console.log(step);
     // console.log(formMapRef.current);
     // console.log(props.form.getFieldValue());
@@ -125,13 +126,13 @@ const StepForm = (props) => {
     if (step === 1) {
       // console.log('这是第二步', twoFormRef?.current?.validateFields());
       const obj = await twoFormRef?.current?.validateFieldsReturnFormatValue();
-      console.log(obj);
       obj.migration_method = 'block';
       obj.migration_type = 'offline';
       obj.migration_category = 'full';
       obj.migration_status = 'RUNNING';
-      obj.id = 'task_id';
+      obj.id = taskId;
       const res = await temporaryMigrationTask(obj);
+      console.log(res);
     }
     props.onSubmit?.();
     // console.log(props.form.getFieldValue());
@@ -240,7 +241,9 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <TwoStep twoFormRef={twoFormRef} />
+            <TwoStep
+              twoFormRef={twoFormRef}
+            />
           </StepsForm.StepForm>
           <StepsForm.StepForm
             title="第三步"
