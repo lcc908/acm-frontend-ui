@@ -15,11 +15,11 @@ export default (props) => {
     getData();
   },[])
   const getData = async () => {
-    const {data} = await getHostData({id:'629743c71e90bc07b4000001'});
-    const res = data[0];
-    console.log(res);
+    const res = await getHostData({id:'629743c71e90bc07b4000001'});
+    const par = res?.data[0];
+    console.log(par);
     formRef.current?.setFieldsValue({
-      ...res,
+      ...par,
     })
   }
   return (
