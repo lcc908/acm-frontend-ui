@@ -54,7 +54,6 @@ const AvatarDropdown = ({ menu }) => {
     </span>
   );
 
-  console.log(1);
   if (!initialState) {
     return loading;
   }

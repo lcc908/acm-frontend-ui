@@ -1,7 +1,7 @@
 import React, { useEffect, useState,useRef } from 'react';
 import { Form, message } from 'antd';
-import { ModalForm, ProFormText, ProFormSwitch, ProFormSelect } from '@ant-design/pro-form';
-
+import { ModalForm, ProFormText, ProFormSwitch, ProFormSelect,ProFormTextArea } from '@ant-design/pro-form';
+import {addPermission} from './service'
 const waitTime = (time) => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -12,46 +12,97 @@ const waitTime = (time) => {
 
 export default (props) => {
   const {isModalVisible,setModalVisit,editData} = props;
-  const [form] = Form.useForm();
-  const [platformType, setPlatformType] = useState('vmware_vcenter');
+  const formRef  = useRef();
+  const [platformType, setPlatformType] = useState('openstack');
   useEffect(() => {
     // if(formType === 'Add') {
     //   return false;
     // }
-    form.resetFields();
-    form.setFieldsValue({ ...editData });
+    formRef?.current?.resetFields();
+    formRef?.current?.setFieldsValue({ ...editData });
   }, [editData]);
 
   const titleText = editData?.id ? '编辑表单' : '新建表单';
 
   const changeValues = (val) => {
-    const {platform_type} = val;
-    if(platform_type) {
-      console.log(1);
-      setPlatformType(platform_type)
+    const {platform_name} = val;
+    if(platform_name) {
+      setPlatformType(platform_name);
+      formRef?.current?.resetFields();
     }
+  }
+  const onFinish = async (values) => {
+    // await waitTime(2000);
+    console.log(values);
+    const obj = {...values};
+    if(obj.platform_name === "physical_server") {
+      console.log(1);
+      obj.platform_type = "Physical Server";
+    }
+    if(obj.platform_name === "vmware_vcenter") {
+      obj.platform_type = "VMware vCenter";
+      obj.extra = {
+        ip:obj.ip,
+        username:obj.username,
+        password:obj.password,
+      }
+    }
+    if(obj.platform_name === "hyper_v") {
+      obj.platform_type = "Hyper-V";
+      obj.extra = {
+        ip:obj.ip,
+        username:obj.username,
+        password:obj.password,
+      }
+    }
+    if(obj.platform_name === "openstack") {
+      obj.platform_type = "OpenStack";
+      obj.extra = {
+        auth_url:obj.auth_url,
+        project_name:obj.project_name,
+        user_domain_name:obj.user_domain_name,
+        project_domain_name:obj.project_domain_name,
+        username:obj.username,
+        password:obj.password,
+        region_name:obj.region_name,
+      }
+    }
+    for(let i in obj) {
+      if(obj.extra &&　obj.extra[i]) {
+        delete obj[i]
+      }
+    }
+    console.log(obj);
+
+    if(editData?.id) {
+
+    } else {
+      const res = await addPermission(obj);
+      console.log(res);
+    }
+    // message.success('提交成功');
+    // return true;
   }
   return (
     <ModalForm
       title={titleText}
       visible={isModalVisible}
-      form={form}
-      onFinish={async (values) => {
-        await waitTime(2000);
-        console.log(values);
-        message.success('提交成功');
-        return true;
-      }}
+      formRef={formRef}
+      onFinish={onFinish}
       layout={'horizontal'}
       labelCol={{ span: 4 }}
       wrapperCol={{ span: 20 }}
       onVisibleChange={setModalVisit}
       onValuesChange={(val) => changeValues(val)}
+      modalProps={{
+        destroyOnClose: true,
+      }}
     >
       <ProFormSelect
-        name="platform_type"
+        name="platform_name"
         label="平台类型"
         width='xl'
+        initialValue={platformType}
         request={async () =>
           [
             {
@@ -63,7 +114,8 @@ export default (props) => {
               "value": "vmware_vcenter"
             },
             {
-              "label": "Physical Server",
+              // "label": "Physical Server",
+              "label": "物理服务器",
               "value": "physical_server"
             },
             {
@@ -72,65 +124,79 @@ export default (props) => {
             },
           ]
         }
-        // placeholder="Please select a country"
-        // rules={[{ required: true, message: 'Please select your country!' }]}
+        rules={[{ required: true}]}
       />
+      {
+        (platformType === 'vmware_vcenter' || platformType === 'hyper_v') && (
+          <ProFormText
+            width='xl'
+            name="ip"
+            label="IP地址"
+            placeholder="请输入IP地址"
+            rules={[{ required: true}]}
+          />
+        )
+      }
+      {
+        (platformType === 'vmware_vcenter' || platformType === 'openstack' || platformType === 'hyper_v') && (
+          <>
+            <ProFormText
+              width='xl'
+              name="username"
+              label="用户名"
+              placeholder="请输入用户名"
+              fieldProps={{
+                autoComplete:"new-password"
+              }}
+              rules={[{ required: true}]}
+            />
+            <ProFormText.Password
+              width='xl'
+              name="password"
+              label="密码"
+              fieldProps={{
+                autoComplete:"new-password"
+              }}
+              placeholder="请输入密码"
+              rules={[{ required: true}]}
+            />
+          </>
+        )
+      }
+      {
+        platformType === 'openstack' && (
+          <>
+            <ProFormText
+              width='xl'
+              name="auth_url"
+              label="访问地址"
+              rules={[{ required: true}]}
+            />
+            <ProFormText
+              width='xl'
+              name="project_name"
+              label="租户名称"
+              rules={[{ required: true}]}
+            />
+            <ProFormText width='xl' name="project_domain_name" label="租户域" />
+            <ProFormText width='xl' name="user_domain_name" label="用户域" />
+            <ProFormText width='xl' name="region_name" label="区域" />
+          </>
+        )
+      }
       <ProFormText
         width='xl'
-        name="ip_address"
-        label="区域"
-        placeholder="请输入IP地址"
-      />
-      <ProFormText
-        width='xl'
-        name="ip_address"
-        label="IP地址"
-        placeholder="请输入IP地址"
-      />
-      <ProFormText
-        width='xl'
-        name="name2"
-        label="用户名"
-        placeholder="请输入用户名"
-      />
-      <ProFormText
-        width='xl'
-        name="name"
-        label="用户名"
-        placeholder="请输入用户名"
-        fieldProps={{
-          autoComplete:"new-password"
-        }}
-      />
-      <ProFormText.Password
-        width='xl'
-        name="ipmi_password"
-        label="密码"
-        fieldProps={{
-          autoComplete:"new-password"
-        }}
-        placeholder="请输入密码"
-      />
-      <ProFormText
-        width='xl'
-        name="name12"
-        label="DataStore"
+        name="location"
+        label="DC位置"
+        placeholder="请输入DC所在区域"
       />
       <ProFormSwitch name="switch" label="是否激活" />
-      {/*<ProFormRadio.Group*/}
-      {/*  name="radio"*/}
-      {/*  label="是否激活"*/}
-      {/*  options={[*/}
-      {/*    {*/}
-      {/*      label: '是',*/}
-      {/*      value: 'a',*/}
-      {/*    },*/}
-      {/*    {*/}
-      {/*      label: '否',*/}
-      {/*      value: 'b',*/}
-      {/*    },*/}
-      {/*  ]}*/}
-      {/*/>*/}
+      <ProFormTextArea
+        width='xl'
+        name="description"
+        label="描述"
+        placeholder="请输入"
+      />
     </ModalForm>
   );
 };
