@@ -43,7 +43,7 @@ const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(1); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(2); //当前表单的步骤数，从 0 开始
   const [disabled, setDisabled] = useState(true);
   const [temporaryButton, setTemporaryButton] = useState(false);
   const [form] = Form.useForm();
@@ -105,7 +105,7 @@ const StepForm = (props) => {
   };
   const handleSubmit = async (props) => {
     const { step } = props;
-    const taskId = localStorage.getItem('task_id')
+    const taskId = localStorage.getItem('offlineTask_id')
     console.log(step);
     // console.log(formMapRef.current);
     // console.log(props.form.getFieldValue());

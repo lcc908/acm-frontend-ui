@@ -46,13 +46,15 @@ export default (props) => {
   },[checkBox])
   const getData = async () => {
     const {data} = await getTemporaryMigrationTask({host_id:'629743c71e90bc07b4000001'});
-    const res = data[0];
-    // handleSetTaskId(res.id)
-    localStorage.setItem('task_id',res.id)
-    twoFormRef.current?.setFieldsValue({
-      ...res,
-      // ...hostData
-    })
+    if(data.length) {
+      const res = data[0];
+      // handleSetTaskId(res.id)
+      localStorage.setItem('offlineTask_id',res.id)
+      twoFormRef.current?.setFieldsValue({
+        ...res,
+        // ...hostData
+      })
+    }
   }
   return (
     <>

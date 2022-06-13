@@ -9,6 +9,7 @@ import ThreeStep from './three-step';
 import FourStep from './four-step';
 import FiveStep from './five-step';
 import styles from './style.less';
+import {postHotMigration} from "@/pages/onlineMigration/service";
 // import FourStep from "@/pages/onlineMigration/components/fourStep";
 
 const waitTime = (time = 100) => {
@@ -41,7 +42,14 @@ const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(0); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(2); //当前表单的步骤数，从 0 开始
+  const [oneDisabled, setOneDisabled] = useState(()=>{
+    const data = JSON.parse(localStorage.getItem('onlineOne'));
+    if(data) {
+      return false
+    }
+    return true
+  }); //当前表单的步骤数，从 0 开始
   const [form] = Form.useForm();
 
   const formMapRef = useRef();
@@ -76,6 +84,7 @@ const StepForm = (props) => {
   const handleSubmit = async (props) => {
     // console.log(formMapRef.current);
     // console.log(props.form.getFieldValue());
+    const { step } = props;
     let Arr = [];
     formMapRef.current.forEach((item) => {
       // console.log(item.current.getFieldValue());
@@ -90,9 +99,34 @@ const StepForm = (props) => {
       }
     }
     console.log(obj);
+    if(step === 0) {
+      const obj = await oneFormRef?.current?.validateFieldsReturnFormatValue();
+      console.log(obj);
+      delete obj.machine_type1;
+      delete obj.method;
+      delete obj.encrypt;
+      // obj.extra = {
+      //   method: obj.method,
+      //   encrypt: obj.encrypt,
+      // }
+      // for(let i in obj) {
+      //   if(obj.extra &&　obj.extra[i]) {
+      //     delete obj[i]
+      //   }
+      // }
+      // obj.extra = JSON.stringify(obj.extra);
+      // obj.extra = JSON.stringify(obj.extra);
+      const res = await postHotMigration(obj);
+      if(res.code !== 200) {
+        return false;
+      }
+      localStorage.setItem('onlineTask_id',res.data.id)
+    }
     props.onSubmit?.();
-    // console.log(props.form.getFieldValue());
   };
+  const oneNextButtonState = (par) => {
+    setOneDisabled(par);
+  }
   return (
     <PageContainer content="将一个冗长或用户不熟悉的表单任务分成多个步骤，指导用户完成。">
       <Card bordered={false} className={styles.spacrFrom}>
@@ -112,10 +146,10 @@ const StepForm = (props) => {
               if (props.step === 0) {
                 return (
                   [
-                    <Button style={{marginTop:35}} type="primary" key="goToTree33" onClick={() => handleSubmitZanCun(props)}>
-                      暂存
-                    </Button>,
-                    <Button style={{marginTop:35}} type="primary" key="asd2123" onClick={() => props.onSubmit?.()}>
+                    // <Button style={{marginTop:35}} type="primary" key="1" onClick={() => handleSubmitZanCun(props)}>
+                    //   暂存
+                    // </Button>,
+                    <Button disabled={oneDisabled} style={{marginTop:35}} type="primary" key="2" onClick={() => handleSubmit(props)}>
                       下一步
                     </Button>
                   ]
@@ -172,7 +206,10 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <OneStep {...props}/>
+            <OneStep
+              oneFormRef={oneFormRef}
+              setOneDisabled={oneNextButtonState}
+            />
           </StepsForm.StepForm>
 
           <StepsForm.StepForm
@@ -191,7 +228,9 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <TwoStep/>
+            <TwoStep
+              twoFormRef={twoFormRef}
+            />
           </StepsForm.StepForm>
           <StepsForm.StepForm
             title="第三步"
