@@ -19,7 +19,7 @@ export const initialStateConfig = {
  * */
 //拦截器-请求前拦截
 const authHeaderInterceptor = (url, options) => {
-  const baseUrl = process.env.NODE_ENV === 'development' ? '/api' : 'http://10.122.140.39:9001';
+  const baseUrl = process.env.NODE_ENV === 'development' ? '/api' : 'https://acm.lenovo.com:9001';
   const token = localStorage.getItem('userToken');
   const o = options;
   // if (history.location.pathname !== loginPath &&　token) {

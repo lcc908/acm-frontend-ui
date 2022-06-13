@@ -9,7 +9,7 @@ import FourStep from './four-step';
 import FiveStep from './five-step';
 import SixStep from './six-step';
 import styles from './style.less';
-import { history } from 'umi';
+import { history,Prompt } from 'umi';
 import {temporaryMigrationTask} from './service'
 // import FourStep from "@/pages/onlineMigration/components/fourStep";
 
@@ -43,7 +43,10 @@ const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(2); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(()=>{
+    const setNum = localStorage.getItem('offset');
+    return setNum ? parseInt(setNum) : 0;
+  }); //当前表单的步骤数，从 0 开始
   const [disabled, setDisabled] = useState(true);
   const [temporaryButton, setTemporaryButton] = useState(false);
   const [form] = Form.useForm();
@@ -58,6 +61,10 @@ const StepForm = (props) => {
   const fourFormRef = useRef();
   const fiveFormRef = useRef();
   const sixFormRef = useRef();
+  const changeCurrent = (val) => {
+    setCurrent(val);
+    localStorage.setItem('offset',val);
+  }
 
   const handleSubmitZanCun = async (props) => {
     const { step } = props;
@@ -139,12 +146,15 @@ const StepForm = (props) => {
   };
   return (
     <PageContainer content="将一个冗长或用户不熟悉的表单任务分成多个步骤，指导用户完成。">
+      <Prompt message={(location) => {
+        localStorage.removeItem('offset')
+      }}  />
       <Card bordered={false} className={styles.spacrFrom}>
         <StepsForm
           formMapRef={formMapRef}
           current={current}
           form={form}
-          onCurrentChange={setCurrent} //current 发生改变的事件
+          onCurrentChange={changeCurrent} //current 发生改变的事件
           // onFinish={async (values) => {
           //   console.log(values);
           //   await waitTime(1000);
