@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import { Popconfirm, Timeline, Button, Progress , Row, Col, Table,Space } from 'antd';
+import {Popconfirm, Timeline, Button, Progress, Row, Col, Table, Space, message} from 'antd';
 import {
   ProFormText,
   ProFormSelect,
@@ -10,8 +10,9 @@ import ProCard from '@ant-design/pro-card'
 import { EditableProTable } from '@ant-design/pro-table';
 
 import styles from '../style.less';
+import {getTemporaryMigrationTask, postOpenstackVm} from "@/pages/offlineMigration/host/service";
 
-const waitTime = (time) => {
+const waitTime = (time = 1000) => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(true);
@@ -21,9 +22,10 @@ const waitTime = (time) => {
 
 
 export default (props) => {
-  const { fiveFormRef, form, stepData } = props;
+  const { fiveFormRef, fiveData, stepData } = props;
   const [editableKeys, setEditableRowKeys] = useState([]);
   const [dataSource, setDataSource] = useState([]);
+  const [state,setState] = useState({}); //上传状态
   const columns = [
     {
       title: '序号',
@@ -92,6 +94,33 @@ export default (props) => {
       tags: 3,
     },
   ];
+
+  useEffect(() => {
+    console.log(fiveData);
+    if(fiveData) {
+      fiveFormRef?.current?.setFieldsValue({
+        ...fiveData
+      });
+      setState(fiveData.status)
+    }
+
+  },[fiveData])
+  const handleClick = async () => {
+    console.log('这是第四步', fiveFormRef?.current?.getFieldValue());
+    await waitTime();
+    const val = fiveFormRef?.current?.getFieldValue();
+    const taskId = localStorage.getItem('offlineTask_id') || '62972194759b7432c4000001'
+    val.task_id = taskId;
+    val.flavor_name = val.flavor;
+    val.save_only = true;
+    const res = await postOpenstackVm(val);
+    if(res.code === 200) {
+      message.success('虚拟机启动成功！');
+      const res = await getTemporaryMigrationTask({id:taskId});
+      console.log(res);
+      // res.data[0].sub_task[0].platform_info
+    }
+  }
   useEffect(() => {
     // console.log(editableKeys);
     console.log(dataSource);
@@ -102,86 +131,97 @@ export default (props) => {
         // title="创建虚拟机"
         headerBordered
         bordered
-        // gutter={8}
         split={'vertical'}
-        // gutter={[0, 8]}
+        // actions={updateState === 'IMAGE_UPLOADING' ? [<Button type="primary" key="1" loading>上传中</Button>] : [<Button type="primary" key="2" onClick={handleClick} loading>启动虚拟机</Button>]}
       >
         <ProCard
           title="创建虚拟机"
           colSpan="60%"
           headerBordered
+          // actions={updateState === 'IMAGE_UPLOADING' ? [<Button type="primary" key="1" loading>上传中</Button>] : [<Button type="primary" key="2" onClick={handleClick} >启动虚拟机</Button>]}
           // bordered
         >
+          {/*<ProFormText*/}
+          {/*  name="a"*/}
+          {/*  label="平台名称"*/}
+          {/*  // rules={rules}*/}
+          {/*/>*/}
           <ProFormText
-            name="a"
-            label="平台名称"
-            // rules={rules}
-          />
-          <ProFormSelect
-            name="b"
+            name="instance_name"
             label="主机名"
-            options={[
-              {
-                value: '1',
-                label: '1',
-              },
-            ]}
-          />
-          <ProFormText
-            name="c"
-            label="镜像名称"
-            disabled
             // rules={rules}
           />
+          {/*<ProFormSelect*/}
+          {/*  name="instance_name"*/}
+          {/*  label="主机名"*/}
+          {/*  options={[*/}
+          {/*    {*/}
+          {/*      value: '1',*/}
+          {/*      label: '1',*/}
+          {/*    },*/}
+          {/*  ]}*/}
+          {/*/>*/}
+          {/*<ProFormText*/}
+          {/*  name="c"*/}
+          {/*  label="镜像名称"*/}
+          {/*  disabled*/}
+          {/*  // rules={rules}*/}
+          {/*/>*/}
           <ProFormSelect
-            name="d"
+            name="flavor"
             label="套餐大小"
             options={[
               {
-                value: '1',
-                label: '1',
+                value: '4-16-0',
+                label: '4-16-0',
               },
             ]}
           />
           <ProFormSelect
-            name="d"
+            name="network_name"
             label="网络名称"
             options={[
               {
-                value: '1',
-                label: '1',
+                value: 'network_10.120.79',
+                label: 'network_10.120.79',
               },
             ]}
           />
+          <div style={{textAlign:'center'}}>
+            {
+              state === 'OPENSTACK_VM_CREATING' ? <Button type="primary" loading>虚拟机创建中</Button> :
+                <Button type="primary" key="2" onClick={handleClick} loading>启动虚拟机</Button>
+            }
+          </div>
           {/*<Table columns={columns} dataSource={data} pagination={false} title={() => '磁盘列表'}/>*/}
-          <EditableProTable
-            rowKey="key"
-            headerTitle="磁盘列表"
-            columns={columns}
-            // scroll={{
-            //   x: 960,
-            // }}
-            request={async () => ({
-              data: data,
-              total: 3,
-              success: true,
-            })}
-            value={dataSource}
-            onChange={setDataSource}
-            editable={{
-              type: 'multiple',
-              editableKeys,
-              onSave: async (rowKey, data, row) => {
-                console.log(rowKey, data, row);
-                await waitTime(2000);
-              },
-              onChange: setEditableRowKeys,
-              onDelete:(Key, row) => {
-                console.log(Key);
-              }
-            }}
-            recordCreatorProps={false}
-          />
+          {/*<EditableProTable*/}
+          {/*  rowKey="key"*/}
+          {/*  headerTitle="磁盘列表"*/}
+          {/*  columns={columns}*/}
+          {/*  // scroll={{*/}
+          {/*  //   x: 960,*/}
+          {/*  // }}*/}
+          {/*  request={async () => ({*/}
+          {/*    data: data,*/}
+          {/*    total: 3,*/}
+          {/*    success: true,*/}
+          {/*  })}*/}
+          {/*  value={dataSource}*/}
+          {/*  onChange={setDataSource}*/}
+          {/*  editable={{*/}
+          {/*    type: 'multiple',*/}
+          {/*    editableKeys,*/}
+          {/*    onSave: async (rowKey, data, row) => {*/}
+          {/*      console.log(rowKey, data, row);*/}
+          {/*      await waitTime(2000);*/}
+          {/*    },*/}
+          {/*    onChange: setEditableRowKeys,*/}
+          {/*    onDelete:(Key, row) => {*/}
+          {/*      console.log(Key);*/}
+          {/*    }*/}
+          {/*  }}*/}
+          {/*  recordCreatorProps={false}*/}
+          {/*/>*/}
         </ProCard>
         <ProCard
           headerBordered
@@ -192,13 +232,13 @@ export default (props) => {
             {/*<Timeline>*/}
             <Timeline.Item color="green">2022-03-1 10:13:15 连接目标主机成功</Timeline.Item>
             <Timeline.Item color="green">2022-03-1 11:13:30  操作系统配置基线检查完成</Timeline.Item>
-            <Timeline.Item color="green">2022-03-2 12:13:45  目标主机硬件环境检查完成</Timeline.Item>
-            <Timeline.Item color="green">2022-03-3 11:13:45  网络连通性检查正常，能够访问ETL存储</Timeline.Item>
-            <Timeline.Item color="green">2022-03-4 12:13:45 成功状态</Timeline.Item>
-            <Timeline.Item color="green">2022-03-4 12:13:45 成功状态</Timeline.Item>
-            <Timeline.Item color="green">2022-03-4 12:13:45 成功状态</Timeline.Item>
-            <Timeline.Item color="gray">2022-03-5 14:13:11 警告状态</Timeline.Item>
-            <Timeline.Item color="red">2022-03-5 14:13:11 失败状态</Timeline.Item>
+            {/*<Timeline.Item color="green">2022-03-2 12:13:45  目标主机硬件环境检查完成</Timeline.Item>*/}
+            {/*<Timeline.Item color="green">2022-03-3 11:13:45  网络连通性检查正常，能够访问ETL存储</Timeline.Item>*/}
+            {/*<Timeline.Item color="green">2022-03-4 12:13:45 成功状态</Timeline.Item>*/}
+            {/*<Timeline.Item color="green">2022-03-4 12:13:45 成功状态</Timeline.Item>*/}
+            {/*<Timeline.Item color="green">2022-03-4 12:13:45 成功状态</Timeline.Item>*/}
+            {/*<Timeline.Item color="gray">2022-03-5 14:13:11 警告状态</Timeline.Item>*/}
+            {/*<Timeline.Item color="red">2022-03-5 14:13:11 失败状态</Timeline.Item>*/}
           </Timeline>
         </ProCard>
       </ProCard>

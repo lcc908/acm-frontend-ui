@@ -22,7 +22,15 @@ export async function getReportAnalysis(params) {
   });
 }
 
-//
+// 安装Agent
+// POST /api/v1/hot_migration/agent_installation
+export async function postInstallAgent(params) {
+  return request('/api/v1/hot_migration/agent_installation', {
+    method: 'POST',
+    data: { ...params},
+  });
+}
+
 // //第二步 创建任务
 // //暂存 POST /api/v1/migration_task
 // export async function temporaryMigrationTask(params) {

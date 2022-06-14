@@ -10,7 +10,7 @@ import FiveStep from './five-step';
 import SixStep from './six-step';
 import styles from './style.less';
 import { history,Prompt } from 'umi';
-import {temporaryMigrationTask} from './service'
+import {getTemporaryMigrationTask, temporaryMigrationTask} from './service'
 // import FourStep from "@/pages/onlineMigration/components/fourStep";
 
 const waitTime = (time = 100) => {
@@ -38,6 +38,24 @@ const StepResult = (props) => {
     ></Result>
   );
 };
+function useInterval(callback,delay) {
+  const savedCallback = useRef();
+
+  useEffect(() => {
+    savedCallback.current = callback;
+  });
+
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
 
 const StepForm = (props) => {
   const [stepData, setStepData] = useState({
@@ -45,15 +63,27 @@ const StepForm = (props) => {
   });
   const [current, setCurrent] = useState(()=>{
     const setNum = localStorage.getItem('offset');
-    return setNum ? parseInt(setNum) : 0;
+    return setNum ? parseInt(setNum) : 4;
   }); //当前表单的步骤数，从 0 开始
   const [disabled, setDisabled] = useState(true);
+  const [fourNextBt, setFourNextBt] = useState(true);
+  const [fiveNextBt, setFiveNextBt] = useState(true);
   const [temporaryButton, setTemporaryButton] = useState(false);
+  const [threeData,setData] = useState({}); //第三步的数据
+  const [fourData,setFourData] = useState({}); //第四步的数据
+  const [fiveData,setFiveData] = useState({}); //第五的数据
+  const [isRunning, setIsRunning] = useState(true);
+
   const [form] = Form.useForm();
 
+  // useInterval(() => {
+  //   getData();;
+  // }, isRunning ? 5000 : null);
+
   useEffect(()=>{
-    console.log(history);
+    getData();;
   },[])
+
   const formMapRef = useRef();
   const oneFormRef = useRef();
   const twoFormRef = useRef();
@@ -65,7 +95,40 @@ const StepForm = (props) => {
     setCurrent(val);
     localStorage.setItem('offset',val);
   }
-
+  const getData = async () => {
+    const taskId = localStorage.getItem('offlineTask_id') || '62972194759b7432c4000001'
+    const res = await getTemporaryMigrationTask({id:taskId});
+    if(res.data.length) {
+      const fourData = JSON.parse(res.data[0].sub_task[0].image_info);
+      const fiveData = JSON.parse(res.data[0].sub_task[0].platform_info);
+      // const fourState = res.data[0].sub_task[0].current_step;
+      // const fourState = res.data[0].sub_task[0].current_step;
+      console.log(fiveData);
+      setData({...res.data[0]})
+      setFourData({...fourData})
+      setFiveData({...fiveData})
+      //镜像上传中或者失败下一步不可点击
+      if(fourData.status === 'IMAGE_UPLOADING' ||　fourData.status === 'IMAGE_UPLOAD_FAILED') {
+        setFourNextBt(true);
+      }
+      if(fourData.status === 'IMAGE_UPLOADED') {
+        setFourNextBt(false);
+      }
+      // if(fourData.status === 'IMAGE_UPLOADED') {
+      //   setIsRunning(false);
+      // }
+      // if(fourData.status === 'IMAGE_UPLOAD_FAILED') {
+      //   console.log('上传失败');
+      // }
+      //虚拟机创建中或者失败下一步不可点击
+      if(fiveData.status === 'OPENSTACK_VM_CREATING' || fiveData.status === 'OPENSTACK_VM_CREATE_FAILED') {
+        setFiveNextBt(true);
+      }
+      if(fiveData.status === 'OPENSTACK_VM_CREATED') {
+        setFiveNextBt(false);
+      }
+    }
+  }
   const handleSubmitZanCun = async (props) => {
     const { step } = props;
     setTemporaryButton(true); //设置暂存按钮loading 避免多次提交
@@ -144,6 +207,31 @@ const StepForm = (props) => {
     props.onSubmit?.();
     // console.log(props.form.getFieldValue());
   };
+  const ButtonArray = (props,disabled) => {
+    return [
+      <Button key="pre1" style={{ marginTop: 35 }} onClick={() => props.onPre?.()}>
+        上一步
+      </Button>,
+      <Button
+        type="primary"
+        style={{ marginTop: 35 }}
+        key="goToTree"
+        onClick={() => handleSubmitZanCun(props)}
+        loading={temporaryButton}
+      >
+        暂存
+      </Button>,
+      <Button
+        type="primary"
+        style={{ marginTop: 35 }}
+        key="goToTree3"
+        onClick={() => handleSubmit(props)}
+        disabled={disabled}
+      >
+        下一步
+      </Button>,
+    ]
+  }
   return (
     <PageContainer content="将一个冗长或用户不熟悉的表单任务分成多个步骤，指导用户完成。">
       <Prompt message={(location) => {
@@ -165,15 +253,6 @@ const StepForm = (props) => {
             render: (props, dom) => {
               if (props.step === 0) {
                 return [
-                  // <Button
-                  //   style={{ marginTop: 35 }}
-                  //   type="primary"
-                  //   key="goToTree33"
-                  //   onClick={() => handleSubmitZanCun(props)}
-                  // >
-                  //   暂存
-                  // </Button>,
-                  // <Button disabled={disabled} style={{marginTop:35}} type="primary" key="asd2123" onClick={() => props.onSubmit?.()}>
                   <Button
                     style={{ marginTop: 35 }}
                     type="primary"
@@ -183,6 +262,12 @@ const StepForm = (props) => {
                     下一步
                   </Button>,
                 ];
+              }
+              if (props.step === 3) {
+                return ButtonArray(props,fourNextBt)
+              }
+              if (props.step === 4) {
+                return ButtonArray(props,fiveNextBt)
               }
               if (props.step < 6) {
                 return [
@@ -267,7 +352,7 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <ThreeStep threeFormRef={threeFormRef} />
+            <ThreeStep threeFormRef={threeFormRef} data={threeData}/>
           </StepsForm.StepForm>
           <StepsForm.StepForm
             title="第四步"
@@ -284,7 +369,10 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <FourStep fourFormRef={fourFormRef} />
+            <FourStep
+              fourFormRef={fourFormRef}
+              fourData={fourData}
+            />
           </StepsForm.StepForm>
 
           <StepsForm.StepForm
@@ -292,8 +380,8 @@ const StepForm = (props) => {
             formRef={fiveFormRef}
             layout="horizontal"
             // layout="horizontal"
-            // labelCol={{ span: 4 }}
-            // wrapperCol={{ span: 20 }}
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 20 }}
             stepProps={{
               description: '创建虚拟机',
             }}
@@ -303,7 +391,10 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <FiveStep fiveFormRef={fiveFormRef} />
+            <FiveStep
+              fiveFormRef={fiveFormRef}
+              fiveData={fiveData}
+            />
           </StepsForm.StepForm>
 
           <StepsForm.StepForm

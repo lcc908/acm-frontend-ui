@@ -39,3 +39,11 @@ export async function postOpenstackImg(params) {
     data: { ...params},
   });
 }
+//第五步 创建虚拟机
+// POST /api/v1/openstack/vm
+export async function postOpenstackVm(params) {
+  return request('/api/v1/openstack/vm', {
+    method: 'POST',
+    data: { ...params},
+  });
+}

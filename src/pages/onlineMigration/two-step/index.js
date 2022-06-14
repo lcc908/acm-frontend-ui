@@ -3,21 +3,22 @@ import { Card, Timeline, Button, Progress , Row,Col, message, Form } from 'antd'
 import ProForm, {
   ProFormSelect,
   ProFormSwitch,
-  ProFormRadio,
+  ProFormRadio, ProFormText,
 } from '@ant-design/pro-form';
 import ProCard from '@ant-design/pro-card'
 import styles from '../style.less';
-import {getReportAnalysis} from "@/pages/onlineMigration/service";
+import {getReportAnalysis,postInstallAgent} from "@/pages/onlineMigration/service";
 
 export default (props) => {
-  const { oneFormRef, twoFormRef, stepData } = props;
+  const { twoFormRef, setTwoNextBt } = props;
   const [lineList,setLineList] = useState([]);
   // localStorage.setItem('onlineTask_id',res.data.id)
+  const id = localStorage.getItem('onlineTask_id');
   useEffect(() => {
     getData()
   },[])
   const getData = async () => {
-    const id = localStorage.getItem('onlineTask_id');
+
     const {data} = await getReportAnalysis({task_id:id});
     setLineList([...data]);
     // oneFormRef?.current?.setFieldsValue({
@@ -26,7 +27,11 @@ export default (props) => {
   }
   const handleClickAgent = async () => {
     const val = await twoFormRef.current?.validateFieldsReturnFormatValue();
+    val.task_id = id;
     console.log(val);
+    const res = await postInstallAgent(val);
+    console.log(res);
+    // setTwoNextBt(false)
   }
   return (
   <div className={styles.cardList}>
@@ -62,34 +67,39 @@ export default (props) => {
           // className={styles.rightCard}
           bodyStyle={{height:440}}
           headStyle={{ fontWeight: 'bold' }}
-          actions={[<Button type="primary" key="1" onClick={handleClickAgent}>安装Agent</Button>]}
+          actions={[<Button type="primary" key="1" onClick={handleClickAgent}>安装客户端</Button>]}
         >
           <ProFormSelect
             name="package_name"
             label="软件包列表"
+            initialValue="Linuxs_salt_agent.zip"
             options={[
-              { value: 'SR650', label: 'SR650' },
-              { value: 'X3650M5', label: 'X3650M5' },
+              {
+                "label": "Windows_Salt_Agent.zip",
+                "value": "windows_salt_agent.zip"
+              },
+              {
+                "label": "Linux_Salt_Agent.zip",
+                "value": "Linuxs_salt_agent.zip"
+              }
             ]}
           />
-          <ProFormSelect
-            name="location"
+          <ProFormText
+            name="instance_name"
             label="安装位置"
-            options={[
-              { value: 'SR650', label: 'SR650' },
-              { value: 'X3650M5', label: 'X3650M5' },
-            ]}
+            initialValue={'/acm_agent'}
+            // rules={rules}
           />
           <ProFormRadio.Group
             label="服务启动"
-            name="service_type"
-            initialValue="a"
+            name="service_start_method"
+            initialValue="one_time"
             options={[
-              { label: '一次性', value: 'a' },
-              { label: '加入系统服务', value: 'b' },
+              { label: '一次性', value: 'one_time' },
+              { label: '加入系统服务', value: 'system_service' },
             ]}
           />
-          <ProFormSwitch name="enable_firewall" label="防火墙启用" />
+          <ProFormSwitch name="if_firewall" label="防火墙启用" />
           {/*<div style={{marginTop:80,textAlign:"center"}}>*/}
           {/*  <Progress*/}
           {/*    // type="circle"*/}

@@ -13,19 +13,19 @@ import source_host from '../../../../assets/source_host.png'
 import target_host from '../../../../assets/target_host.png'
 
 export default (props) => {
-  const { threeFormRef, taskId, stepData } = props;
-  const [data,setData] = useState({});
-  useEffect(()=>{
-    getData();
-  },[])
-  const getData = async () => {
-    const taskId = localStorage.getItem('offlineTask_id') || '62972194759b7432c4000001'
-    const res = await getTemporaryMigrationTask({id:taskId});
-    console.log(res);
-    if(res.data.length) {
-      setData({...res.data[0]})
-    }
-  }
+  const { threeFormRef, taskId, stepData,data } = props;
+  // const [data,setData] = useState({});
+  // useEffect(()=>{
+  //   getData();
+  // },[])
+  // const getData = async () => {
+  //   const taskId = localStorage.getItem('offlineTask_id') || '62972194759b7432c4000001'
+  //   const res = await getTemporaryMigrationTask({id:taskId});
+  //   console.log(res);
+  //   if(res.data.length) {
+  //     setData({...res.data[0]})
+  //   }
+  // }
   return (
     <>
       <ProCard title="数据迁移" headerBordered bordered>

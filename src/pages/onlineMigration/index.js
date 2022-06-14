@@ -42,7 +42,8 @@ const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(2); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(1); //当前表单的步骤数，从 0 开始
+  const [twoNextBt, setTwoNextBt] = useState(true); //当前表单的步骤数，从 0 开始
   const [oneDisabled, setOneDisabled] = useState(()=>{
     const data = JSON.parse(localStorage.getItem('onlineOne'));
     if(data) {
@@ -127,6 +128,20 @@ const StepForm = (props) => {
   const oneNextButtonState = (par) => {
     setOneDisabled(par);
   }
+  const ButtonArray = (props,disabled) => {
+    return [
+      <Button key="pre1" style={{marginTop:35}} onClick={() => props.onPre?.()}>
+        上一步
+      </Button>,
+      <Button type="primary" style={{marginTop:35}} key="goToTree" onClick={() => handleSubmitZanCun(props)}>
+        暂存
+      </Button>,
+      // <Button type="primary" key="goToTree3" onClick={() => handleSubmit2(props)}>
+      <Button disabled={disabled} type="primary" style={{marginTop:35}} key="goToTree3" onClick={() => handleSubmit(props)}>
+        下一步
+      </Button>,
+    ]
+  }
   return (
     <PageContainer content="将一个冗长或用户不熟悉的表单任务分成多个步骤，指导用户完成。">
       <Card bordered={false} className={styles.spacrFrom}>
@@ -146,14 +161,14 @@ const StepForm = (props) => {
               if (props.step === 0) {
                 return (
                   [
-                    // <Button style={{marginTop:35}} type="primary" key="1" onClick={() => handleSubmitZanCun(props)}>
-                    //   暂存
-                    // </Button>,
                     <Button disabled={oneDisabled} style={{marginTop:35}} type="primary" key="2" onClick={() => handleSubmit(props)}>
                       下一步
                     </Button>
                   ]
                 );
+              }
+              if(props.step === 1) {
+                return ButtonArray(props,twoNextBt)
               }
               if (props.step < 5) {
                 return [
@@ -169,19 +184,6 @@ const StepForm = (props) => {
                   </Button>,
                 ];
               }
-              // if (props.step < 2) {
-              //   return [
-              //     <Button key="pre1" onClick={() => props.onPre?.()}>
-              //       上一步
-              //     </Button>,
-              //     <Button type="primary" key="goToTree" onClick={() => handleSubmit(props)}>
-              //       暂存
-              //     </Button>,
-              //     <Button type="primary" key="goToTree3" onClick={() => props.onSubmit?.()}>
-              //       下一步
-              //     </Button>,
-              //   ];
-              // }
               if (props.step === 5) {
                 return null;
               }
@@ -230,6 +232,7 @@ const StepForm = (props) => {
           >
             <TwoStep
               twoFormRef={twoFormRef}
+              setTwoNextBt={setTwoNextBt}
             />
           </StepsForm.StepForm>
           <StepsForm.StepForm
