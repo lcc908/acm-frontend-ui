@@ -42,7 +42,7 @@ const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(1); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(2); //当前表单的步骤数，从 0 开始
   const [twoNextBt, setTwoNextBt] = useState(true); //当前表单的步骤数，从 0 开始
   const [oneDisabled, setOneDisabled] = useState(()=>{
     const data = JSON.parse(localStorage.getItem('onlineOne'));
@@ -99,7 +99,7 @@ const StepForm = (props) => {
         obj[j] = i[j];
       }
     }
-    console.log(obj);
+    // console.log(obj);
     if(step === 0) {
       const obj = await oneFormRef?.current?.validateFieldsReturnFormatValue();
       console.log(obj);
@@ -122,6 +122,23 @@ const StepForm = (props) => {
         return false;
       }
       localStorage.setItem('onlineTask_id',res.data.id)
+    }
+    if(step === 2) {
+      const val = await threeFormRef?.current?.validateFieldsReturnFormatValue();
+      val.task_id = localStorage.getItem('onlineTask_id')
+      val.host = {
+        host_name:val.host_name,
+        image_name:val.image_name,
+        account:val.account,
+        network_name:val.network_name,
+      }
+      for(let i in val) {
+        if(val.host &&　val.host[i]) {
+          delete val[i]
+        }
+      }
+      console.log(val);
+      return false;
     }
     props.onSubmit?.();
   };
@@ -251,7 +268,9 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <ThreeStep/>
+            <ThreeStep
+              threeFormRef={threeFormRef}
+            />
           </StepsForm.StepForm>
           <StepsForm.StepForm
             title="第四步"

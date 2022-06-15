@@ -30,9 +30,16 @@ export async function postInstallAgent(params) {
   });
 }
 //安装 Agent 进度
-// POST /api/v1/hot_migration/agent_installation
+// GET /api/v1/hot_migration/agent_installation
 export async function getInstallAgentPercent(params) {
   return request('/api/v1/hot_migration/agent_installation', {
+    params
+  });
+}
+//第三部 目标主机
+// GET /api/v1/hot_migration/generate_data
+export async function getGenerateData(params) {
+  return request('/api/v1/hot_migration/generate_data', {
     params
   });
 }
