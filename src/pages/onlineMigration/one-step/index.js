@@ -138,36 +138,35 @@ export default (props) => {
                 { value: 'X3650M5', label: 'X3650M5' },
               ]}
             />
-            {/*<ProFormUploadDragger*/}
-            {/*  max={1}*/}
-            {/*  label="上传"*/}
-            {/*  name="upload"*/}
-            {/*  tooltip="上传目标平台认证文件"*/}
-            {/*  description="仅支持三种格式上传: .txt，.sh和.yaml"*/}
-            {/*  onChange={handleChange}*/}
-            {/*  action={'http://10.122.140.39:9001/api/v1/hot_migration/host'}*/}
-            {/*  fieldProps={{*/}
-            {/*    name: "file",*/}
-            {/*    method:'PUT',*/}
-            {/*    beforeUpload:beforeUpload,*/}
-            {/*    headers:{*/}
-            {/*      username:localStorage.getItem('userToken'),*/}
-            {/*      "X-Requested-With": null*/}
-            {/*    }*/}
-            {/*  }}*/}
-            {/*  // fieldProps={{method:'PUT'}}*/}
-            {/*/>*/}
-            <Upload
-              name='file'
-              action='https://acm.lenovo.com:9001/api/v1/hot_migration/host'
-              headers={
-                {username: localStorage.getItem('userToken')}
-              }
-              method='PUT'
-              beforeUpload={beforeUpload}
-            >
-              <Button icon={<UploadOutlined />}>Click to Upload</Button>
-            </Upload>
+            <ProFormUploadDragger
+              max={1}
+              label="上传"
+              name="upload"
+              tooltip="上传目标平台认证文件"
+              description="仅支持三种格式上传: .txt，.sh和.yaml"
+              onChange={handleChange}
+              action={'https://acm.lenovo.com:9001/api/v1/hot_migration/host'}
+              fieldProps={{
+                name: "file",
+                method:'PUT',
+                beforeUpload:beforeUpload,
+                headers:{
+                  username:localStorage.getItem('userToken'),
+                }
+              }}
+              // fieldProps={{method:'PUT'}}
+            />
+            {/*<Upload*/}
+            {/*  name='file'*/}
+            {/*  action='https://acm.lenovo.com:9001/api/v1/hot_migration/host'*/}
+            {/*  headers={*/}
+            {/*    {username: localStorage.getItem('userToken')}*/}
+            {/*  }*/}
+            {/*  method='PUT'*/}
+            {/*  beforeUpload={beforeUpload}*/}
+            {/*>*/}
+            {/*  <Button icon={<UploadOutlined />}>Click to Upload</Button>*/}
+            {/*</Upload>*/}
           </Card>
         </Col>
       </Row>
