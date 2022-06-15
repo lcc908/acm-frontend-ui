@@ -31,8 +31,8 @@ function useInterval(callback,delay) {
 export default (props) => {
   const { twoFormRef, setTwoNextBt } = props;
   const [lineList,setLineList] = useState([]);
-  const [percent,setPercent] = useState([]);
-  const [isRunning, setIsRunning] = useState(true);
+  const [percent,setPercent] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
   // localStorage.setItem('onlineTask_id',res.data.id)
   const id = localStorage.getItem('onlineTask_id');
 
@@ -56,23 +56,25 @@ export default (props) => {
     if(code === 200) {
       message.success('已提交安装客户端');
       console.log(data);
+      localStorage.setItem('twoState',id);
       getAgentPercent(data.id)
       // getInstallAgentPercent
     }
     // console.log(res);
     // setTwoNextBt(false)
   }
-  // useInterval(() => {
-  //   getAgentPercent();
-  // }, isRunning ? 5000 : null);
+  useInterval(() => {
+    getAgentPercent(localStorage.getItem('twoState'));
+  }, isRunning ? 5000 : null);
 
   const getAgentPercent = async (id) => {
     const {code,data} = await getInstallAgentPercent({id});
     if(code === 200) {
       setPercent(data.percent);
-      // if(data.percent < 100) {
-      //   // getAgentPercent(id);
-      // }
+      if(data.percent < 100) {
+        // getAgentPercent(id);
+        setIsRunning(true);
+      }
     }
   }
   return (
