@@ -7,31 +7,73 @@ import ProForm, {
 } from '@ant-design/pro-form';
 import ProCard from '@ant-design/pro-card'
 import styles from '../style.less';
-import {getReportAnalysis,postInstallAgent} from "@/pages/onlineMigration/service";
+import {getInstallAgentPercent, getReportAnalysis, postInstallAgent} from "@/pages/onlineMigration/service";
+
+function useInterval(callback,delay) {
+  const savedCallback = useRef();
+
+  useEffect(() => {
+    savedCallback.current = callback;
+  });
+
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
 
 export default (props) => {
   const { twoFormRef, setTwoNextBt } = props;
   const [lineList,setLineList] = useState([]);
+  const [percent,setPercent] = useState([]);
+  const [isRunning, setIsRunning] = useState(true);
   // localStorage.setItem('onlineTask_id',res.data.id)
   const id = localStorage.getItem('onlineTask_id');
+
   useEffect(() => {
     getData()
   },[])
+
   const getData = async () => {
 
-    const {data} = await getReportAnalysis({task_id:id});
+    const {data} = await getReportAnalysis({id:id});
     setLineList([...data]);
     // oneFormRef?.current?.setFieldsValue({
     //   ...data
     // });
   }
+
   const handleClickAgent = async () => {
     const val = await twoFormRef.current?.validateFieldsReturnFormatValue();
     val.task_id = id;
-    console.log(val);
-    const res = await postInstallAgent(val);
-    console.log(res);
+    const {code,data} = await postInstallAgent(val);
+    if(code === 200) {
+      message.success('已提交安装客户端');
+      console.log(data);
+      getAgentPercent(data.id)
+      // getInstallAgentPercent
+    }
+    // console.log(res);
     // setTwoNextBt(false)
+  }
+  // useInterval(() => {
+  //   getAgentPercent();
+  // }, isRunning ? 5000 : null);
+
+  const getAgentPercent = async (id) => {
+    const {code,data} = await getInstallAgentPercent({id});
+    if(code === 200) {
+      setPercent(data.percent);
+      // if(data.percent < 100) {
+      //   // getAgentPercent(id);
+      // }
+    }
   }
   return (
   <div className={styles.cardList}>
@@ -85,7 +127,7 @@ export default (props) => {
             ]}
           />
           <ProFormText
-            name="instance_name"
+            name="install_path"
             label="安装位置"
             initialValue={'/acm_agent'}
             // rules={rules}
@@ -99,21 +141,22 @@ export default (props) => {
               { label: '加入系统服务', value: 'system_service' },
             ]}
           />
-          <ProFormSwitch name="if_firewall" label="防火墙启用" />
-          {/*<div style={{marginTop:80,textAlign:"center"}}>*/}
-          {/*  <Progress*/}
-          {/*    // type="circle"*/}
-          {/*    strokeColor={{*/}
-          {/*      '0%': '#108ee9',*/}
-          {/*      '100%': '#87d068',*/}
-          {/*    }}*/}
-          {/*    percent={70}*/}
-          {/*    size="small"*/}
-          {/*    status="active"*/}
-          {/*    strokeWidth={20}*/}
-          {/*    style={{fontSize:22}}*/}
-          {/*  />*/}
-          {/*</div>*/}
+          <ProFormSwitch initialValue={false} name="if_firewall" label="防火墙启用" />
+          <div style={{marginTop:80,textAlign:"center"}}>
+            <Progress
+              // type="circle"
+              strokeColor={{
+                '0%': '#108ee9',
+                '100%': '#87d068',
+              }}
+              percent={percent}
+              // format={(percent) => percent && `${parseFloat(percent.toFixed(2))}%`}
+              size="small"
+              status="active"
+              strokeWidth={20}
+              style={{fontSize:22}}
+            />
+          </div>
         </Card>
       </Col>
     </Row>

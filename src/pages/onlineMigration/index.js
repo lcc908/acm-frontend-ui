@@ -103,20 +103,20 @@ const StepForm = (props) => {
     if(step === 0) {
       const obj = await oneFormRef?.current?.validateFieldsReturnFormatValue();
       console.log(obj);
+      obj.extra = {
+        typeList: obj.typeList,
+      }
       delete obj.machine_type1;
       delete obj.method;
       delete obj.encrypt;
-      // obj.extra = {
-      //   method: obj.method,
-      //   encrypt: obj.encrypt,
-      // }
+      delete obj.typeList;
       // for(let i in obj) {
       //   if(obj.extra &&　obj.extra[i]) {
       //     delete obj[i]
       //   }
       // }
       // obj.extra = JSON.stringify(obj.extra);
-      // obj.extra = JSON.stringify(obj.extra);
+      obj.extra = JSON.stringify(obj.extra);
       const res = await postHotMigration(obj);
       if(res.code !== 200) {
         return false;

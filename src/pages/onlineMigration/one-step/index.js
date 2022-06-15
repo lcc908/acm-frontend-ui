@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import { Card, Result, Button, Row, Col, message, Form } from 'antd';
+import { Card, Result, Button, Row, Col, message, Upload } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
 import { ForwardOutlined } from '@ant-design/icons';
 import ProForm, {
@@ -9,8 +9,10 @@ import ProForm, {
   ProFormText,
   ProFormRadio,
 } from '@ant-design/pro-form';
+import { UploadOutlined } from '@ant-design/icons';
 import styles from '../style.less';
 import {getHotMigration} from "@/pages/onlineMigration/service";
+import {getPermission} from "@/pages/authority/platform-permissions/service";
 
 export default (props) => {
   const { oneFormRef, setOneDisabled, stepData } = props;
@@ -36,6 +38,25 @@ export default (props) => {
   }
   const handleChange = (info) => {
     console.log(info);
+  }
+  const request = async (params) => {
+    const {data} = await getPermission({platform_type:'openstack'});
+    const arr = data.map(item =>{
+      return {label:item.platform_name,value:item.id}
+    });
+    oneFormRef?.current?.setFieldsValue({
+      typeList: arr[0].value,
+    });
+    return arr;
+  };
+  const beforeUpload = (file) => {
+    console.log(file);
+    const isPNG = file.type === 'text/x-sh';
+    if (!isPNG) {
+      message.error(`${file.name} 不是一个sh文件`);
+    }
+
+    return isPNG || Upload.LIST_IGNORE;
   }
   return (
     <div className={styles.cardList}>
@@ -109,30 +130,44 @@ export default (props) => {
             // bordered={false}
           >
             <ProFormSelect
-              name="machine_type1"
+              name="typeList"
               label="权限列表"
+              request={request}
               options={[
                 { value: 'SR650', label: 'SR650' },
                 { value: 'X3650M5', label: 'X3650M5' },
               ]}
             />
-            <ProFormUploadDragger
-              max={1}
-              label="上传"
-              name="upload"
-              tooltip="上传目标平台认证文件"
-              description="仅支持三种格式上传: .txt，.sh和.yaml"
-              onChange={handleChange}
-              action={'http://10.122.140.39:9001/api/v1/hot_migration/host'}
-              fieldProps={{
-                name: "file",
-                method:'PUT',
-                headers:{
-                  username:localStorage.getItem('userToken')
-                }
-              }}
-              // fieldProps={{method:'PUT'}}
-            />
+            {/*<ProFormUploadDragger*/}
+            {/*  max={1}*/}
+            {/*  label="上传"*/}
+            {/*  name="upload"*/}
+            {/*  tooltip="上传目标平台认证文件"*/}
+            {/*  description="仅支持三种格式上传: .txt，.sh和.yaml"*/}
+            {/*  onChange={handleChange}*/}
+            {/*  action={'/api/v1/hot_migration/host'}*/}
+            {/*  fieldProps={{*/}
+            {/*    name: "file",*/}
+            {/*    method:'PUT',*/}
+            {/*    beforeUpload:beforeUpload,*/}
+            {/*    headers:{*/}
+            {/*      username:localStorage.getItem('userToken'),*/}
+            {/*      "Access-Control-Allow-Origin":"http://10.122.140.39:9001"*/}
+            {/*    }*/}
+            {/*  }}*/}
+            {/*  // fieldProps={{method:'PUT'}}*/}
+            {/*/>*/}
+            <Upload
+              name='file'
+              action='https://acm.lenovo.com:9001/api/v1/hot_migration/host'
+              // headers={
+              //   {username: 'liucc10',}
+              // }
+              method='PUT'
+              beforeUpload={beforeUpload}
+            >
+              <Button icon={<UploadOutlined />}>Click to Upload</Button>
+            </Upload>
           </Card>
         </Col>
       </Row>

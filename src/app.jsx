@@ -47,6 +47,7 @@ const authHeaderInterceptor = (url, options) => {
     //   options: o
     // }
   }
+  console.log(baseUrl,url);
   return {
     url: baseUrl + url,
     options:o
