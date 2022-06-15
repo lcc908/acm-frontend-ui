@@ -3,7 +3,7 @@ import { request } from 'umi';
 //第一步 基础信息配置
 //查询源平台 GET /api/v1/hot_migration/host
 export async function getHotMigration(params) {
-  return request('http://10.122.140.39:9001/api/v1/hot_migration/host', {
+  return request('/api/v1/hot_migration/host', {
     params,
   });
 }

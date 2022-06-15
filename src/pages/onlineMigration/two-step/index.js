@@ -74,6 +74,8 @@ export default (props) => {
       if(data.percent < 100) {
         // getAgentPercent(id);
         setIsRunning(true);
+      } else {
+        setIsRunning(false);
       }
     }
   }

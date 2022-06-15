@@ -42,7 +42,7 @@ const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(0); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(1); //当前表单的步骤数，从 0 开始
   const [twoNextBt, setTwoNextBt] = useState(true); //当前表单的步骤数，从 0 开始
   const [oneDisabled, setOneDisabled] = useState(()=>{
     const data = JSON.parse(localStorage.getItem('onlineOne'));
