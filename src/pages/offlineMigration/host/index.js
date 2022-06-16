@@ -63,7 +63,7 @@ const StepForm = (props) => {
   });
   const [current, setCurrent] = useState(()=>{
     const setNum = localStorage.getItem('offset');
-    return setNum ? parseInt(setNum) : 4;
+    return setNum ? parseInt(setNum) : 0;
   }); //当前表单的步骤数，从 0 开始
   const [disabled, setDisabled] = useState(true);
   const [fourNextBt, setFourNextBt] = useState(true);

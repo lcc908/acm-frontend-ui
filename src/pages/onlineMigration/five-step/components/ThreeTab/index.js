@@ -53,7 +53,7 @@ export default (props) => {
           className={styles.leftCard}
         >
           <ProFormText
-            name="project"
+            name="ip"
             // width="md"
             disabled
             label="IP地址"

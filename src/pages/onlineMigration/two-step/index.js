@@ -56,7 +56,7 @@ export default (props) => {
     if (code === 200) {
       message.success('已提交安装客户端');
       console.log(data);
-      localStorage.setItem('twoState', data.id);
+      localStorage.setItem('installAgentID', data.id);
       getAgentPercent(data.id)
       // getInstallAgentPercent
     }
@@ -64,7 +64,7 @@ export default (props) => {
     //
   }
   useInterval(() => {
-    getAgentPercent(localStorage.getItem('twoState'));
+    getAgentPercent(localStorage.getItem('installAgentID'));
   }, isRunning ? 5000 : null);
 
   const getAgentPercent = async (id) => {
@@ -94,7 +94,7 @@ export default (props) => {
             <Timeline>
               {
                 lineList.length > 0 && lineList.map((item, index) => {
-                  return <Timeline.Item key={index} color="green">{item.time} {item.action_name}</Timeline.Item>
+                  return <Timeline.Item key={index} color="green">{item.time} {item.description}</Timeline.Item>
                 })
               }
               {/*<Timeline.Item color="green">2022-03-1 10:13:15 连接目标主机成功</Timeline.Item>*/}

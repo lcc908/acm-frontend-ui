@@ -43,6 +43,19 @@ export async function getGenerateData(params) {
     params
   });
 }
+export async function postGenerateData(params) {
+  return request('/api/v1/hot_migration/generate_data', {
+    method: 'POST',
+    data: { ...params},
+  });
+}
+//第四部 信息校验
+// 获取在线迁移任务状态 GET /api/v1/hot_migration/task
+export async function getTask(params) {
+  return request('/api/v1/hot_migration/task', {
+    params
+  });
+}
 
 // //第二步 创建任务
 // //暂存 POST /api/v1/migration_task

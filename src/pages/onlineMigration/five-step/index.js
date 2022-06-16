@@ -33,7 +33,7 @@ const tabList = [
 ];
 export default (props) => {
   const {oneFormRef, form, stepData, fiveFormRef} = props;
-  const [activeTabKey, setActiveTabKey] = useState('tab3');
+  const [activeTabKey, setActiveTabKey] = useState('tab2');
 
   const contentList = {
     tab1: <OneTab fiveFormRef={fiveFormRef}/>,

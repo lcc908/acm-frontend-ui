@@ -9,7 +9,7 @@ import ThreeStep from './three-step';
 import FourStep from './four-step';
 import FiveStep from './five-step';
 import styles from './style.less';
-import {postHotMigration} from "@/pages/onlineMigration/service";
+import {postHotMigration,postGenerateData} from "@/pages/onlineMigration/service";
 // import FourStep from "@/pages/onlineMigration/components/fourStep";
 
 const waitTime = (time = 100) => {
@@ -42,7 +42,7 @@ const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(2); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(4); //当前表单的步骤数，从 0 开始
   const [twoNextBt, setTwoNextBt] = useState(true); //当前表单的步骤数，从 0 开始
   const [oneDisabled, setOneDisabled] = useState(()=>{
     const data = JSON.parse(localStorage.getItem('onlineOne'));
@@ -110,12 +110,6 @@ const StepForm = (props) => {
       delete obj.method;
       delete obj.encrypt;
       delete obj.typeList;
-      // for(let i in obj) {
-      //   if(obj.extra &&　obj.extra[i]) {
-      //     delete obj[i]
-      //   }
-      // }
-      // obj.extra = JSON.stringify(obj.extra);
       obj.extra = JSON.stringify(obj.extra);
       const res = await postHotMigration(obj);
       if(res.code !== 200) {
@@ -125,20 +119,25 @@ const StepForm = (props) => {
     }
     if(step === 2) {
       const val = await threeFormRef?.current?.validateFieldsReturnFormatValue();
+      // val.task_id = localStorage.getItem('onlineTask_id')
       val.task_id = localStorage.getItem('onlineTask_id')
       val.host = {
         host_name:val.host_name,
         image_name:val.image_name,
         account:val.account,
         network_name:val.network_name,
+        source_host_id:val.source_host_id,
       }
       for(let i in val) {
         if(val.host &&　val.host[i]) {
           delete val[i]
         }
       }
-      console.log(val);
-      return false;
+      const res = await postGenerateData(val);
+      console.log(res);
+      if(res.code !== 200) {
+        return false;
+      }
     }
     props.onSubmit?.();
   };
@@ -259,7 +258,7 @@ const StepForm = (props) => {
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 18 }}
             stepProps={{
-              description: '目标主机LiveCD',
+              description: '创建任务',
             }}
             // layout="horizontal"
             onFinish={async (values) => {
@@ -276,7 +275,7 @@ const StepForm = (props) => {
             title="第四步"
             formRef={fourFormRef}
             stepProps={{
-              description: '信息校验',
+              description: '任务执行',
             }}
             // layout="horizontal"
             onFinish={async (values) => {

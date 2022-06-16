@@ -18,19 +18,20 @@ const waitTime = (time) => {
   });
 };
 
-const children = [];
-for (let i = 10; i < 36; i++) {
-  children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
-}
+// const children = [];
+// for (let i = 10; i < 36; i++) {
+//   children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
+// }
 export default (props) => {
   const {fiveFormRef} = props;
+  const [children, setChildren] = useState(['docker-ce-20.10.14', 'keepalived-1.3.5-19','nginx-1.21.5']);
   const [selectValue, setSelectValue] = useState(['a10', 'c12']);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
-    fiveFormRef?.current?.setFieldsValue({
-      switch: ['a10', 'c12']
-    })
+    // fiveFormRef?.current?.setFieldsValue({
+    //   switch: ['a10', 'c12']
+    // })
   }, [])
   const handleClickStopButton = () => {
     // console.log(fiveFormRef?.current?.getFieldValue());
@@ -51,18 +52,23 @@ export default (props) => {
       <div className={styles.oneTabContainer}>
         <Row gutter={8}>
           <Col md={18} lg={18} xl={18} xxl={20}>
-            <Form.Item label="应用类型" shouldUpdate>
+            <Form.Item shouldUpdate>
               {(form) => {
                 return (
                   <Form.Item name="switch">
                     <Select
                       mode="multiple"
                       allowClear
+                      name="pplication_type"
                       // style={{width: '100%'}}
                       placeholder="请选择应用"
                       onChange={handleChange}
                     >
-                      {children}
+                      {
+                        children.map((item,index) => {
+                          return <Option key={index}>{item}</Option>
+                        })
+                      }
                     </Select>
                   </Form.Item>
                 );
@@ -73,9 +79,9 @@ export default (props) => {
             <Button danger onClick={handleClickStopButton}>
               停止应用
             </Button>
-            <Button type="primary" style={{marginLeft: 10}} onClick={showModal}>
-              上传脚本
-            </Button>
+            {/*<Button type="primary" style={{marginLeft: 10}} onClick={showModal}>*/}
+            {/*  上传脚本*/}
+            {/*</Button>*/}
           </Col>
         </Row>
       </div>

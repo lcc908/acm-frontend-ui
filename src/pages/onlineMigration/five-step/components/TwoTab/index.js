@@ -35,25 +35,25 @@ export default (props) => {
               return true;
             }}
           >
-            <ProFormText name="ip" label="源主机" />
-            <ProFormText name="name" label="目标主机  " />
+            <ProFormText name="source_host" label="源主机" />
+            <ProFormText name="target_host" label="目标主机  " />
             <ProFormSelect
-              name="machine_type"
+              name="os_type"
               label="系统类型"
+              initialValue="linux"
               options={[
-                { value: 'SR650', label: 'SR650' },
-                { value: 'X3650M5', label: 'X3650M5' },
+                { value: 'linux', label: 'Linux' },
+                { value: 'windows', label: 'Windows' },
               ]}
             />
-            <ProFormText name="name" label="仓库地址" />
+            <ProFormText name="name" label="NFS地址系统类型" />
             <ProFormRadio.Group
               label="迁移方式"
-              name="invoiceType"
-              initialValue="a"
-              // options={['发票', '普票', '无票']}
+              name="method"
+              initialValue="block"
               options={[
-                { label: '块级', value: 'a' },
-                { label: '文件级', value: 'b' },
+                { label: '块级', value: 'block' },
+                { label: '文件级', value: 'file' },
               ]}
             />
           </ProForm>
