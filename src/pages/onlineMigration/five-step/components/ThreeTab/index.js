@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, {useEffect, memo, useState} from 'react';
 import { Card, Table, Button, Progress , Row,Col, message, Form } from 'antd';
 import ProForm, {
   ProFormText,
 } from '@ant-design/pro-form';
 import styles from './style.less';
-import {red} from "mockjs/src/mock/random/color_dict";
+import {getValidate,postValidate} from "@/pages/onlineMigration/service";
 
 const dataSource = [
   {
@@ -42,6 +42,17 @@ const columns = [
 
 export default (props) => {
   const { oneFormRef, form, stepData } = props;
+  const task_id = localStorage.getItem('onlineTask_id') || '62a96668678f29a3cfe23de0';
+  useEffect(() => {
+    getData()
+  },[])
+  const getData = async () => {
+    const res = await getValidate({
+      task_id,
+      task_type:"increase_data",
+    })
+    console.log(res);
+  }
   return (
   <div className={styles.cardList}>
     <Row gutter={24}>

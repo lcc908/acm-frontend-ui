@@ -35,6 +35,7 @@ export default (props) => {
   const [isRunning, setIsRunning] = useState(false);
   // localStorage.setItem('onlineTask_id',res.data.id)
   const id = localStorage.getItem('onlineTask_id');
+  const rules = [{ required: true, message: '这是必填项' }];
 
   useEffect(() => {
     getData()

@@ -7,7 +7,7 @@ import ProForm, {
 } from '@ant-design/pro-form';
 
 const {Option} = Select;
-import styles from './style.less';
+
 import OneTab from "@/pages/onlineMigration/five-step/components/OneTab";
 import TwoTab from "@/pages/onlineMigration/five-step/components/TwoTab";
 import ThreeTab from "@/pages/onlineMigration/five-step/components/ThreeTab";
@@ -32,18 +32,27 @@ const tabList = [
   },
 ];
 export default (props) => {
-  const {oneFormRef, form, stepData, fiveFormRef} = props;
-  const [activeTabKey, setActiveTabKey] = useState('tab1');
+  const { fiveFormRef,setFiveNextBt } = props;
+  const [activeTabKey, setActiveTabKey] = useState('tab3');
+  const [applyList, setApplyList] = useState([]);
 
   const contentList = {
-    tab1: <OneTab fiveFormRef={fiveFormRef}/>,
+    tab1: <OneTab fiveFormRef={fiveFormRef} setApplyList={setApplyList}/>,
     tab2: <TwoTab fiveFormRef={fiveFormRef}/>,
     tab3: <ThreeTab fiveFormRef={fiveFormRef}/>,
-    tab4: <FourTab />,
+    tab4: <FourTab applyList={applyList}/>,
   };
   const onTab1Change = key => {
     setActiveTabKey(key);
   };
+  useEffect(() => {
+    if(activeTabKey === 'tab4') {
+      setFiveNextBt(false);
+    } else {
+      setFiveNextBt(true);
+    }
+  },[activeTabKey]);
+
   return (
     <Card
       // style={{minWidth:960,maxWidth:1200,height:556}}

@@ -49,7 +49,7 @@ export async function postGenerateData(params) {
     data: { ...params},
   });
 }
-//第四部 信息校验
+//第四步 信息校验
 // 获取在线迁移任务状态 GET /api/v1/hot_migration/task
 export async function getTask(params) {
   return request('/api/v1/hot_migration/task', {
@@ -57,17 +57,43 @@ export async function getTask(params) {
   });
 }
 
-// //第二步 创建任务
-// //暂存 POST /api/v1/migration_task
-// export async function temporaryMigrationTask(params) {
-//   return request('/api/v1/migration_task', {
-//     method: 'put',
-//     data: { ...params},
-//   });
-// }
-// //暂存 POST /api/v1/migration_task
-// export async function getTemporaryMigrationTask(params) {
-//   return request('/api/v1/migration_task', {
-//     params
-//   });
-// }
+//第五步 增量数据迁移
+//源应用停止 GET /api/v1/hot_migration/stop_app
+export async function getStopApp(params) {
+  return request('/api/v1/hot_migration/manage_app', {
+    params
+  });
+}
+// POST /api/v1/hot_migration/stop_app
+export async function postStopApp(params) {
+  return request('/api/v1/hot_migration/manage_app', {
+    method: 'POST',
+    data: { ...params},
+  });
+}
+// 增量数据快照
+//GET /api/v1/hot_migration/snapshot
+export async function getSnapshot(params) {
+  return request('/api/v1/hot_migration/snapshot', {
+    params
+  });
+}
+export async function postSnapshot(params) {
+  return request('/api/v1/hot_migration/snapshot', {
+    method: 'POST',
+    data: { ...params},
+  });
+}
+//目标数据校验
+//GET /api/v1/hot_migration/validate
+export async function getValidate(params) {
+  return request('/api/v1/hot_migration/validate', {
+    params
+  });
+}
+export async function postValidate(params) {
+  return request('/api/v1/hot_migration/validate', {
+    method: 'POST',
+    data: { ...params},
+  });
+}

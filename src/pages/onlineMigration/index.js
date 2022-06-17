@@ -48,9 +48,10 @@ const StepForm = (props) => {
   const [current, setCurrent] = useState(()=>{
     const setNum = localStorage.getItem('onlineStep');
     // return setNum ? parseInt(setNum) : 3;
-    return 3;
+    return 4;
   }); //当前表单的步骤数，从 0 开始
-  const [twoNextBt, setTwoNextBt] = useState(true); //当前表单的步骤数，从 0 开始
+  const [twoNextBt, setTwoNextBt] = useState(true); //2 next
+  const [fiveNextBt, setFiveNextBt] = useState(true); //5 next
   const [oneDisabled, setOneDisabled] = useState(()=>{
     const data = JSON.parse(localStorage.getItem('onlineOne'));
     if(data) {
@@ -203,6 +204,9 @@ const StepForm = (props) => {
               if(props.step === 1) {
                 return ButtonArray(props,twoNextBt)
               }
+              if(props.step === 4) {
+                return ButtonArray(props,fiveNextBt)
+              }
               if (props.step < 5) {
                 return [
                   <Button key="pre1" style={{marginTop:35}} onClick={() => props.onPre?.()}>
@@ -307,9 +311,6 @@ const StepForm = (props) => {
           <StepsForm.StepForm
             title="第五步"
             formRef={fiveFormRef}
-            // layout="horizontal"
-            // labelCol={{ span: 4 }}
-            // wrapperCol={{ span: 20 }}
             stepProps={{
               description: '增量数据迁移',
             }}
@@ -319,7 +320,10 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <FiveStep fiveFormRef={fiveFormRef}/>
+            <FiveStep
+              fiveFormRef={fiveFormRef}
+              setFiveNextBt={setFiveNextBt}
+            />
           </StepsForm.StepForm>
 
           {/*<StepsForm.StepForm*/}

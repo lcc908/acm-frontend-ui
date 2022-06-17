@@ -11,7 +11,7 @@ export default (props) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectRowsData, setSelectRowsData] = useState([]);
   const [params, setParams] = useState({
-    platform_id:'6',
+    platform_id:'629db04f99387effeb02b325',
     vm_name: '',
     ip: '',
   })
