@@ -62,7 +62,7 @@ const StepForm = (props) => {
     id1: '5001',
   });
   const [current, setCurrent] = useState(()=>{
-    const setNum = localStorage.getItem('offset');
+    const setNum = localStorage.getItem('hostStep');
     return setNum ? parseInt(setNum) : 0;
   }); //当前表单的步骤数，从 0 开始
   const [disabled, setDisabled] = useState(true);
@@ -93,7 +93,7 @@ const StepForm = (props) => {
   const sixFormRef = useRef();
   const changeCurrent = (val) => {
     setCurrent(val);
-    localStorage.setItem('offset',val);
+    localStorage.setItem('hostStep',val);
   }
   const getData = async () => {
     const taskId = localStorage.getItem('offlineTask_id') || '62972194759b7432c4000001'
@@ -235,8 +235,9 @@ const StepForm = (props) => {
   return (
     <PageContainer content="将一个冗长或用户不熟悉的表单任务分成多个步骤，指导用户完成。">
       <Prompt message={(location) => {
-        localStorage.removeItem('offset')
-      }}  />
+        localStorage.removeItem('hostStep')
+        localStorage.removeItem('offlineTask_id')
+      }} />
       <Card bordered={false} className={styles.spacrFrom}>
         <StepsForm
           formMapRef={formMapRef}

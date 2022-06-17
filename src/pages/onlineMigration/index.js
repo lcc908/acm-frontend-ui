@@ -10,6 +10,7 @@ import FourStep from './four-step';
 import FiveStep from './five-step';
 import styles from './style.less';
 import {postHotMigration,postGenerateData} from "@/pages/onlineMigration/service";
+import {Prompt} from "umi";
 // import FourStep from "@/pages/onlineMigration/components/fourStep";
 
 const waitTime = (time = 100) => {
@@ -42,7 +43,13 @@ const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(4); //当前表单的步骤数，从 0 开始
+  // const [current, setCurrent] = useState(4); //当前表单的步骤数，从 0 开始
+  // const [current, setCurrent] = useState(4); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(()=>{
+    const setNum = localStorage.getItem('onlineStep');
+    // return setNum ? parseInt(setNum) : 3;
+    return 3;
+  }); //当前表单的步骤数，从 0 开始
   const [twoNextBt, setTwoNextBt] = useState(true); //当前表单的步骤数，从 0 开始
   const [oneDisabled, setOneDisabled] = useState(()=>{
     const data = JSON.parse(localStorage.getItem('onlineOne'));
@@ -158,14 +165,24 @@ const StepForm = (props) => {
       </Button>,
     ]
   }
+  const changeCurrent = (val) => {
+    setCurrent(val);
+    localStorage.setItem('onlineStep',val);
+  }
   return (
     <PageContainer content="将一个冗长或用户不熟悉的表单任务分成多个步骤，指导用户完成。">
+      <Prompt message={(location) => {
+        localStorage.removeItem('onlineStep');
+        localStorage.removeItem('onlineTask_id');
+        localStorage.removeItem('onlineOne');
+        localStorage.removeItem('installAgentID');
+      }} />
       <Card bordered={false} className={styles.spacrFrom}>
         <StepsForm
           formMapRef={formMapRef}
           current={current}
           form={form}
-          onCurrentChange={setCurrent} //current 发生改变的事件
+          onCurrentChange={changeCurrent} //current 发生改变的事件
           // onFinish={async (values) => {
           //   console.log(values);
           //   await waitTime(1000);

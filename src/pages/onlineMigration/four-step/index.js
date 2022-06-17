@@ -1,10 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Card, Row, Col, Descriptions, Divider, message, Form, Timeline} from 'antd';
 import styles from '../style.less';
-import { ClockCircleOutlined } from '@ant-design/icons';
+import {ClockCircleOutlined} from '@ant-design/icons';
 import {getTask} from '@/pages/onlineMigration/service'
+
 export default (props) => {
-  const { oneFormRef, form, stepData } = props;
+  const {oneFormRef, form, stepData} = props;
   const [lineList, setLineList] = useState([]);
   const [loading, setLoading] = useState('');
   const id = localStorage.getItem('onlineTask_id');
@@ -14,10 +15,13 @@ export default (props) => {
   const getData = async () => {
     const {data} = await getTask({task_id: localStorage.getItem('onlineTask_id')});
     setLineList([...data]);
-    for (let i of data) {
-      if(i.status === 'running') {
-        setLoading('加载中...');
-      }
+    const res = data.some(item => {
+      return item.status === 'running'
+    })
+    if (res) {
+      setLoading('加载中...')
+    } else {
+      setLoading('')
     }
     // oneFormRef?.current?.setFieldsValue({
     //   ...data
@@ -25,12 +29,12 @@ export default (props) => {
   }
   const lineColor = (status) => {
     let str = '';
-    if(status === 'error' || status === 'timeout') {
+    if (status === 'error' || status === 'timeout') {
       str = 'red';
-    } else if(status === 'sucess') {
+    } else if (status === 'success') {
       str = 'green';
     } else if (status === 'running') {
-
+      str = 'red';
     }
     return str;
   }
@@ -38,7 +42,7 @@ export default (props) => {
     <>
       <Card
         title="迁移日志记录"
-        headStyle={{ fontWeight: 'bold' }}
+        headStyle={{fontWeight: 'bold'}}
         // style={{minWidth:960,maxWidth:1200,height:556}}
         // className={styles.leftCard}
         // headerBordered
@@ -50,7 +54,8 @@ export default (props) => {
             <Timeline pending={loading} className={styles.timeLine}>
               {
                 lineList.length > 0 && lineList.map((item, index) => {
-                  return <Timeline.Item key={index} dot={item.status === 'timeout' ? <ClockCircleOutlined className="timeline-clock-icon" /> : null} color={lineColor(item.status)}>{item.time} {item.description}</Timeline.Item>
+                  return <Timeline.Item key={index} dot={item.status === 'timeout' ? <ClockCircleOutlined/> : null}
+                                        color={lineColor(item.status)}>{item.time} {item.description}</Timeline.Item>
                 })
               }
             </Timeline>
