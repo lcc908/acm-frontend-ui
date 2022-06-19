@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import {Card, Table, Button, Progress, Row, Col, message, Form, Timeline} from 'antd';
+import {Card, Tag, Button, Progress, Row, Col, message, Form, Timeline} from 'antd';
 import ProForm, {
   ProFormCheckbox,
   ProFormText,
@@ -8,7 +8,13 @@ import styles from './style.less';
 
 
 export default (props) => {
-  const { oneFormRef, form, stepData } = props;
+  const { applyList } = props;
+  const handleClickstart = () => {
+    if(!applyList.length) {
+      message.error('请先到源应用停止页面选择应用！');
+      return false;
+    }
+  }
   return (
   <div>
     <Row gutter={24}>
@@ -17,26 +23,33 @@ export default (props) => {
           title="应用列表"
           headStyle={{ fontWeight: 'bold' }}
           bodyStyle={{height:'245px'}}
-          actions={[<Button type="primary">启动应用</Button>]}
+          actions={[<Button type="primary" onClick={handleClickstart}>启动应用</Button>]}
         >
-          <ProFormCheckbox.Group
-            layout="vertical"
-            name="spare"
-            options={[
-              {
-                label: 'item 1',
-                value: 'a',
-              },
-              {
-                label: 'item 2',
-                value: 'b',
-              },
-              {
-                label: 'item 3',
-                value: 'c',
-              },
-            ]}
-          />
+          {
+            applyList.map(item => {
+              return <p><Tag color="success" key={item}>{item}</Tag></p>
+            })
+          }
+          {/*<Tag color="success">success</Tag>*/}
+
+          {/*<ProFormCheckbox.Group*/}
+          {/*  layout="vertical"*/}
+          {/*  name="spare"*/}
+          {/*  options={[*/}
+          {/*    {*/}
+          {/*      label: 'item 1',*/}
+          {/*      value: 'a',*/}
+          {/*    },*/}
+          {/*    {*/}
+          {/*      label: 'item 2',*/}
+          {/*      value: 'b',*/}
+          {/*    },*/}
+          {/*    {*/}
+          {/*      label: 'item 3',*/}
+          {/*      value: 'c',*/}
+          {/*    },*/}
+          {/*  ]}*/}
+          {/*/>*/}
         </Card>
       </Col>
       <Col span={12}>

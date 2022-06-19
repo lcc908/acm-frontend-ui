@@ -9,6 +9,8 @@ import ThreeStep from './three-step';
 import FourStep from './four-step';
 import FiveStep from './five-step';
 import styles from './style.less';
+import {postHotMigration,postGenerateData} from "@/pages/onlineMigration/service";
+import {Prompt} from "umi";
 // import FourStep from "@/pages/onlineMigration/components/fourStep";
 
 const waitTime = (time = 100) => {
@@ -41,7 +43,22 @@ const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
   });
-  const [current, setCurrent] = useState(0); //当前表单的步骤数，从 0 开始
+  // const [current, setCurrent] = useState(4); //当前表单的步骤数，从 0 开始
+  // const [current, setCurrent] = useState(4); //当前表单的步骤数，从 0 开始
+  const [current, setCurrent] = useState(()=>{
+    const setNum = localStorage.getItem('onlineStep');
+    // return setNum ? parseInt(setNum) : 3;
+    return 4;
+  }); //当前表单的步骤数，从 0 开始
+  const [twoNextBt, setTwoNextBt] = useState(true); //2 next
+  const [fiveNextBt, setFiveNextBt] = useState(true); //5 next
+  const [oneDisabled, setOneDisabled] = useState(()=>{
+    const data = JSON.parse(localStorage.getItem('onlineOne'));
+    if(data) {
+      return false
+    }
+    return true
+  }); //当前表单的步骤数，从 0 开始
   const [form] = Form.useForm();
 
   const formMapRef = useRef();
@@ -76,6 +93,7 @@ const StepForm = (props) => {
   const handleSubmit = async (props) => {
     // console.log(formMapRef.current);
     // console.log(props.form.getFieldValue());
+    const { step } = props;
     let Arr = [];
     formMapRef.current.forEach((item) => {
       // console.log(item.current.getFieldValue());
@@ -89,18 +107,83 @@ const StepForm = (props) => {
         obj[j] = i[j];
       }
     }
-    console.log(obj);
+    // console.log(obj);
+    if(step === 0) {
+      const obj = await oneFormRef?.current?.validateFieldsReturnFormatValue();
+      console.log(obj);
+      obj.extra = {
+        typeList: obj.typeList,
+      }
+      delete obj.machine_type1;
+      delete obj.method;
+      delete obj.encrypt;
+      delete obj.typeList;
+      obj.extra = JSON.stringify(obj.extra);
+      const res = await postHotMigration(obj);
+      if(res.code !== 200) {
+        return false;
+      }
+      localStorage.setItem('onlineTask_id',res.data.id)
+    }
+    if(step === 2) {
+      const val = await threeFormRef?.current?.validateFieldsReturnFormatValue();
+      // val.task_id = localStorage.getItem('onlineTask_id')
+      val.task_id = localStorage.getItem('onlineTask_id')
+      val.host = {
+        host_name:val.host_name,
+        image_name:val.image_name,
+        account:val.account,
+        network_name:val.network_name,
+        source_host_id:val.source_host_id,
+      }
+      for(let i in val) {
+        if(val.host &&　val.host[i]) {
+          delete val[i]
+        }
+      }
+      const res = await postGenerateData(val);
+      console.log(res);
+      if(res.code !== 200) {
+        return false;
+      }
+    }
     props.onSubmit?.();
-    // console.log(props.form.getFieldValue());
   };
+  const oneNextButtonState = (par) => {
+    setOneDisabled(par);
+  }
+  const ButtonArray = (props,disabled) => {
+    return [
+      <Button key="pre1" style={{marginTop:35}} onClick={() => props.onPre?.()}>
+        上一步
+      </Button>,
+      <Button type="primary" style={{marginTop:35}} key="goToTree" onClick={() => handleSubmitZanCun(props)}>
+        暂存
+      </Button>,
+      // <Button type="primary" key="goToTree3" onClick={() => handleSubmit2(props)}>
+      <Button disabled={disabled} type="primary" style={{marginTop:35}} key="goToTree3" onClick={() => handleSubmit(props)}>
+        下一步
+      </Button>,
+    ]
+  }
+  const changeCurrent = (val) => {
+    setCurrent(val);
+    localStorage.setItem('onlineStep',val);
+  }
   return (
     <PageContainer content="将一个冗长或用户不熟悉的表单任务分成多个步骤，指导用户完成。">
+      <Prompt message={(location) => {
+        localStorage.removeItem('onlineStep');
+        localStorage.removeItem('onlineTask_id');
+        localStorage.removeItem('onlineOne');
+        localStorage.removeItem('installAgentID');
+      }} />
       <Card bordered={false} className={styles.spacrFrom}>
         <StepsForm
           formMapRef={formMapRef}
           current={current}
           form={form}
-          onCurrentChange={setCurrent} //current 发生改变的事件
+          onCurrentChange={changeCurrent} //current 发生改变的事件
           // onFinish={async (values) => {
           //   console.log(values);
           //   await waitTime(1000);
@@ -112,14 +195,17 @@ const StepForm = (props) => {
               if (props.step === 0) {
                 return (
                   [
-                    <Button style={{marginTop:35}} type="primary" key="goToTree33" onClick={() => handleSubmitZanCun(props)}>
-                      暂存
-                    </Button>,
-                    <Button style={{marginTop:35}} type="primary" key="asd2123" onClick={() => props.onSubmit?.()}>
+                    <Button disabled={oneDisabled} style={{marginTop:35}} type="primary" key="2" onClick={() => handleSubmit(props)}>
                       下一步
                     </Button>
                   ]
                 );
+              }
+              if(props.step === 1) {
+                return ButtonArray(props,twoNextBt)
+              }
+              if(props.step === 4) {
+                return ButtonArray(props,fiveNextBt)
               }
               if (props.step < 5) {
                 return [
@@ -135,19 +221,6 @@ const StepForm = (props) => {
                   </Button>,
                 ];
               }
-              // if (props.step < 2) {
-              //   return [
-              //     <Button key="pre1" onClick={() => props.onPre?.()}>
-              //       上一步
-              //     </Button>,
-              //     <Button type="primary" key="goToTree" onClick={() => handleSubmit(props)}>
-              //       暂存
-              //     </Button>,
-              //     <Button type="primary" key="goToTree3" onClick={() => props.onSubmit?.()}>
-              //       下一步
-              //     </Button>,
-              //   ];
-              // }
               if (props.step === 5) {
                 return null;
               }
@@ -172,7 +245,10 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <OneStep {...props}/>
+            <OneStep
+              oneFormRef={oneFormRef}
+              setOneDisabled={oneNextButtonState}
+            />
           </StepsForm.StepForm>
 
           <StepsForm.StepForm
@@ -191,7 +267,10 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <TwoStep/>
+            <TwoStep
+              twoFormRef={twoFormRef}
+              setTwoNextBt={setTwoNextBt}
+            />
           </StepsForm.StepForm>
           <StepsForm.StepForm
             title="第三步"
@@ -200,7 +279,7 @@ const StepForm = (props) => {
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 18 }}
             stepProps={{
-              description: '目标主机LiveCD',
+              description: '创建任务',
             }}
             // layout="horizontal"
             onFinish={async (values) => {
@@ -209,13 +288,15 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <ThreeStep/>
+            <ThreeStep
+              threeFormRef={threeFormRef}
+            />
           </StepsForm.StepForm>
           <StepsForm.StepForm
             title="第四步"
             formRef={fourFormRef}
             stepProps={{
-              description: '信息校验',
+              description: '任务执行',
             }}
             // layout="horizontal"
             onFinish={async (values) => {
@@ -230,9 +311,6 @@ const StepForm = (props) => {
           <StepsForm.StepForm
             title="第五步"
             formRef={fiveFormRef}
-            // layout="horizontal"
-            // labelCol={{ span: 4 }}
-            // wrapperCol={{ span: 20 }}
             stepProps={{
               description: '增量数据迁移',
             }}
@@ -242,7 +320,10 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <FiveStep fiveFormRef={fiveFormRef}/>
+            <FiveStep
+              fiveFormRef={fiveFormRef}
+              setFiveNextBt={setFiveNextBt}
+            />
           </StepsForm.StepForm>
 
           {/*<StepsForm.StepForm*/}

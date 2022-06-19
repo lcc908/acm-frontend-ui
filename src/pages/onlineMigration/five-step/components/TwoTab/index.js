@@ -1,18 +1,24 @@
-import React, { useRef, useState } from 'react';
-import {Card, Progress, Button, Row, Col, message, Form, Timeline} from 'antd';
-import { PageContainer } from '@ant-design/pro-layout';
-import { ForwardOutlined } from '@ant-design/icons';
+import React, {useEffect, useRef, useState} from 'react';
+import {Progress, Row, Col, message, Form, Timeline} from 'antd';
 import ProForm, {
-  ProFormUploadDragger,
   ProFormSelect,
-  ProFormCheckbox,
   ProFormText,
   ProFormRadio,
 } from '@ant-design/pro-form';
 import styles from './style.less';
-
+import {waitTime} from "@/utils"
+import {getSnapshot,postSnapshot} from "@/pages/onlineMigration/service";
 export default (props) => {
-  const { oneFormRef, form, stepData,fiveFormRef } = props;
+  const { fiveFormRef } = props;
+  const rules = [{ required: true, message: '这是必填项' }];
+  const task_id = localStorage.getItem('onlineTask_id') || '62a96668678f29a3cfe23de0'
+  useEffect(() => {
+    getData()
+  },[])
+  const getData = async () => {
+    const res = await getSnapshot({task_id})
+    console.log(res);
+  }
   return (
     <div className={styles.cardList}>
       <Row>
@@ -29,37 +35,42 @@ export default (props) => {
               },
             }}
             onFinish={async (values) => {
-              // await waitTime(2000);
-              console.log(values);
-              message.success('提交成功');
+              await waitTime(2000);
+              const val = {...values,task_id}
+              const {code} = await postSnapshot(val);
+              if(code === 200) {
+                message.success('提交成功');
+                getData()
+              }
               return true;
             }}
           >
-            <ProFormText name="ip" label="源主机" />
-            <ProFormText name="name" label="目标主机  " />
+            <ProFormText name="source_host" label="源主机" rules={rules}/>
+            <ProFormText name="target_host" label="目标主机" rules={rules}/>
             <ProFormSelect
-              name="machine_type"
+              name="os_type"
               label="系统类型"
+              initialValue="linux"
               options={[
-                { value: 'SR650', label: 'SR650' },
-                { value: 'X3650M5', label: 'X3650M5' },
+                { value: 'linux', label: 'Linux' },
+                { value: 'windows', label: 'Windows' },
               ]}
+              rules={rules}
             />
-            <ProFormText name="name" label="仓库地址" />
+            <ProFormText name="nfs_address" label="NFS地址系统类型" rules={rules}/>
             <ProFormRadio.Group
               label="迁移方式"
-              name="invoiceType"
-              initialValue="a"
-              // options={['发票', '普票', '无票']}
+              name="method"
+              initialValue="block"
               options={[
-                { label: '块级', value: 'a' },
-                { label: '文件级', value: 'b' },
+                { label: '块级', value: 'block' },
+                { label: '文件级', value: 'file' },
               ]}
             />
           </ProForm>
         </Col>
         <Col span={12} className={styles.rightBox}>
-          <Progress type="circle" percent={75} className={styles.progres}/>
+          {/*<Progress type="circle" percent={75} className={styles.progres}/>*/}
           <Timeline pending="loading..." className={styles.timeLine}>
             {/*<Timeline>*/}
             <Timeline.Item color="green">2022-03-1 10:13:15 连接目标主机成功</Timeline.Item>

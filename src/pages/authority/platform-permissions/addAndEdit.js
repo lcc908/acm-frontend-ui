@@ -1,7 +1,7 @@
-import React, { useEffect, useState,useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Form, message } from 'antd';
 import { ModalForm, ProFormText, ProFormSwitch, ProFormSelect,ProFormTextArea } from '@ant-design/pro-form';
-import {addPermission} from './service'
+import {addPermission,editorPermission} from './service'
 const waitTime = (time) => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -11,15 +11,15 @@ const waitTime = (time) => {
 };
 
 export default (props) => {
-  const {isModalVisible,setModalVisit,editData} = props;
-  const formRef  = useRef();
+  const {isModalVisible,setModalVisit,editData,reloadTable} = props;
   const [platformType, setPlatformType] = useState('openstack');
+  const formRef  = useRef();
+
   useEffect(() => {
     // if(formType === 'Add') {
     //   return false;
     // }
     formRef?.current?.resetFields();
-    formRef?.current?.setFieldsValue({ ...editData });
   }, [editData]);
 
   const titleText = editData?.id ? '编辑表单' : '新建表单';
@@ -32,7 +32,7 @@ export default (props) => {
     }
   }
   const onFinish = async (values) => {
-    // await waitTime(2000);
+    await waitTime(1000);
     console.log(values);
     const obj = {...values};
     if(obj.platform_name === "physical_server") {
@@ -72,16 +72,35 @@ export default (props) => {
         delete obj[i]
       }
     }
-    console.log(obj);
-
+    obj.extra = JSON.stringify(obj.extra);
     if(editData?.id) {
-
+      obj.id = editData.id;
+      const res = await addPermission(obj);
+      if(res.code === 200) {
+        message.success('编辑成功');
+        return true;
+      }
     } else {
       const res = await addPermission(obj);
       console.log(res);
+      if(res.code === 200) {
+        message.success('添加成功');
+        reloadTable()
+        return true;
+      }
     }
-    // message.success('提交成功');
-    // return true;
+  }
+  const onInit = (values) => {
+    if(editData.id) {
+      console.log(editData);
+      const {extra} = editData;
+      const res = JSON.parse(extra);
+
+      formRef?.current?.setFieldsValue({
+        ...editData,
+        ...res
+      });
+    }
   }
   return (
     <ModalForm
@@ -97,6 +116,7 @@ export default (props) => {
       modalProps={{
         destroyOnClose: true,
       }}
+      onInit={(values) => onInit(values)}
     >
       <ProFormSelect
         name="platform_name"

@@ -2,9 +2,9 @@ import React, {useState, useEffect, useRef} from 'react';
 // import {getStorageAPI, check_oses} from './service';
 import {PageContainer} from '@ant-design/pro-layout';
 import ProTable, {TableDropdown} from '@ant-design/pro-table';
-import {message, Button, Dropdown, Menu, Modal} from 'antd';
+import {message, Button, Popconfirm, Menu, Modal} from 'antd';
 import AddAndEdit from "@/pages/authority/platform-permissions/addAndEdit";
-import {getPermission} from "@/pages/authority/platform-permissions/service";
+import {getPermission,deletePermission} from "@/pages/authority/platform-permissions/service";
 
 const waitTime = (time=100) => {
   return new Promise((resolve) => {
@@ -16,6 +16,7 @@ const waitTime = (time=100) => {
 
 export default (props) => {
   const [isModalVisible, setModalVisit] = useState(false);
+  const [deleteDisabled, setDeleteDisabled] = useState(true);
   const [editorRowData, setEditorRowData] = useState({}); //编辑数据
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectRowsData, setSelectRowsData] = useState([]);
@@ -24,7 +25,7 @@ export default (props) => {
     // page_size: 10,
     // sort: "+id",
   })
-  const actionRef = useRef();
+  const ref = useRef();
   const columns = [
     {
       title: '权限ID',
@@ -72,7 +73,16 @@ export default (props) => {
       valueType: 'option',
       render: (text, record) => [
         <a key="1" onClick={() => handleOnClickEdit(record)}>编辑</a>,
-        <a key="2">删除</a>,
+        <Popconfirm
+          key={"3"}
+          title="确认删除该数据吗？"
+          okText="Yes"
+          cancelText="No"
+          onConfirm={() => deleteData([record.id])}
+        >
+          <a key="2">删除</a>
+        </Popconfirm>
+        // <a key="2">删除</a>,
       ],
     },
   ]
@@ -80,27 +90,6 @@ export default (props) => {
     setModalVisit(true);
     setEditorRowData({ ...record });
   }
-  const data = [
-    {
-      "id": "628ca5363cf4476053000001",
-      "os_type": "centos7",
-      "ip_address": "10.122.1.1",
-      "name": null,
-      "common_account_id": null,
-      "account": "test",
-      "password_hash": "Decryption failed",
-      "port": 22,
-      "connect_type": "SSH",
-      "extra": "ds",
-      "enabled": "1",
-      "description": "sd",
-      "deleted": "0",
-      "created_by": "liusl12",
-      "created_at": "2022-05-24 00:00:00",
-      "updated_by": "liusl12",
-      "updated_at": "2022-05-24 00:00:00"
-    }
-  ]
   /*
 * 分页*/
   const onChangePagination = (page, pageSize) => {
@@ -123,14 +112,37 @@ export default (props) => {
 
   const onSelectChange = (selectedRowKeys, selectedRows) => {
     // setButtonDisableds(true)
-    setSelectRowsData([...selectedRows])
-    setSelectedRowKeys([...selectedRowKeys])
+    setSelectRowsData([...selectedRows]);
+    setSelectedRowKeys([...selectedRowKeys]);
+    console.log(selectedRowKeys);
+    if(selectedRowKeys.length > 0) {
+      setDeleteDisabled(false);
+      return false;
+    }
+    setDeleteDisabled(true);
   }
 
+  // const clickDelete = () => {
+  //   deleteData(selectedRowKeys)
+  // }
+  // const dataClickDelete = (id) => {
+  //   deleteData([id])
+  // }
+  const deleteData = async (ids) => {
+    const res = await deletePermission({ids:ids});
+    if(res.code === 200) {
+      message.success('删除成功');
+      setDeleteDisabled(true);
+      reloadTable()
+    }
+  }
+  const reloadTable = () => {
+    ref.current.reload();
+  }
   return (
     <PageContainer>
       <ProTable
-        actionRef={actionRef}
+        actionRef={ref}
         columns={columns}
         rowKey="id"
         params={
@@ -139,11 +151,10 @@ export default (props) => {
         request={() => {
           return getPermission(params)
         }}
-        // dataSource={data}
-        // cardProps={{ title: '用户列表', bordered: true }}
         headerTitle='主机列表'
         search={false}
         pagination={false}
+        revalidateOnFocus={false}
         rowSelection={{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange
@@ -162,17 +173,26 @@ export default (props) => {
             type="primary"
             danger
             onClick={showModal}
+            disabled={deleteDisabled}
           >
             批量禁用
           </Button>,
-          <Button
-            key="3"
-            type="primary"
-            danger
-            onClick={showModal}
+          <Popconfirm
+            key={"3"}
+            title="确认删除选中的数据吗？"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => deleteData(selectedRowKeys)}
           >
-            批量删除
-          </Button>
+            <Button
+              type="primary"
+              danger
+              // onClick={clickDelete}
+              disabled={deleteDisabled}
+            >
+              批量删除
+            </Button>
+          </Popconfirm>
         ]}
       >
       </ProTable>
@@ -180,6 +200,7 @@ export default (props) => {
         isModalVisible={isModalVisible}
         setModalVisit={setModalVisit}
         editData={editorRowData}
+        reloadTable={reloadTable}
       />
     </PageContainer>
   );

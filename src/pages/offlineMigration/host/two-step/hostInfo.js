@@ -6,21 +6,24 @@ import {Row, Col} from 'antd';
 import ProCard from '@ant-design/pro-card';
 import styles from './style.less';
 import {getHostData} from "@/pages/authority/platform-permissions/service";
+import {history} from "umi";
 
 export default (props) => {
-  const { twoFormRef } = props;
+  const { twoFormRef,hostInfo } = props;
   const [data,setData] = useState({})
   const formRef = useRef();
   useEffect(()=>{
-    getData();
-  },[])
-  const getData = async () => {
-    const {data} = await getHostData({id:'629743c71e90bc07b4000001'});
-    const res = data[0];
-    console.log(res);
     formRef.current?.setFieldsValue({
-      ...res,
+      ...hostInfo,
     })
+  },[hostInfo])
+  const getData = async () => {
+    // const {host_id} = history?.location?.query;
+    // const res = await getHostData({id:host_id});
+    // const par = res?.data[0];
+    // formRef.current?.setFieldsValue({
+    //   ...hostInfo,
+    // })
   }
   return (
       <ProForm
@@ -46,7 +49,7 @@ export default (props) => {
           </Col>
           <Col span={8}>
             <ProFormText
-              name="f"
+              name="server_manufacturer"
               label="服务器厂商"
               disabled
               // rules={rules}
@@ -80,8 +83,8 @@ export default (props) => {
           </Col>
           <Col span={8}>
             <ProFormText
-              name="network"
-              label="网络信息"
+              name="network_num"
+              label="网卡数量"
               disabled
               // rules={rules}
             />

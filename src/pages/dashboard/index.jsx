@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useRef, useState} from 'react';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   Avatar,
@@ -9,7 +9,7 @@ import {
   Input,
   List,
   Menu,
-  Modal,
+  Modal, Popconfirm,
   Progress,
   Radio,
   Row,
@@ -20,6 +20,8 @@ import moment from 'moment';
 import OperationModal from './components/OperationModal';
 import { addFakeList, queryFakeList, removeFakeList, updateFakeList } from './service';
 import styles from './style.less';
+import ProTable from "@ant-design/pro-table";
+import {getHostPermission} from "@/pages/authority/host-permissions/service";
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const { Search } = Input;
@@ -57,8 +59,10 @@ const ListContent = ({ data: { created_by, createdAt, percent, status } }) => (
 
 export const BasicList = () => {
   const [done, setDone] = useState(false);
+  const [total, setTotal] = useState('');
   const [visible, setVisible] = useState(false);
   const [current, setCurrent] = useState(undefined);
+  const [params, setParams] = useState({})
   const {
     data: listData,
     loading,
@@ -68,6 +72,54 @@ export const BasicList = () => {
       // count: 7,
     });
   });
+  const actionRef = useRef();
+  const columns = [
+    {
+      title: '任务名称',
+      dataIndex: 'name',
+      align: 'center',
+    },
+    {
+      title: '描述',
+      dataIndex: 'description',
+      align: 'center',
+      ellipsis: true,
+    },
+    {
+      title: '管理员',
+      dataIndex: 'created_by',
+      align: 'center',
+    },
+    {
+      title: '开始时间',
+      dataIndex: 'updated_at',
+      align: 'center',
+    },
+    {
+      title: '进度',
+      dataIndex: 'status',
+      align: 'center',
+      render:(text,record) => <Progress status="active" percent={50} showInfo={false} />
+    },
+    {
+      title: '操作',
+      dataIndex: 'option',
+      align: 'center',
+      valueType: 'option',
+      render: (text, record) => [
+        <a key="1" onClick={() => handleOnClickEdit(record)}>编辑</a>,
+        // <a key="2" onClick={() => handleClickDelete(record)}>删除</a>,
+        <Popconfirm
+          title={'确定要删除该数据吗？'}
+          onConfirm={() => handleClickDelete(record)}
+          key="2"
+        >
+          <a>删除</a>
+        </Popconfirm>
+      ],
+    },
+  ]
+
   const { run: postRun } = useRequest(
     (method, params) => {
       if (method === 'remove') {
@@ -161,63 +213,86 @@ export const BasicList = () => {
     <div>
       <PageContainer>
         <div className={styles.standardList}>
-          <Card bordered={false}>
+          <Card bordered={false} style={{marginBottom:20}}>
             <Row>
               <Col sm={8} xs={24}>
-                <Info title="我的待办" value="8个任务" bordered />
+                <Info title="我的待办" value={`${total}个任务`} bordered />
               </Col>
               <Col sm={8} xs={24}>
                 <Info title="本周任务平均处理时间" value="32分钟" bordered />
               </Col>
               <Col sm={8} xs={24}>
-                <Info title="本周完成任务数" value="24个任务" />
+                <Info title="本周完成任务数" value={`${total}个任务`} />
               </Col>
             </Row>
           </Card>
-
-          <Card
-            className={styles.listCard}
-            bordered={false}
-            title="任务列表"
-            style={{
-              marginTop: 24,
+          {/*<div>*/}
+          {/*  {extraContent}*/}
+          {/*</div>*/}
+          <ProTable
+            headerTitle='任务列表'
+            actionRef={actionRef}
+            columns={columns}
+            rowKey="id"
+            params={
+              params
+            }
+            request={(par) => {
+              return queryFakeList(params)
             }}
-            bodyStyle={{
-              padding: '0 32px 40px 32px',
+            search={false}
+            pagination={false}
+            toolBarRender={() => [
+              extraContent
+            ]}
+            postData={(arr) => {
+              setTotal(arr.length);
+              return arr;
             }}
-            extra={extraContent}
-          >
-            <List
-              size="large"
-              rowKey="id"
-              loading={loading}
-              pagination={paginationProps}
-              dataSource={list}
-              renderItem={(item) => (
-                <List.Item
-                  actions={[
-                    <a
-                      key="edit"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        showEditModal(item);
-                      }}
-                    >
-                      编辑
-                    </a>,
-                    <MoreBtn key="more" item={item} />,
-                  ]}
-                >
-                  <List.Item.Meta
-                    avatar={<Avatar src={item.logo} shape="square" size="large" />}
-                    title={<a href={item.href}>{item.name}</a>}
-                    description={item.subDescription}
-                  />
-                  <ListContent data={item} />
-                </List.Item>
-              )}
-            />
-          </Card>
+          />
+          {/*<Card*/}
+          {/*  className={styles.listCard}*/}
+          {/*  bordered={false}*/}
+          {/*  title="任务列表"*/}
+          {/*  style={{*/}
+          {/*    marginTop: 24,*/}
+          {/*  }}*/}
+          {/*  bodyStyle={{*/}
+          {/*    padding: '0 32px 40px 32px',*/}
+          {/*  }}*/}
+          {/*  extra={extraContent}*/}
+          {/*>*/}
+          {/*  <List*/}
+          {/*    size="large"*/}
+          {/*    rowKey="id"*/}
+          {/*    loading={loading}*/}
+          {/*    pagination={paginationProps}*/}
+          {/*    dataSource={list}*/}
+          {/*    renderItem={(item) => (*/}
+          {/*      <List.Item*/}
+          {/*        actions={[*/}
+          {/*          <a*/}
+          {/*            key="edit"*/}
+          {/*            onClick={(e) => {*/}
+          {/*              e.preventDefault();*/}
+          {/*              showEditModal(item);*/}
+          {/*            }}*/}
+          {/*          >*/}
+          {/*            编辑*/}
+          {/*          </a>,*/}
+          {/*          <MoreBtn key="more" item={item} />,*/}
+          {/*        ]}*/}
+          {/*      >*/}
+          {/*        <List.Item.Meta*/}
+          {/*          avatar={<Avatar src={item.logo} shape="square" size="large" />}*/}
+          {/*          title={<a href={item.href}>{item.name}</a>}*/}
+          {/*          description={item.subDescription}*/}
+          {/*        />*/}
+          {/*        <ListContent data={item} />*/}
+          {/*      </List.Item>*/}
+          {/*    )}*/}
+          {/*  />*/}
+          {/*</Card>*/}
         </div>
       </PageContainer>
       {/*<Button*/}

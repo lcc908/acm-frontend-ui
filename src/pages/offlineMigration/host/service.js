@@ -23,9 +23,27 @@ export async function temporaryMigrationTask(params) {
     data: { ...params},
   });
 }
-//暂存 POST /api/v1/migration_task
+
+//第三步数据迁移
+// get /api/v1/migration_task
 export async function getTemporaryMigrationTask(params) {
   return request('/api/v1/migration_task', {
     params
+  });
+}
+//第四步上传镜像
+// POST /api/v1/openstack/image
+export async function postOpenstackImg(params) {
+  return request('/api/v1/openstack/image', {
+    method: 'POST',
+    data: { ...params},
+  });
+}
+//第五步 创建虚拟机
+// POST /api/v1/openstack/vm
+export async function postOpenstackVm(params) {
+  return request('/api/v1/openstack/vm', {
+    method: 'POST',
+    data: { ...params},
   });
 }
