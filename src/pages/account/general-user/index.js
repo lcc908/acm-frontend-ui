@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 // import {getStorageAPI, check_oses} from './service';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable, { TableDropdown } from '@ant-design/pro-table';
-import { message, Button, Dropdown, Menu, Modal } from 'antd';
+import { message, Button, Popconfirm, Dropdown, Menu, Modal } from 'antd';
+// import { message, Button, Popconfirm, Menu, Modal } from 'antd';
 import AddAndEdit from '@/pages/account/general-user/addAndEdit';
-import { getUser } from '@/pages/account/general-user/service';
+import { getUser, deleteUser } from '@/pages/account/general-user/service';
 
 const waitTime = (time = 100) => {
   return new Promise((resolve) => {
@@ -74,8 +75,15 @@ export default (props) => {
         <a key="1" onClick={() => handleOnClickEdit(record)}>
           编辑
         </a>,
-        // TODO：删除？这里没有定义式事件？生产环境没问题？
-        <a key="2">删除</a>,
+        <Popconfirm
+          key={'3'}
+          title="确认删除该数据吗？"
+          okText="Yes"
+          cancelText="No"
+          onConfirm={() => deleteData([record.id])}
+        >
+          <a key="2">删除</a>
+        </Popconfirm>,
       ],
     },
   ];
@@ -128,6 +136,15 @@ export default (props) => {
     // setButtonDisableds(true)
     setSelectRowsData([...selectedRows]);
     setSelectedRowKeys([...selectedRowKeys]);
+  };
+
+  const deleteData = async (ids) => {
+    const res = await deleteUser({ ids: ids });
+    if (res.code === 200) {
+      message.success('删除成功');
+      setDeleteDisabled(true);
+      reloadTable();
+    }
   };
 
   return (
