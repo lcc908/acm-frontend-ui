@@ -20,4 +20,10 @@ export async function editorPermission(params) {
   });
 }
 
-// TODO: delete??
+//用户列表 DELETE /api/v1/user
+export async function deleteUser(params) {
+  return request('/api/v1/user', {
+    method: 'DELETE',
+    data: params,
+  });
+}
