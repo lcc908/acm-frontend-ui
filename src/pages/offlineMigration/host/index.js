@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import { Card, Result, Button, Divider, message, Form } from 'antd';
+import { Card, Result, Button, Divider, message, Form,Modal } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
 import { ProFormSwitch, ProFormText, StepsForm } from '@ant-design/pro-form';
 import OneStep from './one-step';
@@ -10,9 +10,11 @@ import FiveStep from './five-step';
 import SixStep from './six-step';
 import styles from './style.less';
 import { history,Prompt } from 'umi';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {getTemporaryMigrationTask, temporaryMigrationTask} from './service'
 // import FourStep from "@/pages/onlineMigration/components/fourStep";
 
+const { confirm } = Modal;
 const waitTime = (time = 100) => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -73,7 +75,7 @@ const StepForm = (props) => {
   const [fourData,setFourData] = useState({}); //第四步的数据
   const [fiveData,setFiveData] = useState({}); //第五的数据
   const [isRunning, setIsRunning] = useState(true);
-
+  const {host_id} = history?.location?.query;
   const [form] = Form.useForm();
 
   // useInterval(() => {
@@ -81,7 +83,8 @@ const StepForm = (props) => {
   // }, isRunning ? 5000 : null);
 
   useEffect(()=>{
-    getData();;
+    getData();
+    console.log(history.location.query.host_id);
   },[])
 
   const formMapRef = useRef();
@@ -108,10 +111,10 @@ const StepForm = (props) => {
       setFourData({...fourData})
       setFiveData({...fiveData})
       //镜像上传中或者失败下一步不可点击
-      if(fourData.status === 'IMAGE_UPLOADING' ||　fourData.status === 'IMAGE_UPLOAD_FAILED') {
+      if(fourData?.status === 'IMAGE_UPLOADING' ||　fourData?.status === 'IMAGE_UPLOAD_FAILED') {
         setFourNextBt(true);
       }
-      if(fourData.status === 'IMAGE_UPLOADED') {
+      if(fourData?.status === 'IMAGE_UPLOADED') {
         setFourNextBt(false);
       }
       // if(fourData.status === 'IMAGE_UPLOADED') {
@@ -121,10 +124,10 @@ const StepForm = (props) => {
       //   console.log('上传失败');
       // }
       //虚拟机创建中或者失败下一步不可点击
-      if(fiveData.status === 'OPENSTACK_VM_CREATING' || fiveData.status === 'OPENSTACK_VM_CREATE_FAILED') {
+      if(fiveData?.status === 'OPENSTACK_VM_CREATING' || fiveData?.status === 'OPENSTACK_VM_CREATE_FAILED') {
         setFiveNextBt(true);
       }
-      if(fiveData.status === 'OPENSTACK_VM_CREATED') {
+      if(fiveData?.status === 'OPENSTACK_VM_CREATED') {
         setFiveNextBt(false);
       }
     }
@@ -212,15 +215,15 @@ const StepForm = (props) => {
       <Button key="pre1" style={{ marginTop: 35 }} onClick={() => props.onPre?.()}>
         上一步
       </Button>,
-      <Button
-        type="primary"
-        style={{ marginTop: 35 }}
-        key="goToTree"
-        onClick={() => handleSubmitZanCun(props)}
-        loading={temporaryButton}
-      >
-        暂存
-      </Button>,
+      // <Button
+      //   type="primary"
+      //   style={{ marginTop: 35 }}
+      //   key="goToTree"
+      //   onClick={() => handleSubmitZanCun(props)}
+      //   loading={temporaryButton}
+      // >
+      //   暂存
+      // </Button>,
       <Button
         type="primary"
         style={{ marginTop: 35 }}
@@ -231,6 +234,26 @@ const StepForm = (props) => {
         下一步
       </Button>,
     ]
+  }
+  const showConfirm = (props) => {
+    confirm({
+      title: '请确认',
+      icon: <ExclamationCircleOutlined />,
+      content: 'LiveCD是否已挂载到物理机?',
+      onOk() {
+        props.onSubmit?.()
+      },
+    });
+  }
+  const showTwoConfirm = (props) => {
+    confirm({
+      title: '是否创建任务?',
+      icon: <ExclamationCircleOutlined />,
+      content: '点击下一步，开始创建',
+      onOk() {
+        handleSubmit(props)
+      },
+    });
   }
   return (
     <PageContainer content="将一个冗长或用户不熟悉的表单任务分成多个步骤，指导用户完成。">
@@ -258,7 +281,25 @@ const StepForm = (props) => {
                     style={{ marginTop: 35 }}
                     type="primary"
                     key="asd2123"
-                    onClick={() => props.onSubmit?.()}
+                    // onClick={() => props.onSubmit?.()}
+                    onClick={() => showConfirm(props)}
+                    disabled={host_id ? false : true}
+                  >
+                    下一步
+                  </Button>,
+                ];
+              }
+              if (props.step === 1) {
+                return [
+                  <Button key="pre1" style={{ marginTop: 35 }} onClick={() => props.onPre?.()}>
+                    上一步
+                  </Button>,
+                  <Button
+                    type="primary"
+                    style={{ marginTop: 35 }}
+                    key="goToTree3"
+                    // onClick={() => handleSubmit(props)}
+                    onClick={() => showTwoConfirm(props)}
                   >
                     下一步
                   </Button>,
@@ -275,16 +316,15 @@ const StepForm = (props) => {
                   <Button key="pre1" style={{ marginTop: 35 }} onClick={() => props.onPre?.()}>
                     上一步
                   </Button>,
-                  <Button
-                    type="primary"
-                    style={{ marginTop: 35 }}
-                    key="goToTree"
-                    onClick={() => handleSubmitZanCun(props)}
-                    loading={temporaryButton}
-                  >
-                    暂存
-                  </Button>,
-                  // <Button disabled={disabled} type="primary" style={{marginTop:35}} key="goToTree3" onClick={() => handleSubmit(props)}>
+                  // <Button
+                  //   type="primary"
+                  //   style={{ marginTop: 35 }}
+                  //   key="goToTree"
+                  //   onClick={() => handleSubmitZanCun(props)}
+                  //   loading={temporaryButton}
+                  // >
+                  //   暂存
+                  // </Button>,
                   <Button
                     type="primary"
                     style={{ marginTop: 35 }}

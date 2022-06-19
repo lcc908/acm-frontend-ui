@@ -5,17 +5,19 @@ import {ProFormText, ProFormSelect, ProFormSwitch, ProFormRadio} from '@ant-desi
 import {CloudDownloadOutlined} from '@ant-design/icons';
 import styles from './style.less';
 import {getLiveCd, makeLiveCd} from '../service'
+import {history} from "umi";
 
 export default (props) => {
   const {oneFormRef, form, handleNextState} = props;
   const [downLoad,setDownLoad] = useState('');
   const rules = [{required: true, message: '这是必填项'}];
+  const {host_id} = history?.location?.query;
   const handleClick = async () => {
     // console.log(oneFormRef.current);
     // console.log(oneFormRef.current.validateFields());
     const val = await oneFormRef.current?.validateFieldsReturnFormatValue();
     console.log(val);
-    val.host_id = '629051dc87c4c42b766b928d';
+    val.host_id = host_id;
     val.nic_index = parseInt(val.nic_index);
     const res = await makeLiveCd(val);
     if (res.code === 200) {
@@ -37,7 +39,7 @@ export default (props) => {
     getData();
   },[]);
   const getData = async () => {
-    const res = await getLiveCd({host_id:'629051dc87c4c42b766b928d'});
+    const res = await getLiveCd({host_id:host_id});
     if(res.code === 200) {
       setDownLoad(res.data.url)
       oneFormRef?.current?.setFieldsValue({
@@ -110,13 +112,13 @@ export default (props) => {
               rules={rules}
             />
           </Col>
-          <Col span={8}>
-            <ProFormText
-              name="e"
-              label="镜像名称"
-              // rules={rules}
-            />
-          </Col>
+          {/*<Col span={8}>*/}
+          {/*  <ProFormText*/}
+          {/*    name="e"*/}
+          {/*    label="镜像名称"*/}
+          {/*    // rules={rules}*/}
+          {/*  />*/}
+          {/*</Col>*/}
         </Row>
         {/*<Row>*/}
         {/*  <ProFormRadio.Group*/}
