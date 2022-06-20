@@ -352,7 +352,7 @@ const StepForm = (props) => {
             }}
             // labelCol={{span: 4}}
             // wrapperCol={{span: 18}}
-            initialValues={stepData}
+            // initialValues={stepData}
             onFinish={async (values) => {
               console.log(values);
               // setStepData(values);
@@ -457,7 +457,6 @@ const StepForm = (props) => {
             <StepResult
               onFinish={async () => {
                 setCurrent(0);
-                console.log(1);
                 // formMapRef.current?.resetFields();
                 oneFormRef.current?.resetFields();
                 return true;

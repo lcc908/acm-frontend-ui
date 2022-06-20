@@ -238,7 +238,7 @@ const StepForm = (props) => {
             }}
             labelCol={{span: 4}}
             wrapperCol={{span: 20}}
-            initialValues={stepData}
+            // initialValues={stepData}
             onFinish={async (values) => {
               console.log(values);
               // setStepData(values);

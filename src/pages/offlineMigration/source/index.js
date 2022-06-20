@@ -50,7 +50,7 @@ const IndexPage = () => {
   const pushRoute = () => {
     console.log(platformType);
     if(platformType === 'vmware') {
-      history.push(`/offline/vm?host_id=${hostId}`);
+      history.push(`/offline/vm?platform_id=${hostId}`);
     }
     if(platformType === 'physical_host') {
       history.push(`/offline/host?host_id=${hostId}`);

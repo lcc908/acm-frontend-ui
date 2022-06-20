@@ -4,14 +4,16 @@ import ProCard from '@ant-design/pro-card';
 import ProTable, {TableDropdown} from '@ant-design/pro-table';
 import {CloudDownloadOutlined} from '@ant-design/icons';
 import styles from './style.less'
-import {getVmWareListVm} from '../service'
+import {history} from "umi";
+import {getVmWareListVm} from "@/pages/offlineMigration/ware/service"
 
 export default (props) => {
+  const {platform_id} = history?.location?.query;
   const {oneFormRef, handleNextState,onChangeDisabled} = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectRowsData, setSelectRowsData] = useState([]);
   const [params, setParams] = useState({
-    platform_id:'629db04f99387effeb02b325',
+    platform_id:platform_id,
     vm_name: '',
     ip: '',
   })
@@ -59,25 +61,26 @@ export default (props) => {
     },
   ];
   useEffect(()=>{
-    console.log(params);
+    // console.log(params);
   },[params])
   const onChangePagination = (page, pageSize) => {
     console.log(page, pageSize);
   }
 
   const onSelectChange = (selectedRowKeys, selectedRows) => {
+    // console.log(selectedRowKeys);
+    localStorage.setItem('vmOneStepRowKeys',JSON.stringify(selectedRowKeys));
     setSelectRowsData([...selectedRows])
     setSelectedRowKeys([...selectedRowKeys])
     if(selectedRowKeys.length > 0) {
       onChangeDisabled(false,selectedRowKeys)
     } else {
-      onChangeDisabled(true)
+      onChangeDisabled(true,[])
     }
   }
 
   const beforeSearchSubmit = (val) => {
     const {vmname,ip} = val;
-    console.log(1);
     setParams({...params,vm_name:vmname,ip})
   }
 
@@ -98,6 +101,7 @@ export default (props) => {
         beforeSearchSubmit={beforeSearchSubmit}
         search={{
           // labelWidth: 100,
+          labelWidth: 'auto',
           // span: 8,
           optionRender: ({searchText, resetText}, {form}, dom) => [
             <Button

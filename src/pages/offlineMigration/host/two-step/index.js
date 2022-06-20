@@ -28,7 +28,6 @@ export default (props) => {
       setXitGb(false);
       return false;
     }
-    console.log(1);
     setXitGb(true);
     twoFormRef.current?.setFieldsValue({
       c1:null

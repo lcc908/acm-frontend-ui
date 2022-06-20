@@ -16,8 +16,7 @@ export default (props) => {
   it can be found as a welcome guest in many households across the world.
 `;
   const callback = (key) => {
-    console.log(key);
-
+    // console.log(key);
   }
   const genExtra = (data) => {
     if(data === 1) {

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import { Row, Col, Cascader , Form, Select} from 'antd';
+import {Row, Col, Cascader, Form, Select} from 'antd';
 import ProForm, {
   ProFormSelect,
   ProFormDateTimePicker,
@@ -9,6 +9,7 @@ import ProForm, {
 } from '@ant-design/pro-form';
 import ProCard from '@ant-design/pro-card';
 import styles from './style.less';
+import {getPermission} from "@/pages/authority/platform-permissions/service";
 
 const options = [
   {
@@ -47,9 +48,9 @@ const options = [
 
 
 export default (props) => {
-  const { twoFormRef, selectedRowKeys, handleNextState } = props;
-  const [showDateTime,setShowDateTime] = useState(false)
-  const rules = [{ required: true, message: '这是必填项' }];
+  const {twoFormRef, selectedRowKeys, handleNextState} = props;
+  const [showDateTime, setShowDateTime] = useState(false)
+  const rules = [{required: true}];
   const onChange = (value) => {
     console.log(value);
     // setSelectValue(value)
@@ -60,61 +61,67 @@ export default (props) => {
   const changeSwitch = (val) => {
     setShowDateTime(val)
   }
-  useEffect(()=>{
-    console.log(selectedRowKeys);
-  },[selectedRowKeys])
+  useEffect(() => {
+    // console.log(selectedRowKeys);
+  }, [selectedRowKeys])
   return (
     <>
       <ProCard title="任务信息" headerBordered bordered>
         <Row gutter={24}>
           <Col span={8}>
             <ProFormText
-              name="a"
+              name="name"
               label="任务名称"
-              // rules={rules}
+              rules={rules}
             />
           </Col>
           <Col span={8}>
             <ProFormSelect
-              name="b"
+              name="target_platform_id"
+              label="目标平台"
+              request={async () => {
+                const {data} = await getPermission();
+                const arr = [];
+                data.forEach(item => {
+                  if (item?.platform_type.toLowerCase() === "openstack") {
+                    arr.push({
+                      label: item.platform_name, value: item.id
+                    })
+                  }
+                })
+                // console.log(arr);
+                return arr
+              }}
+              rules={rules}
+            />
+          </Col>
+          <Col span={8}>
+            <ProFormSelect
+              name="network_name"
               label="网络名称"
+              initialValue="network_10.120.79"
               options={[
                 {
-                  value: '1',
-                  label: '1',
-                },
-                {
-                  value: '2',
-                  label: '2',
+                  value: 'network_10.120.79',
+                  label: 'network_10.120.79',
                 },
               ]}
             />
           </Col>
           <Col span={8}>
-            <ProFormCascader
-              name="area"
+            <ProFormSelect
+              name="datacenter"
               label="区域"
-              fieldProps={{
-                options: [
-                  {
-                    value: 'zhejiang',
-                    label: 'Zhejiang',
-                    children: [
-                      {
-                        value: 'hangzhou',
-                        label: 'Hangzhou',
-                        children: [
-                          {
-                            value: 'xihu',
-                            label: 'West Lake',
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-                displayRender:displayRender
-              }}
+              initialValue="shenyang"
+              options={[{
+                label: "Shenyang",
+                value: "shenyang"
+              },
+                {
+                  label: "BJ-Beiyan",
+                  value: "bj-beiyan"
+                }
+              ]}
             />
             {/*<Form.Item label="后端存储" shouldUpdate>*/}
             {/*  {(form) => {*/}
@@ -131,60 +138,44 @@ export default (props) => {
             {/*  }}*/}
             {/*</Form.Item>*/}
           </Col>
-          <Col span={8}>
-            <ProFormSelect
-              name="b1"
-              label="目标平台权限"
-              options={[
-                {
-                  value: '1',
-                  label: '1',
-                },
-                {
-                  value: '2',
-                  label: '2',
-                },
-              ]}
-            />
-          </Col>
         </Row>
         <Row gutter={24}>
-          <Col span={12}>
-            <ProForm.Group label="自定义脚本">
-              <ProFormSelect
-                width="md"
-                name="b"
-                label="脚本类型"
-                options={[
-                  {
-                    value: '1',
-                    label: '1',
-                  },
-                ]}
-                addonAfter={
-                  <div className={styles.upload}>
-                    <ProFormUploadButton name="upload" max={1} action="/upload.do" />
-                  </div>
-                }
-              />
-              <ProFormSelect
-                width="md"
-                name="b"
-                label="脚本类型2"
-                options={[
-                  {
-                    value: '1',
-                    label: '1',
-                  },
-                ]}
-                addonAfter={
-                  <div className={styles.upload}>
-                    <ProFormUploadButton name="upload" max={1} action="/upload.do" />
-                  </div>
-                }
-              />
-            </ProForm.Group>
-          </Col>
+          {/*<Col span={12}>*/}
+          {/*  <ProForm.Group label="自定义脚本">*/}
+          {/*    <ProFormSelect*/}
+          {/*      width="md"*/}
+          {/*      name="b"*/}
+          {/*      label="脚本类型"*/}
+          {/*      options={[*/}
+          {/*        {*/}
+          {/*          value: '1',*/}
+          {/*          label: '1',*/}
+          {/*        },*/}
+          {/*      ]}*/}
+          {/*      addonAfter={*/}
+          {/*        <div className={styles.upload}>*/}
+          {/*          <ProFormUploadButton name="upload" max={1} action="/upload.do" />*/}
+          {/*        </div>*/}
+          {/*      }*/}
+          {/*    />*/}
+          {/*    <ProFormSelect*/}
+          {/*      width="md"*/}
+          {/*      name="b"*/}
+          {/*      label="脚本类型2"*/}
+          {/*      options={[*/}
+          {/*        {*/}
+          {/*          value: '1',*/}
+          {/*          label: '1',*/}
+          {/*        },*/}
+          {/*      ]}*/}
+          {/*      addonAfter={*/}
+          {/*        <div className={styles.upload}>*/}
+          {/*          <ProFormUploadButton name="upload" max={1} action="/upload.do" />*/}
+          {/*        </div>*/}
+          {/*      }*/}
+          {/*    />*/}
+          {/*  </ProForm.Group>*/}
+          {/*</Col>*/}
           <Col span={24}>
             <ProFormSwitch
               name="switch1"
