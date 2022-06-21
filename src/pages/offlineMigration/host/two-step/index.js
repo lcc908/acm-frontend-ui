@@ -21,7 +21,7 @@ export default (props) => {
   const [checkBox,setCheckBox] = useState([])
   const [hostInfo,setHostInfo] = useState({}) //源主机配置
   const [diskArray,setDiskArray] = useState([]) //磁盘信息
-  const rules = [{ required: true, message: '这是必填项' }];
+  const rules = [{ required: true}];
   const handleChange = (val) => {
     console.log(val[0]);
     if(val[0]) {

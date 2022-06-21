@@ -10,7 +10,7 @@ import {waitTime} from "@/utils"
 import {getSnapshot,postSnapshot} from "@/pages/onlineMigration/service";
 export default (props) => {
   const { fiveFormRef } = props;
-  const rules = [{ required: true, message: '这是必填项' }];
+  const rules = [{ required: true}];
   const task_id = localStorage.getItem('onlineTask_id') || '62a96668678f29a3cfe23de0'
   useEffect(() => {
     getData()

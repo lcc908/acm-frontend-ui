@@ -14,9 +14,18 @@ export async function postVmwareTaskValidate(params) {
   });
 }
 
-// export async function removeFakeList(params) {
-//   return request('/api/post_fake_list', {
-//     method: 'POST',
-//     data: { ...params, method: 'delete' },
-//   });
-// }
+// /api/v1/vmware_task_create
+export async function postCreateVmware(params) {
+  return request('/api/v1/vmware_task_create', {
+    method: 'POST',
+    data: { ...params},
+  });
+}
+//第四步 /api/v1/vmware_task_log
+export async function postVmwareLog(params) {
+  return request('/api/v1/vmware_task_log', {
+    method: 'POST',
+    data: { ...params},
+  });
+}
+

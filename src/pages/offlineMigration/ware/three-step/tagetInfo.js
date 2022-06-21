@@ -7,21 +7,42 @@ import ProCard from '@ant-design/pro-card';
 import {getPermission} from "@/pages/authority/platform-permissions/service";
 
 export default (props) => {
-  const {twoFormRef, hostInfo} = props;
+  const {current, hostInfo} = props;
   const [data, setData] = useState({})
+  const {name, target_platform_id} = JSON.parse(localStorage.getItem('vmTwoStepFormData')) || {}
+
   const formRef = useRef();
+  // useEffect(() => {
+  //   function renderData() {
+  //     const {target_platform_id} = JSON.parse(localStorage.getItem('vmTwoStepFormData'))
+  //     if (target_platform_id) {
+  //       getData()
+  //     }
+  //   }
+  //   window.addEventListener('storage', renderData)
+  //
+  //   return () => {
+  //     window.removeEventListener('storage', renderData)
+  //   }
+  // }, [])
+
   useEffect(() =>{
     getData()
-  },[])
-  const getData = async () => {
-    const {target_platform_id} = JSON.parse(localStorage.getItem('vmTwoStepFormData'))
-    const {data} = await getPermission({id:target_platform_id});
-    const credential = JSON.parse(data[0].credential)
+  },[current])
 
-    formRef?.current?.setFieldsValue({
-      ...data[0],
-      ...credential
-    });
+  const getData = async () => {
+    console.log(1);
+    const obj = JSON.parse(localStorage.getItem('vmTwoStepFormData'))
+    if(obj?.target_platform_id) {
+      const {target_platform_id} = obj;
+      const {data} = await getPermission({id:target_platform_id});
+      const credential = JSON.parse(data[0].credential)
+
+      formRef?.current?.setFieldsValue({
+        ...data[0],
+        ...credential
+      });
+    }
   };
   return (
     <ProCard title="目标平台" headerBordered bordered>

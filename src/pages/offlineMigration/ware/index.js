@@ -8,9 +8,9 @@ import TwoStep from './two-step';
 import ThreeStep from './three-step';
 import FourStep from './four-step';
 import styles from './style.less';
-import {useHistory, Prompt} from "umi";
+import {useHistory, Prompt, history} from "umi";
 import {RouterPrompt} from '@/usehooks/RouterPrompt'
-// import FourStep from "@/pages/onlineMigration/components/fourStep";
+import {postCreateVmware} from "@/pages/offlineMigration/ware/service";
 
 const StepResult = (props) => {
   return (
@@ -37,7 +37,7 @@ const StepForm = (props) => {
     return setNum ? parseInt(setNum) : 0;
   }); //当前表单的步骤数，从 0 开始
   const [disabled, setDisabled] = useState(true);
-  const [threeNextBt, setThreeNextBt] = useState(false);
+  const [threeNextBt, setThreeNextBt] = useState(true);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]); //第一步：选择的虚拟机列表名称
   const history = useHistory();
 
@@ -51,6 +51,7 @@ const StepForm = (props) => {
   const changeCurrent = (val) => {
     setCurrent(val);
     localStorage.setItem('vmStep',val);
+    console.log(val);
   }
   const handleSubmitZanCun = (props) => {
     const { step, form } = props;
@@ -104,6 +105,24 @@ const StepForm = (props) => {
       localStorage.setItem('vmTwoStepFormData',JSON.stringify(obj));
       // return false;
     }
+    if(props.step === 2) {
+      const {platform_id} = history?.location?.query;
+      const {name, target_platform_id} = JSON.parse(localStorage.getItem('vmTwoStepFormData'));
+      const vm_infos = JSON.parse(localStorage.getItem('vmThreeVmData'));
+      let obj = {
+        name,
+        target_platform_id,
+        source_platform_id:platform_id,
+        vm_infos:vm_infos
+      }
+      const {code,data:{task_id}} = await postCreateVmware(obj);
+      if(code === 200) {
+        // props.onSubmit?.();
+        localStorage.setItem('vm_task_id',task_id);
+      } else {
+        return false;
+      }
+    }
     props.onSubmit?.();
     // console.log(props.form.getFieldValue());
   };
@@ -133,6 +152,7 @@ const StepForm = (props) => {
     localStorage.removeItem('vmStep');
     localStorage.removeItem('vmTwoStepFormData');
     localStorage.removeItem('vmOneStepRowKeys');
+    localStorage.removeItem('vmThreeVmData');
   };
 
   return (
@@ -150,24 +170,11 @@ const StepForm = (props) => {
           current={current}
           form={form}
           onCurrentChange={changeCurrent} //current 发生改变的事件
-          // onFinish={async (values) => {
-          //   console.log(values);
-          //   await waitTime(1000);
-          //   message.success('提交成功');
-          // }}
           submitter={{
             //提交按钮相关配置
             render: (props, dom) => {
               if (props.step === 0) {
                 return [
-                  // <Button
-                  //   style={{ marginTop: 35 }}
-                  //   type="primary"
-                  //   key="goToTree33"
-                  //   onClick={() => handleSubmitZanCun(props)}
-                  // >
-                  //   暂存
-                  // </Button>,
                   <Button
                     style={{ marginTop: 35 }}
                     type="primary"
@@ -232,6 +239,7 @@ const StepForm = (props) => {
             <TwoStep
               twoFormRef={twoFormRef}
               selectedRowKeys={selectedRowKeys}
+              current={current}
             />
           </StepsForm.StepForm>
           <StepsForm.StepForm
@@ -250,6 +258,7 @@ const StepForm = (props) => {
               threeFormRef={threeFormRef}
               selectedRowKeys={selectedRowKeys}
               setThreeNextBt={setThreeNextBt}
+              current={current}
             />
           </StepsForm.StepForm>
           <StepsForm.StepForm
@@ -265,7 +274,7 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <FourStep fourFormRef={fourFormRef} />
+            <FourStep fourFormRef={fourFormRef} current={current}/>
           </StepsForm.StepForm>
           <StepsForm.StepForm title="完成">
             <StepResult

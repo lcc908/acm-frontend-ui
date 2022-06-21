@@ -8,34 +8,34 @@ import ProForm, {
 import ProCard from '@ant-design/pro-card'
 import styles from '../style.less';
 import {getInstallAgentPercent, getReportAnalysis, postInstallAgent} from "@/pages/onlineMigration/service";
+import {useInterval} from "@/utils"
 
-function useInterval(callback, delay) {
-  const savedCallback = useRef();
-
-  useEffect(() => {
-    savedCallback.current = callback;
-  });
-
-  useEffect(() => {
-    function tick() {
-      savedCallback.current();
-    }
-
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}
+// function useInterval(callback, delay) {
+//   const savedCallback = useRef();
+//
+//   useEffect(() => {
+//     savedCallback.current = callback;
+//   });
+//
+//   useEffect(() => {
+//     function tick() {
+//       savedCallback.current();
+//     }
+//
+//     if (delay !== null) {
+//       let id = setInterval(tick, delay);
+//       return () => clearInterval(id);
+//     }
+//   }, [delay]);
+// }
 
 export default (props) => {
   const {twoFormRef, setTwoNextBt} = props;
   const [lineList, setLineList] = useState([]);
   const [percent, setPercent] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-  // localStorage.setItem('onlineTask_id',res.data.id)
   const id = localStorage.getItem('onlineTask_id');
-  const rules = [{ required: true, message: '这是必填项' }];
+  const rules = [{ required: true}];
 
   useEffect(() => {
     getData()

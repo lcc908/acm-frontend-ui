@@ -11,42 +11,6 @@ import ProCard from '@ant-design/pro-card';
 import styles from './style.less';
 import {getPermission} from "@/pages/authority/platform-permissions/service";
 
-const options = [
-  {
-    value: 'zhejiang',
-    label: 'Zhejiang',
-    children: [
-      {
-        value: 'hangzhou',
-        label: 'Hangzhou',
-        children: [
-          {
-            value: 'xihu',
-            label: 'West Lake',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: 'jiangsu',
-    label: 'Jiangsu',
-    children: [
-      {
-        value: 'nanjing',
-        label: 'Nanjing',
-        children: [
-          {
-            value: 'zhonghuamen',
-            label: 'Zhong Hua Men',
-          },
-        ],
-      },
-    ],
-  },
-];
-
-
 export default (props) => {
   const {twoFormRef, selectedRowKeys, handleNextState} = props;
   const [showDateTime, setShowDateTime] = useState(false)
@@ -63,6 +27,10 @@ export default (props) => {
   }
   useEffect(() => {
     // console.log(selectedRowKeys);
+    const obj = JSON.parse(localStorage.getItem('vmTwoStepFormData')) || {}
+    twoFormRef?.current?.setFieldsValue({
+      ...obj
+    });
   }, [selectedRowKeys])
   return (
     <>

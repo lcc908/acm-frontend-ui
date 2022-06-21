@@ -20,7 +20,7 @@ const waitTime = (time = 1000) => {
 
 export default (props) => {
   const { threeFormRef, form, stepData } = props;
-  const rules = [{required: true, message: '这是必填项'}];
+  const rules = [{required: true}];
   const [dataSource,setDataSource] = useState([]);
   const [editableKeys, setEditableRowKeys] = useState([]);
   const columns = [

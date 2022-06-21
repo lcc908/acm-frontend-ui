@@ -1,10 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Alert ,Row, Col,Space,Tag } from 'antd';
+import {Alert, Row, Col, Space, Tag, Button} from 'antd';
 import {
   ProFormText,
 } from '@ant-design/pro-form';
 import ProCard from '@ant-design/pro-card';
-import { EditableProTable } from '@ant-design/pro-table';
+import {EditableProTable} from '@ant-design/pro-table';
 import {history} from "umi";
 import TagetInfo from './tagetInfo'
 // import styles from './style.less';
@@ -14,59 +14,76 @@ import {waitTime} from "@/utils"
 
 
 const TagList = ({value}) => {
-  return value.map((item,index) => (
-    <Tag key={index}>{item.size}</Tag>
-  ))}
+  return value.map((item, index) => (
+    <Tag color="green" key={index}>{item.size}</Tag>
+  ))
+}
+
+const ErrorTagList = ({value}) => {
+  return value.map((item, index) => (
+    <Tag color="error" key={index}>{item}</Tag>
+  ))
+}
 
 export default (props) => {
-  const { threeFormRef, selectedRowKeys, setThreeNextBt } = props;
+  const {threeFormRef, current, setThreeNextBt} = props;
   const {platform_id} = history?.location?.query;
-  const [errText,setErrText] = useState(false);
+  const [errText, setErrText] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [dataSource,setDataSource] = useState([])
+  const [dataSource, setDataSource] = useState([])
   const [editableKeys, setEditableRowKeys] = useState([]); //正在编辑的行，默认 key 会使用 rowKey 的配置
-
+  const {name, target_platform_id} = JSON.parse(localStorage.getItem('vmTwoStepFormData')) || {}
+  const vmArray = JSON.parse(localStorage.getItem('vmOneStepRowKeys')) || []
   const columns = [
     {
       title: '虚拟机名称',
       dataIndex: 'vmname',
       ellipsis: true,
       align: 'center',
+      readonly: true,
     },
     {
       title: 'IP地址',
       dataIndex: 'ip',
       align: 'center',
+      editable: (text, record, index) => {
+        return text ? false : true;
+      },
     },
     {
       title: 'CPU',
       dataIndex: 'cpu',
       align: 'center',
+      readonly: true,
     },
     {
       title: 'MEM',
       dataIndex: 'mem',
       align: 'center',
+      readonly: true,
     },
     {
       title: '主机类型',
       dataIndex: 'os',
       align: 'center',
+      editable: (text, record, index) => {
+        return text ? false : true;
+      },
     },
     {
       title: '磁盘配置',
       dataIndex: 'diskInfo',
       align: 'center',
       readonly: true,
-      renderFormItem: (_, { isEditable }) => {
-        return <TagList />;
+      renderFormItem: (_, {isEditable}) => {
+        return <TagList/>;
       },
       render: (tags) => (
         <span>
-        {tags.map((tag) => {
+        {tags.map((tag,index) => {
           let color = tag.length > 5 ? 'geekblue' : 'green';
           return (
-            <Tag color={color} key={tag}>
+            <Tag color={color} key={index}>
               {tag.size}
             </Tag>
           );
@@ -77,18 +94,17 @@ export default (props) => {
     {
       title: '错误描述',
       dataIndex: 'error_message',
-      readonly: true,
       align: 'center',
-      width: 120,
-      renderFormItem: (_, { isEditable }) => {
-        return <TagList />;
+      width: 300,
+      renderFormItem: (_, {isEditable}) => {
+        return <ErrorTagList/>;
       },
       render: (tags) => (
         <span>
-        {tags.map((tag) => {
+        {tags.map((tag,index) => {
           return (
             <Space size={4}>
-              <Tag color="error" key={tag}>
+              <Tag color="error" key={index}>
                 {tag}
               </Tag>
             </Space>
@@ -111,58 +127,110 @@ export default (props) => {
         >
           编辑
         </a>,
-        <a
-          key="delete"
-          onClick={() => {
-            setDataSource(dataSource.filter((item) => item.id !== record.id));
-          }}
-        >
-          删除
-        </a>,
+        // <a
+        //   key="delete"
+        //   onClick={() => {
+        //     setDataSource(dataSource.filter((item) => item.vmname !== record.vmname));
+        //   }}
+        // >
+        //   删除
+        // </a>,
       ],
     },
   ];
 
+  // useEffect(() => {
+  //   function renderData() {
+  //     const item = JSON.parse(localStorage.getItem('vmTwoStepFormData'))
+  //     if (item) {
+  //       getData()
+  //     }
+  //   }
+  //
+  //   window.addEventListener('storage', renderData)
+  //
+  //   return () => {
+  //     window.removeEventListener('storage', renderData)
+  //   }
+  // }, [])
 
   useEffect(() => {
-    console.log(dataSource);
-    console.log(editableKeys);
-  },[dataSource,editableKeys]);
-  useEffect(() =>{
     getData()
-  },[])
+  }, [current]);
+
   const getData = async () => {
-    setLoading(true);
-    const {name,target_platform_id} = JSON.parse(localStorage.getItem('vmTwoStepFormData'))
-    const vmArray = JSON.parse(localStorage.getItem('vmOneStepRowKeys'))
-    const {data} = await getPermission({id:platform_id}); //获取目标平台
-    const vmNameArray = vmArray.map(item => {
-      return {vmname:item};
-    })
-  // :{datastore_check,vm_check,vm_infos}
-    const {code,data:{result}} = await postVmwareTaskValidate({
-      name,
-      source_platform_id:platform_id,
-      target_platform_id:target_platform_id,
-      vm_infos:vmNameArray
-    });
-    if(code === 200) setLoading(false)
-    console.log(result);
-    const {datastore_check,vm_check,vm_infos} = result;
-    if(datastore_check === "failed" || vm_check === "failed") {
-      // "datastore_check" 和 "vm_check"的值只要任何一个为"failed"，说明验证失败，阻止用户进入下一步
-      setThreeNextBt(true)
-    }
-    if(datastore_check === "failed") {
-      setErrText(true)
-    }
-    console.log(result);
-    setDataSource([...vm_infos]);
+    const {data} = await getPermission({id: platform_id}); //获取目标平台
+    getVmwareList();
+    // :{datastore_check,vm_check,vm_infos}
     threeFormRef?.current?.setFieldsValue({
       ...data[0],
     });
   };
+  const getVmwareList = async (arr) => {
+    setLoading(true);
+    // const vmArray = JSON.parse(localStorage.getItem('vmOneStepRowKeys')) || []
+    const vmNameArray = vmArray.map(item => {
+      return {vmname: item};
+    })
+    try {
+      const {code, data: {result}} = await postVmwareTaskValidate({
+        name,
+        source_platform_id: platform_id,
+        target_platform_id: target_platform_id,
+        vm_infos: arr || vmNameArray
+      });
+      if (code === 200) setLoading(false)
+      // setLoading(false)
+      // console.log(result);
+      const {datastore_check, vm_check, vm_infos} = result;
+      if (datastore_check === "failed" || vm_check === "failed") {
+        // "datastore_check" 和 "vm_check"的值只要任何一个为"failed"，说明验证失败，阻止用户进入下一步
+        setThreeNextBt(true)
+      }
+      if (datastore_check === "success" && vm_check === "success") {
+        setThreeNextBt(false)
+      }
+      if (datastore_check === "failed") {
+        setErrText(true)
+      }
+      // console.log(result);
+      const Arr = vm_infos.map(item => {
+        delete item.port;
+        return item;
+      })
+      setDataSource([...Arr]);
+      localStorage.setItem('vmThreeVmData', JSON.stringify(Arr));
+    } catch (e) {
+      setLoading(false)
+    }
 
+  }
+  //重新验证
+  const validation = async () => {
+    const vmArray = JSON.parse(localStorage.getItem('vmOneStepRowKeys')) || []
+    const vmNameArray = vmArray.map(item => {
+      return {vmname: item};
+    })
+    // console.log(vmNameArray);
+    // console.log(dataSource);
+    // console.log(editableKeys);
+    for (let i of vmNameArray) {
+      for (let j of dataSource) {
+        if (i.vmname === j.vmname) {
+          i.ip = j.ip;
+          i.os = j.os;
+        }
+      }
+    }
+    const res = await getVmwareList(vmNameArray)
+    console.log(res);
+    // for (let)
+  }
+  const handleChange = (editableKeys, editableRows) => {
+    // console.log(editableKeys);
+    // console.log(editableRows);
+    setEditableRowKeys(editableKeys)
+  }
   return (
     <>
       <ProCard title="源平台" headerBordered bordered>
@@ -214,42 +282,51 @@ export default (props) => {
         </Row>
         <Row>
           <Col span={24}>
-            {/*<Table*/}
-            {/*  title={() => '磁盘列表'}*/}
-            {/*  columns={columns}*/}
-            {/*  dataSource={dataList}*/}
-            {/*  pagination={false}*/}
-            {/*  loading={loading}*/}
-            {/*/>*/}
             <EditableProTable
               rowKey="vmname"
-              headerTitle="可编辑表格"
-              loading={false}
-              toolBarRender={false}
+              headerTitle="待迁移虚拟机列表"
+              toolBarRender={() => [
+                <Button
+                  type="primary"
+                  onClick={validation}
+                  key="1"
+                  disabled={editableKeys.length ? true : false}
+                >
+                  重新验证
+                </Button>
+              ]}
               recordCreatorProps={false}
               columns={columns}
               value={dataSource}
               onChange={setDataSource}
-              // scroll={{
-              //   x: 1200,
-              // }}
+              loading={loading}
               editable={{
-              type: 'multiple',
-              editableKeys,
-              onSave: async (rowKey, data, row) => {
-                console.log(rowKey, data, row);
-                await waitTime(1000);
-              },
-              onChange: setEditableRowKeys,
-            }}
-              />
+                type: 'single',
+                editableKeys,
+                actionRender: (row, config, defaultDoms) => {
+                  return [defaultDoms.save, defaultDoms.cancel];
+                },
+                onSave: async (rowKey, data, row) => {
+                  console.log(rowKey, data, row);
+                  // await waitTime(1000);
+                },
+                onChange: handleChange,
+              }}
+            />
             {
-              errText ? <Alert style={{marginTop:20}} showIcon message="源平台上找不到与目标平台nfs对应的datastore，请先配置datastore" type="error" /> : null
+              errText ? (
+                <Alert
+                  style={{marginTop: 20}}
+                  showIcon
+                  message="源平台上找不到与目标平台nfs对应的datastore，请先配置datastore"
+                  type="error"
+                />
+              ) : null
             }
           </Col>
         </Row>
       </ProCard>
-      <TagetInfo />
+      <TagetInfo current={current}/>
     </>
   );
 };
