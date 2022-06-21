@@ -11,7 +11,7 @@ export async function getLiveCd(params) {
 export async function makeLiveCd(params) {
   return request('/api/v1/live_cd', {
     method: 'POST',
-    data: { ...params},
+    data: { ...params },
   });
 }
 
@@ -19,8 +19,15 @@ export async function makeLiveCd(params) {
 //暂存 POST /api/v1/migration_task
 export async function temporaryMigrationTask(params) {
   return request('/api/v1/migration_task', {
-    method: 'put',
-    data: { ...params},
+    method: 'PUT',
+    data: { ...params },
+  });
+}
+
+export async function createMigrationTask(params) {
+  return request('/api/v1/migration_task', {
+    method: 'POST',
+    data: { ...params },
   });
 }
 
@@ -28,7 +35,7 @@ export async function temporaryMigrationTask(params) {
 // get /api/v1/migration_task
 export async function getTemporaryMigrationTask(params) {
   return request('/api/v1/migration_task', {
-    params
+    params,
   });
 }
 //第四步上传镜像
@@ -36,7 +43,7 @@ export async function getTemporaryMigrationTask(params) {
 export async function postOpenstackImg(params) {
   return request('/api/v1/openstack/image', {
     method: 'POST',
-    data: { ...params},
+    data: { ...params },
   });
 }
 //第五步 创建虚拟机
@@ -44,6 +51,6 @@ export async function postOpenstackImg(params) {
 export async function postOpenstackVm(params) {
   return request('/api/v1/openstack/vm', {
     method: 'POST',
-    data: { ...params},
+    data: { ...params },
   });
 }
