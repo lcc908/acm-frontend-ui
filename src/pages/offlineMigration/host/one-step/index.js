@@ -36,7 +36,11 @@ export default (props) => {
   };
   useEffect(async () => {
     // console.log(res);
-    getData();
+    if(host_id) {
+      getData();
+    } else {
+      message.error("请先去选择源平台界面，选择一台主机")
+    }
   },[]);
   const getData = async () => {
     const res = await getLiveCd({host_id:host_id});

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Card, Button, Progress, Row, Col, Popconfirm} from 'antd';
+import {Card, Button, message, Row, Col, Popconfirm} from 'antd';
 import ProCard from '@ant-design/pro-card';
 import ProTable, {TableDropdown} from '@ant-design/pro-table';
 import {CloudDownloadOutlined} from '@ant-design/icons';
@@ -67,6 +67,14 @@ export default (props) => {
     console.log(page, pageSize);
   }
 
+  const requestData = async () => {
+    if(!platform_id) {
+      message.error("请先选择源平台");
+      return [];
+    }
+    return await getVmWareListVm(params)
+  }
+
   const onSelectChange = (selectedRowKeys, selectedRows) => {
     // console.log(selectedRowKeys);
     localStorage.setItem('vmOneStepRowKeys',JSON.stringify(selectedRowKeys));
@@ -116,9 +124,10 @@ export default (props) => {
           ]
         }}
         // columnsStateMap={columnsStateMap}
-        request={(par) => {
-          return getVmWareListVm(params)
-        }}
+        // request={(par) => {
+        //   return getVmWareListVm(params)
+        // }}
+        request={requestData}
         rowSelection={{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange

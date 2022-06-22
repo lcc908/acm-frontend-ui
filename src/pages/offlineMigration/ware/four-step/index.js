@@ -1,26 +1,26 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Collapse ,Spin , Button} from 'antd';
-import ProForm,{
+import {Collapse, Spin, Button,Select,Empty  } from 'antd';
+import ProForm, {
   ProFormSelect,
 } from '@ant-design/pro-form';
-import { LoadingOutlined,CloseCircleTwoTone,CheckCircleTwoTone } from '@ant-design/icons';
+import {LoadingOutlined, CloseCircleTwoTone, CheckCircleTwoTone} from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card'
-import {postVmwareLog} from "@/pages/offlineMigration/ware/service";
+import {postVmwareLog, postVmwareTaskRetr} from "@/pages/offlineMigration/ware/service";
 
-const { Panel } = Collapse;
+const {Panel} = Collapse;
+const { Option } = Select;
 
 export default (props) => {
-  const { fourFormRef, form, current } = props;
+  const {fourFormRef,current} = props;
   const task_id = localStorage.getItem('vm_task_id');
-  const [vmNameList,setVmNameList] = useState([]);
-  const [selectVal,setSelectVal] = useState('');
-  const [loading,setLoading] = useState(false);
-  const [logData,setLogData] = useState({});
-  const callback = (key) => {
-    // console.log(key);
-  }
+  const [vmNameList, setVmNameList] = useState([]);
+  const [vmtaskId, setVmtaskId] = useState([]);
+  const [selectVal, setSelectVal] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [logData, setLogData] = useState({});
+  const [allData, setAllData] = useState({});
   const genExtra = (data) => {
-    if(data === 1) {
+    if (data === 1) {
       return <LoadingOutlined
         onClick={event => {
           // If you don't want click extra trigger collapse, you can prevent this:
@@ -28,59 +28,76 @@ export default (props) => {
         }}
       />
     }
-    if(data === 2) {
+    if (data === "failed") {
       return <CloseCircleTwoTone twoToneColor="#ff4d4f"
-        onClick={event => {
-          // If you don't want click extra trigger collapse, you can prevent this:
-          event.stopPropagation();
-        }}
+                                 onClick={event => {
+                                   // If you don't want click extra trigger collapse, you can prevent this:
+                                   event.stopPropagation();
+                                 }}
       />
     }
     return <CheckCircleTwoTone twoToneColor="#52c41a"
-      onClick={event => {
-        // If you don't want click extra trigger collapse, you can prevent this:
-        event.stopPropagation();
-      }}
+                               onClick={event => {
+                                 // If you don't want click extra trigger collapse, you can prevent this:
+                                 event.stopPropagation();
+                               }}
     />
   };
   useEffect(() => {
-    if(task_id) {
+    if (task_id) {
+      console.log(1);
       getData()
     }
-  },[current])
+  }, [current])
+
   const getData = async () => {
     setLoading(true)
-    const {code,data:{log_info}} = await postVmwareLog({
-      migration_batch_task_id:"629ef4f055e4720a23000003"
+    const {data: {log_info}} = await postVmwareLog({
+      migration_batch_task_id:task_id
+      // migration_batch_task_id: "629ef4f055e4720a23000003"
     });
-    // vmNameList
-    // console.log(log_info["suse12-sp4-node2"]);
-    let vm_name_list = [];
-    for (let i in log_info) {
-      vm_name_list.push({
-        label:i,
-        value:i
-      });
+    if (Object.getOwnPropertyNames(log_info).length !== 0) {
+      let vm_name_list = [];
+      for (let i in log_info) {
+        vm_name_list.push({
+          label: i,
+          value: log_info[i].task_id
+        });
+      }
+      console.log(vm_name_list);
+      setVmNameList([...vm_name_list])
+      setAllData({...log_info});
+      if (selectVal) {
+        setLogData({...log_info[selectVal]})
+      } else {
+        setLogData({...log_info[vm_name_list[0].label]});
+        // fourFormRef.
+        fourFormRef?.current?.setFieldsValue({
+          useMode:vm_name_list[0].value
+        });
+      }
     }
     setLoading(false)
-    setVmNameList([...vm_name_list])
-    if(selectVal) {
-      setLogData({...log_info[selectVal]})
-    } else {
-      setLogData({...log_info[vm_name_list[0].value]})
-    }
   }
   useEffect(() => {
-    console.log(logData);
-  },[logData])
+    console.log(vmNameList);
+    if(vmNameList.length) {
+      console.log(vmNameList[0].value);
+    }
+  }, [vmNameList])
 
   const handleRender = () => {
     getData();
   }
-  // const handleChange = (val) => {
-  //   console.log(val);
-  //   setSelectVal()
-  // }
+  const handleReload = async () => {
+    const res = await postVmwareTaskRetr({migration_task_id: vmtaskId});
+    console.log(res);
+  }
+  const handleChange = (val,option) => {
+    setSelectVal(option.label);
+    setVmtaskId(val)
+    setLogData({...allData[option.label]})
+  }
   return (
     <Spin spinning={loading}>
       <ProCard
@@ -90,13 +107,10 @@ export default (props) => {
       >
         <ProForm.Group>
           {
-            vmNameList.length &&　(
+            vmNameList.length > 0 ? (
               <ProFormSelect
                 width="md"
-                // fieldProps={{
-                //   labelInValue: true,
-                // }}
-                initialValue={vmNameList[0].value}
+                // initialValue={vmNameList[0].value}
                 options={vmNameList}
                 name="useMode"
                 label="vmName"
@@ -104,21 +118,34 @@ export default (props) => {
                   <Button type="primary" onClick={handleRender}>更新</Button>
                 }
                 fieldProps={{
-                  onChange:setSelectVal
+                  onChange: handleChange,
                 }}
               />
-            )
+            ) :
+              <ProFormSelect
+                width="md"
+                options={[]}
+                name="useMode"
+                label="vmName"
+                addonAfter={
+                  <Button type="primary" onClick={handleRender}>更新</Button>
+                }
+                fieldProps={{
+                  onChange: setSelectVal
+                }}
+              />
           }
+          <Button type="primary" onClick={handleReload}>任务重试</Button>
         </ProForm.Group>
-        <Collapse onChange={callback}>
+        <Collapse>
           {
-            logData.logs && logData.logs.map((item,index) => {
+            logData.logs ? logData.logs.map((item, index) => {
               return (
-                <Panel header={item.step} key={index} extra={genExtra(3)}>
+                <Panel header={item.step} key={index} extra={genExtra(item.result)}>
                   <p>{item.message}</p>
                 </Panel>
               )
-            })
+            }) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
           }
           {/*<Panel header="This is panel header 2" key="2" extra={genExtra(2)}>*/}
           {/*  <p>{text}</p>*/}

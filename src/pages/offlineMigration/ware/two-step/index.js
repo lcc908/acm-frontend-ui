@@ -5,7 +5,7 @@ import ProForm, {
   ProFormDateTimePicker,
   ProFormUploadButton,
   ProFormText, ProFormSwitch,
-  ProFormCascader
+  ProFormCascader, ProFormTextArea
 } from '@ant-design/pro-form';
 import ProCard from '@ant-design/pro-card';
 import styles from './style.less';
@@ -15,18 +15,10 @@ export default (props) => {
   const {twoFormRef, selectedRowKeys, handleNextState} = props;
   const [showDateTime, setShowDateTime] = useState(false)
   const rules = [{required: true}];
-  const onChange = (value) => {
-    console.log(value);
-    // setSelectValue(value)
-  }
-  const displayRender = (label) => {
-    return label[label.length - 1];
-  }
   const changeSwitch = (val) => {
     setShowDateTime(val)
   }
   useEffect(() => {
-    // console.log(selectedRowKeys);
     const obj = JSON.parse(localStorage.getItem('vmTwoStepFormData')) || {}
     twoFormRef?.current?.setFieldsValue({
       ...obj
@@ -50,14 +42,16 @@ export default (props) => {
               request={async () => {
                 const {data} = await getPermission();
                 const arr = [];
-                data.forEach(item => {
-                  if (item?.platform_type.toLowerCase() === "openstack") {
-                    arr.push({
-                      label: item.platform_name, value: item.id
-                    })
+                if(data.length) {
+                  for (let i of data) {
+                    if (i.platform_type &&　i.platform_type.toLowerCase() === "openstack") {
+                      console.log(i.platform_name);
+                      arr.push({
+                        label: i.platform_name, value: i.id
+                      })
+                    }
                   }
-                })
-                // console.log(arr);
+                }
                 return arr
               }}
               rules={rules}
@@ -105,6 +99,17 @@ export default (props) => {
             {/*    );*/}
             {/*  }}*/}
             {/*</Form.Item>*/}
+          </Col>
+          <Col span={8}>
+            <ProFormTextArea
+              name="description"
+              label="描述"
+              placeholder="请输入描述"
+              fieldProps={{
+                rows:1
+              }}
+              // rules={rules}
+            />
           </Col>
         </Row>
         <Row gutter={24}>

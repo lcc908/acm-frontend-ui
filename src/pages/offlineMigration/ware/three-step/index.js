@@ -169,41 +169,42 @@ export default (props) => {
   const getVmwareList = async (arr) => {
     setLoading(true);
     // const vmArray = JSON.parse(localStorage.getItem('vmOneStepRowKeys')) || []
-    const vmNameArray = vmArray.map(item => {
-      return {vmname: item};
-    })
-    try {
-      const {code, data: {result}} = await postVmwareTaskValidate({
-        name,
-        source_platform_id: platform_id,
-        target_platform_id: target_platform_id,
-        vm_infos: arr || vmNameArray
-      });
-      if (code === 200) setLoading(false)
-      // setLoading(false)
-      // console.log(result);
-      const {datastore_check, vm_check, vm_infos} = result;
-      if (datastore_check === "failed" || vm_check === "failed") {
-        // "datastore_check" 和 "vm_check"的值只要任何一个为"failed"，说明验证失败，阻止用户进入下一步
-        setThreeNextBt(true)
-      }
-      if (datastore_check === "success" && vm_check === "success") {
-        setThreeNextBt(false)
-      }
-      if (datastore_check === "failed") {
-        setErrText(true)
-      }
-      // console.log(result);
-      const Arr = vm_infos.map(item => {
-        delete item.port;
-        return item;
+    if(target_platform_id) {
+      const vmNameArray = vmArray.map(item => {
+        return {vmname: item};
       })
-      setDataSource([...Arr]);
-      localStorage.setItem('vmThreeVmData', JSON.stringify(Arr));
-    } catch (e) {
-      setLoading(false)
+      try {
+        const {code, data: {result}} = await postVmwareTaskValidate({
+          name,
+          source_platform_id: platform_id,
+          target_platform_id: target_platform_id,
+          vm_infos: arr || vmNameArray
+        });
+        if (code === 200) setLoading(false)
+        // setLoading(false)
+        // console.log(result);
+        const {datastore_check, vm_check, vm_infos} = result;
+        if (datastore_check === "failed" || vm_check === "failed") {
+          // "datastore_check" 和 "vm_check"的值只要任何一个为"failed"，说明验证失败，阻止用户进入下一步
+          setThreeNextBt(true)
+        }
+        if (datastore_check === "success" && vm_check === "success") {
+          setThreeNextBt(false)
+        }
+        if (datastore_check === "failed") {
+          setErrText(true)
+        }
+        // console.log(result);
+        const Arr = vm_infos.map(item => {
+          delete item.port;
+          return item;
+        })
+        setDataSource([...Arr]);
+        localStorage.setItem('vmThreeVmData', JSON.stringify(Arr));
+      } catch (e) {
+        setLoading(false)
+      }
     }
-
   }
   //重新验证
   const validation = async () => {

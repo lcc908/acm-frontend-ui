@@ -28,4 +28,11 @@ export async function postVmwareLog(params) {
     data: { ...params},
   });
 }
+// /api/v1/vmware_task_retry
+export async function postVmwareTaskRetr(params) {
+  return request('/api/v1/vmware_task_retry', {
+    method: 'POST',
+    data: { ...params},
+  });
+}
 

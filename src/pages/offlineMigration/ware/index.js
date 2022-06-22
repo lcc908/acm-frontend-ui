@@ -13,14 +13,18 @@ import {RouterPrompt} from '@/usehooks/RouterPrompt'
 import {postCreateVmware} from "@/pages/offlineMigration/ware/service";
 
 const StepResult = (props) => {
+  const handleBlack = () => {
+    props.onFinish();
+    clearLocalStorage()
+  }
   return (
     <Result
       status="success"
-      title="流程结束"
-      subTitle="。。。"
+      title="迁移任务完成"
+      subTitle="点击返回按钮，返回第一步"
       extra={
         <>
-          <Button type="primary" onClick={props.onFinish}>
+          <Button type="primary" onClick={handleBlack}>
             返回
           </Button>
         </>
@@ -28,6 +32,14 @@ const StepResult = (props) => {
       className={styles.result}
     ></Result>
   );
+};
+
+const clearLocalStorage = () => {
+  localStorage.removeItem('vmStep');
+  localStorage.removeItem('vmTwoStepFormData');
+  localStorage.removeItem('vmOneStepRowKeys');
+  localStorage.removeItem('vmThreeVmData');
+  localStorage.removeItem('vm_task_id');
 };
 
 const StepForm = (props) => {
@@ -148,13 +160,6 @@ const StepForm = (props) => {
     ]
   }
 
-  const clearLocalStorage = () => {
-    localStorage.removeItem('vmStep');
-    localStorage.removeItem('vmTwoStepFormData');
-    localStorage.removeItem('vmOneStepRowKeys');
-    localStorage.removeItem('vmThreeVmData');
-  };
-
   return (
     <PageContainer content="将一个冗长或用户不熟悉的表单任务分成多个步骤，指导用户完成。">
       <RouterPrompt
@@ -189,8 +194,20 @@ const StepForm = (props) => {
               if (props.step === 2) {
                 return ButtonArray(props,threeNextBt)
               }
-              if (props.step < 4) {
+              if (props.step === 3 || props.step === 1) {
                 return ButtonArray(props,false)
+              }
+              if (props.step === 4) {
+               return [
+                 <Button
+                   type="primary"
+                   style={{ marginTop: 35 }}
+                   key="goToTree3"
+                   onClick={() => handleSubmit(props)}
+                 >
+                   下一步
+                 </Button>,
+               ]
               }
               if (props.step === 4) {
                 return null;

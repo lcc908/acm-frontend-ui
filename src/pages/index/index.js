@@ -8,6 +8,7 @@ import yewu from '../../assets/yewurongzai.png'
 import zaixian from '../../assets/zaixian.png'
 import lixian from '../../assets/lixian.png'
 import beifen from '../../assets/beifen.png'
+import {history} from "umi";
 
 const IndexPage = () => {
   const list = [
@@ -23,6 +24,7 @@ const IndexPage = () => {
       "title": "混合云场景",
       "buttonText": "在线迁移",
       "cover": zaixian,
+      "code":'zaixian',
       "description": "在线迁移目前兼容主流的Linux和Windows主机，该功能能够满足应用宕机时间短，业务恢复快，不依赖于源平台类型，迁移目标平台的时间取决于迁移过程所依赖的网络带宽，磁盘IO读写性能以及迁移应用程序的资源配置。",
     },
     {
@@ -30,6 +32,7 @@ const IndexPage = () => {
       "title": "异构平台",
       "buttonText": "离线迁移",
       "cover": lixian,
+      "code":'physical_host',
       "description": "离线迁移适用于较低版本的OS迁移，操作系统及程序绑定硬件信息，对数据敏感型应用，以及不同厂商的平台，后端存储以及跨存储迁移等场景，迁移时间灵活，自动化程度高。",
     },
     {
@@ -41,6 +44,14 @@ const IndexPage = () => {
     },
   ];
 
+  const handleClick = (code) => {
+    if(code === 'zaixian') {
+      history.push(`/onlineMigration`);
+    }
+    if(code === 'physical_host') {
+      history.push(`/offline/host`);
+    }
+  }
   return (
     <PageContainer
       header={{
@@ -72,11 +83,18 @@ const IndexPage = () => {
           dataSource={[...list]}
           renderItem={(item) => {
             return (
-              <List.Item key={item.id}>
+              <List.Item key={item.id} onClick={() => handleClick(item.code)}>
                 <Card
                   hoverable
                   className={styles.card}
-                  actions={[ <Button style={{width:'200px'}} type="primary" key={item.id}>{item.buttonText}</Button>]}
+                  actions={[ <Button
+                    style={{width:'200px'}}
+                    type="primary"
+                    key={item.id}
+                    disabled={!item.code ? true : false}
+                  >
+                    {item.buttonText}
+                  </Button>]}
                   cover={<img alt="" className={styles.cardAvatar} src={item.cover}/>}
                 >
                   <Card.Meta

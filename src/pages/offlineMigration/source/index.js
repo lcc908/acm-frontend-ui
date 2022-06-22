@@ -48,7 +48,7 @@ const IndexPage = () => {
     setModalVisit(false);
   }
   const pushRoute = () => {
-    console.log(platformType);
+    // console.log(platformType);
     if(platformType === 'vmware') {
       history.push(`/offline/vm?platform_id=${hostId}`);
     }
