@@ -46,13 +46,12 @@ export default [
     path: '/offline',
     name: '离线迁移',
     icon: 'InsertRowRight',
-    routes:[
+    routes: [
       {
         path: '/offline',
         redirect: '/offline/source',
       },
       {
-
         name: '选择源平台',
         icon: 'smile',
         path: '/offline/source',
@@ -70,7 +69,7 @@ export default [
         path: '/offline/vm',
         component: './offlineMigration/ware',
       },
-    ]
+    ],
   },
   {
     path: '/account',
@@ -82,7 +81,7 @@ export default [
         redirect: '/account/general-user',
       },
       {
-        name: '普通用户列表',
+        name: '用户列表',
         path: '/account/general-user',
         component: './account/general-user',
       },
@@ -91,7 +90,7 @@ export default [
         path: '/account/ad-user',
         component: './account/ad-user',
       },
-    ]
+    ],
   },
   {
     path: '/authority',
@@ -112,7 +111,7 @@ export default [
         path: '/authority/platform-permissions',
         component: './authority/platform-permissions',
       },
-    ]
+    ],
   },
   {
     path: '/log-audit',
