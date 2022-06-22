@@ -10,7 +10,7 @@ import {history} from "umi";
 export default (props) => {
   const {oneFormRef, form, handleNextState} = props;
   const [downLoad,setDownLoad] = useState('');
-  const rules = [{required: true, message: '这是必填项'}];
+  const rules = [{required: true}];
   const {host_id} = history?.location?.query;
   const handleClick = async () => {
     // console.log(oneFormRef.current);

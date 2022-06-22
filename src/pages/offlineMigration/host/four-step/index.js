@@ -10,7 +10,7 @@ import ProCard from '@ant-design/pro-card';
 import {postOpenstackImg,getTemporaryMigrationTask} from "@/pages/offlineMigration/host/service";
 export default (props) => {
   const { fourFormRef, fourData } = props;
-  const rules = [{ required: true, message: '这是必填项' }];
+  const rules = [{ required: true}];
   const [updateState,setUpdateState] = useState({}); //上传状态
 
   useEffect(() => {

@@ -1,21 +1,16 @@
-import React, { useRef, useState } from 'react';
-import { Card, Result, Button, Divider, message, Form } from 'antd';
+import React, {useEffect, useRef, useState} from 'react';
+import { Card, Result, Button, Divider, Modal, Form } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
 import { ProFormSwitch, ProFormText, StepsForm } from '@ant-design/pro-form';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import OneStep from './one-step';
 import TwoStep from './two-step';
 import ThreeStep from './three-step';
 import FourStep from './four-step';
 import styles from './style.less';
-// import FourStep from "@/pages/onlineMigration/components/fourStep";
-
-const waitTime = (time = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
+import {useHistory, Prompt, history} from "umi";
+import {RouterPrompt} from '@/usehooks/RouterPrompt'
+import {postCreateVmware} from "@/pages/offlineMigration/ware/service";
 
 const StepResult = (props) => {
   return (
@@ -36,12 +31,15 @@ const StepResult = (props) => {
 };
 
 const StepForm = (props) => {
-  const [stepData, setStepData] = useState({
-    id1: '5001',
-  });
-  const [current, setCurrent] = useState(0); //当前表单的步骤数，从 0 开始
+  // 是否启用Prompt
+  const [current, setCurrent] = useState(()=>{
+    const setNum = localStorage.getItem('vmStep');
+    return setNum ? parseInt(setNum) : 0;
+  }); //当前表单的步骤数，从 0 开始
   const [disabled, setDisabled] = useState(true);
+  const [threeNextBt, setThreeNextBt] = useState(true);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]); //第一步：选择的虚拟机列表名称
+  const history = useHistory();
 
   const [form] = Form.useForm();
 
@@ -50,7 +48,11 @@ const StepForm = (props) => {
   const twoFormRef = useRef();
   const threeFormRef = useRef();
   const fourFormRef = useRef();
-
+  const changeCurrent = (val) => {
+    setCurrent(val);
+    localStorage.setItem('vmStep',val);
+    console.log(val);
+  }
   const handleSubmitZanCun = (props) => {
     const { step, form } = props;
     if (step === 0) {
@@ -97,42 +99,82 @@ const StepForm = (props) => {
       }
     }
     console.log(obj);
+    if (props.step === 1) {
+      const obj = await twoFormRef?.current?.validateFieldsReturnFormatValue();
+      console.log(obj);
+      localStorage.setItem('vmTwoStepFormData',JSON.stringify(obj));
+      // return false;
+    }
+    if(props.step === 2) {
+      const {platform_id} = history?.location?.query;
+      const {name, target_platform_id} = JSON.parse(localStorage.getItem('vmTwoStepFormData'));
+      const vm_infos = JSON.parse(localStorage.getItem('vmThreeVmData'));
+      let obj = {
+        name,
+        target_platform_id,
+        source_platform_id:platform_id,
+        vm_infos:vm_infos
+      }
+      const {code,data:{task_id}} = await postCreateVmware(obj);
+      if(code === 200) {
+        // props.onSubmit?.();
+        localStorage.setItem('vm_task_id',task_id);
+      } else {
+        return false;
+      }
+    }
     props.onSubmit?.();
     // console.log(props.form.getFieldValue());
   };
   //第一步方法：控制下一步按钮和存储选择的虚拟机
   const onChangeDisabled = (par,selectedRowKeys) => {
-    console.log(selectedRowKeys);
     setSelectedRowKeys([...selectedRowKeys])
     setDisabled(par)
   }
+  const ButtonArray = (props,disabled) => {
+    return [
+      <Button key="pre1" style={{ marginTop: 35 }} onClick={() => props.onPre?.()}>
+        上一步
+      </Button>,
+      <Button
+        type="primary"
+        style={{ marginTop: 35 }}
+        key="goToTree3"
+        onClick={() => handleSubmit(props)}
+        disabled={disabled}
+      >
+        下一步
+      </Button>,
+    ]
+  }
+
+  const clearLocalStorage = () => {
+    localStorage.removeItem('vmStep');
+    localStorage.removeItem('vmTwoStepFormData');
+    localStorage.removeItem('vmOneStepRowKeys');
+    localStorage.removeItem('vmThreeVmData');
+  };
+
   return (
     <PageContainer content="将一个冗长或用户不熟悉的表单任务分成多个步骤，指导用户完成。">
+      <RouterPrompt
+        when={true}
+        title="是否要离开页面？"
+        onOK={() => true}
+        clearLocalStorage={clearLocalStorage}
+        onCancel={() => false}
+      />
       <Card bordered={false} className={styles.spacrFrom}>
         <StepsForm
           formMapRef={formMapRef}
           current={current}
           form={form}
-          onCurrentChange={setCurrent} //current 发生改变的事件
-          // onFinish={async (values) => {
-          //   console.log(values);
-          //   await waitTime(1000);
-          //   message.success('提交成功');
-          // }}
+          onCurrentChange={changeCurrent} //current 发生改变的事件
           submitter={{
             //提交按钮相关配置
             render: (props, dom) => {
               if (props.step === 0) {
                 return [
-                  <Button
-                    style={{ marginTop: 35 }}
-                    type="primary"
-                    key="goToTree33"
-                    onClick={() => handleSubmitZanCun(props)}
-                  >
-                    暂存
-                  </Button>,
-                  // <Button disabled={disabled} style={{marginTop:35}} type="primary" key="asd2123" onClick={() => props.onSubmit?.()}>
                   <Button
                     style={{ marginTop: 35 }}
                     type="primary"
@@ -144,29 +186,11 @@ const StepForm = (props) => {
                   </Button>,
                 ];
               }
+              if (props.step === 2) {
+                return ButtonArray(props,threeNextBt)
+              }
               if (props.step < 4) {
-                return [
-                  <Button key="pre1" style={{ marginTop: 35 }} onClick={() => props.onPre?.()}>
-                    上一步
-                  </Button>,
-                  <Button
-                    type="primary"
-                    style={{ marginTop: 35 }}
-                    key="goToTree"
-                    onClick={() => handleSubmitZanCun(props)}
-                  >
-                    暂存
-                  </Button>,
-                  // <Button disabled={disabled} type="primary" style={{marginTop:35}} key="goToTree3" onClick={() => handleSubmit(props)}>
-                  <Button
-                    type="primary"
-                    style={{ marginTop: 35 }}
-                    key="goToTree3"
-                    onClick={() => handleSubmit(props)}
-                  >
-                    下一步
-                  </Button>,
-                ];
+                return ButtonArray(props,false)
               }
               if (props.step === 4) {
                 return null;
@@ -184,12 +208,11 @@ const StepForm = (props) => {
             layout="horizontal"
             // labelCol={{span: 4}}
             // wrapperCol={{span: 18}}
-            initialValues={stepData}
-            onFinish={async (values) => {
-              console.log(values);
-              // setStepData(values);
-              return true;
-            }}
+            // onFinish={async (values) => {
+            //   console.log(values);
+            //   // setStepData(values);
+            //   return true;
+            // }}
           >
             <OneStep
               oneFormRef={oneFormRef}
@@ -216,6 +239,7 @@ const StepForm = (props) => {
             <TwoStep
               twoFormRef={twoFormRef}
               selectedRowKeys={selectedRowKeys}
+              current={current}
             />
           </StepsForm.StepForm>
           <StepsForm.StepForm
@@ -230,7 +254,12 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <ThreeStep threeFormRef={threeFormRef} />
+            <ThreeStep
+              threeFormRef={threeFormRef}
+              selectedRowKeys={selectedRowKeys}
+              setThreeNextBt={setThreeNextBt}
+              current={current}
+            />
           </StepsForm.StepForm>
           <StepsForm.StepForm
             title="第四步"
@@ -245,19 +274,17 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <FourStep fourFormRef={fourFormRef} />
+            <FourStep fourFormRef={fourFormRef} current={current}/>
           </StepsForm.StepForm>
           <StepsForm.StepForm title="完成">
             <StepResult
               onFinish={async () => {
                 setCurrent(0);
-                console.log(1);
                 // formMapRef.current?.resetFields();
                 oneFormRef.current?.resetFields();
                 return true;
               }}
             >
-              {/*<StepDescriptions stepData={stepData} />*/}
             </StepResult>
           </StepsForm.StepForm>
         </StepsForm>

@@ -47,8 +47,8 @@ const StepForm = (props) => {
   // const [current, setCurrent] = useState(4); //当前表单的步骤数，从 0 开始
   const [current, setCurrent] = useState(()=>{
     const setNum = localStorage.getItem('onlineStep');
-    // return setNum ? parseInt(setNum) : 3;
-    return 4;
+    return setNum ? parseInt(setNum) : 1;
+    // return 4;
   }); //当前表单的步骤数，从 0 开始
   const [twoNextBt, setTwoNextBt] = useState(true); //2 next
   const [fiveNextBt, setFiveNextBt] = useState(true); //5 next
@@ -238,7 +238,7 @@ const StepForm = (props) => {
             }}
             labelCol={{span: 4}}
             wrapperCol={{span: 20}}
-            initialValues={stepData}
+            // initialValues={stepData}
             onFinish={async (values) => {
               console.log(values);
               // setStepData(values);
