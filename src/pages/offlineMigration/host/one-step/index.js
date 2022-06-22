@@ -16,7 +16,6 @@ export default (props) => {
     // console.log(oneFormRef.current);
     // console.log(oneFormRef.current.validateFields());
     const val = await oneFormRef.current?.validateFieldsReturnFormatValue();
-    console.log(val);
     val.host_id = host_id;
     val.nic_index = parseInt(val.nic_index);
     const res = await makeLiveCd(val);
@@ -42,6 +41,7 @@ export default (props) => {
       message.error("请先去选择源平台界面，选择一台主机")
     }
   },[]);
+
   const getData = async () => {
     const res = await getLiveCd({host_id:host_id});
     if(res.code === 200) {

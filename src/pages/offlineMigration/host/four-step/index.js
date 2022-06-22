@@ -14,11 +14,13 @@ export default (props) => {
   const [updateState,setUpdateState] = useState({}); //上传状态
 
   useEffect(() => {
-    console.log(fourData.status);
     if(fourData) {
       fourFormRef?.current?.setFieldsValue({
         ...fourData
       });
+      if(fourData.status === "IMAGE_UPLOADED") {
+        // message.success("上传成功！")
+      }
       setUpdateState(fourData.status)
     }
 
@@ -27,30 +29,28 @@ export default (props) => {
   const handleClick = async () => {
     console.log('这是第四步', fourFormRef?.current?.getFieldValue());
     const val = fourFormRef?.current?.getFieldValue();
-    const taskId = localStorage.getItem('offlineTask_id') || '62972194759b7432c4000001'
+    const taskId = localStorage.getItem('host_task_id')
     val.task_id = taskId;
     const res = await postOpenstackImg(val);
     if(res.code === 200) {
       message.success('已提交上传！');
       const res = await getTemporaryMigrationTask({id:taskId});
-      console.log(res);
-      // if(res.data.length) {
-      //   const current_step = res.data[0].sub_task[0].current_step;
-      //   console.log(current_step);
-      //   if(current_step === 'IMAGE_UPLOADING') {
-      //     //上传中
-      //     console.log('上传中');
-      //   }
-      //   if(current_step === 'IMAGE_UPLOADED') {
-      //     //上传已完成
-      //     console.log('上传已完成');
-      //   }
-      //   if(current_step === 'IMAGE_UPLOAD_FAILED') {
-      //     //上传已完成
-      //     console.log('上传失败');
-      //   }
-      //   // setData({...res.data[0]})
-      // }
+      if(res.data.length) {
+        const current_step = res.data[0].sub_task[0].current_step;
+        // if(current_step === 'IMAGE_UPLOADING') {
+        //   //上传中
+        //   console.log('上传中');
+        // }
+        // if(current_step === 'IMAGE_UPLOADED') {
+        //   //上传已完成
+        //   console.log('上传已完成');
+        // }
+        // if(current_step === 'IMAGE_UPLOAD_FAILED') {
+        //   //上传已完成
+        //   console.log('上传失败');
+        // }
+        // setData({...res.data[0]})
+      }
     }
   }
   return (
@@ -59,7 +59,7 @@ export default (props) => {
         title="目标主机配置与迁移"
         headerBordered
         bordered
-        actions={updateState === 'IMAGE_UPLOADING' ? [<Button type="primary" key="1" onClick={handleClick} loading>上传中</Button>] : [<Button type="primary" key="2" onClick={handleClick}>上传镜像</Button>]}
+        actions={updateState === 'IMAGE_UPLOADING' ? [<Button type="primary" key="1" onClick={handleClick} loading>上传中</Button>] : [<Button type="primary" key="2" onClick={handleClick}>上传成功</Button>]}
       >
         <Row gutter={24} justify={'center'} align={'middle'}>
           <Col span={12}>

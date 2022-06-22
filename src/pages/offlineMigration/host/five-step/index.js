@@ -96,8 +96,8 @@ export default (props) => {
   ];
 
   useEffect(() => {
-    console.log(fiveData);
     if(fiveData) {
+      // console.log(fiveData);
       fiveFormRef?.current?.setFieldsValue({
         ...fiveData
       });
@@ -106,25 +106,34 @@ export default (props) => {
 
   },[fiveData])
   const handleClick = async () => {
-    console.log('这是第四步', fiveFormRef?.current?.getFieldValue());
+    // console.log('这是第四步', fiveFormRef?.current?.getFieldValue());
     await waitTime();
     const val = fiveFormRef?.current?.getFieldValue();
-    const taskId = localStorage.getItem('offlineTask_id') || '62972194759b7432c4000001'
+    const taskId = localStorage.getItem('host_task_id')
     val.task_id = taskId;
     val.flavor_name = val.flavor;
     val.save_only = true;
-    const res = await postOpenstackVm(val);
-    if(res.code === 200) {
+    const {code,data} = await postOpenstackVm(val);
+    if(code === 200) {
       message.success('虚拟机启动成功！');
+      console.log(data);
       const res = await getTemporaryMigrationTask({id:taskId});
-      console.log(res);
+      if(res.data.length) {
+        const {status} = JSON.parse(res?.data[0]?.sub_task[0]?.platform_info) || {};
+        console.log(status);
+        if(status === "OPENSTACK_VM_CREATING") {
+
+        }
+        if(status === "OPENSTACK_VM_CREATED") {
+          message.error("创建成功")
+        }
+        if(status === "OPENSTACK_VM_CREATE_FAILED") {
+          message.error("创建失败")
+        }
+      }
       // res.data[0].sub_task[0].platform_info
     }
   }
-  useEffect(() => {
-    // console.log(editableKeys);
-    console.log(dataSource);
-  },[dataSource])
   return (
     <>
       <ProCard
@@ -182,15 +191,15 @@ export default (props) => {
             label="网络名称"
             options={[
               {
-                value: 'network_10.120.79',
-                label: 'network_10.120.79',
+                value: '10.108.192.0',
+                label: '10.108.192.0',
               },
             ]}
           />
           <div style={{textAlign:'center'}}>
             {
-              state === 'OPENSTACK_VM_CREATING' ? <Button type="primary" loading>虚拟机创建中</Button> :
-                <Button type="primary" key="2" onClick={handleClick} loading>启动虚拟机</Button>
+              state === 'OPENSTACK_VM_CREATING' ? <Button type="primary" loading={true}>虚拟机创建中</Button> :
+                <Button type="primary" key="2" onClick={handleClick}>创建虚拟机</Button>
             }
           </div>
           {/*<Table columns={columns} dataSource={data} pagination={false} title={() => '磁盘列表'}/>*/}

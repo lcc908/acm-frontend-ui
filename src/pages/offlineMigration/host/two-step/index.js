@@ -23,15 +23,14 @@ export default (props) => {
   const [diskArray,setDiskArray] = useState([]) //磁盘信息
   const rules = [{ required: true}];
   const handleChange = (val) => {
-    console.log(val[0]);
     if(val[0]) {
       setXitGb(false);
       return false;
     }
     setXitGb(true);
-    twoFormRef.current?.setFieldsValue({
-      c1:null
-    })
+    // twoFormRef.current?.setFieldsValue({
+    //   c1:null
+    // })
   }
   const handleChangeSJ = (val) => {
     if(val[0]) {
@@ -39,9 +38,9 @@ export default (props) => {
       return false;
     }
     setSjGb(true);
-    twoFormRef.current?.setFieldsValue({
-      c2:[]
-    })
+    // twoFormRef.current?.setFieldsValue({
+    //   c2:[]
+    // })
   }
   useEffect(()=>{
     getData();
@@ -55,14 +54,14 @@ export default (props) => {
     // setDiskArray([...par.volume]);
     if(par.volume.length) {
       const arr = par.volume.map(item =>{
-        return {label:item.name,value:item.id}
+        return {label:item.name,value:item.name}
       });
       setDiskArray([...arr]);
     }
     if(data.length) {
       const res = data[0];
       // handleSetTaskId(res.id)
-      localStorage.setItem('offlineTask_id',res.id)
+      localStorage.setItem('host_task_id',res.id)
       twoFormRef.current?.setFieldsValue({
         ...res,
         // ...hostData
@@ -98,7 +97,7 @@ export default (props) => {
             {/*  // rules={rules}*/}
             {/*/>*/}
             <ProFormSelect
-              name="a"
+              name="target_platform_id"
               label="目标平台"
               request={async () => {
                 const {data} = await getPermission();
@@ -158,7 +157,7 @@ export default (props) => {
               ]}
               // addonAfter={<ProFormText name="c1" disabled={xitGb} />}
               addonAfter={<ProFormSelect
-                name="c1"
+                name="system_disk"
                 width="xl"
                 options={diskArray}
                 disabled={xitGb}
@@ -180,7 +179,7 @@ export default (props) => {
               ]}
               // addonAfter={<ProFormText name="c2" disabled={sjGb} />}
               addonAfter={<ProFormSelect
-                name="c2"
+                name="data_disk"
                 width="xl"
                 options={diskArray}
                 fieldProps={{

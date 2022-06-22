@@ -2,7 +2,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { StepsForm } from '@ant-design/pro-form';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Button, Card, Divider, Form, message, Modal, Result } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { history, Prompt } from 'umi';
 import FiveStep from './five-step';
 import FourStep from './four-step';
@@ -12,6 +12,7 @@ import SixStep from './six-step';
 import styles from './style.less';
 import ThreeStep from './three-step';
 import TwoStep from './two-step';
+import {useInterval} from "@/utils"
 // import FourStep from "@/pages/onlineMigration/components/fourStep";
 
 const { confirm } = Modal;
@@ -24,14 +25,19 @@ const waitTime = (time = 100) => {
 };
 
 const StepResult = (props) => {
+  const handleBlack = () => {
+    props.onFinish();
+    clearLocalStorage();
+    history.push('/offline/source');
+  }
   return (
     <Result
       status="success"
-      title="流程结束"
-      subTitle="。。。"
+      title="迁移任务完成"
+      subTitle="点击返回按钮，返回第选择源平台界面"
       extra={
         <>
-          <Button type="primary" onClick={props.onFinish}>
+          <Button type="primary" onClick={handleBlack}>
             返回
           </Button>
         </>
@@ -40,25 +46,10 @@ const StepResult = (props) => {
     ></Result>
   );
 };
-function useInterval(callback, delay) {
-  const savedCallback = useRef();
-
-  useEffect(() => {
-    savedCallback.current = callback;
-  });
-
-  useEffect(() => {
-    function tick() {
-      savedCallback.current();
-    }
-
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}
-
+const clearLocalStorage = () => {
+  localStorage.removeItem('hostStep');
+  localStorage.removeItem('host_task_id');
+};
 const StepForm = (props) => {
   const [stepData, setStepData] = useState({
     id1: '5001',
@@ -68,6 +59,7 @@ const StepForm = (props) => {
     return setNum ? parseInt(setNum) : 0;
   }); //当前表单的步骤数，从 0 开始
   const [disabled, setDisabled] = useState(true);
+  const [threeNextBt, setThreeNextBt] = useState(true);
   const [fourNextBt, setFourNextBt] = useState(true);
   const [fiveNextBt, setFiveNextBt] = useState(true);
   const [temporaryButton, setTemporaryButton] = useState(false);
@@ -78,13 +70,12 @@ const StepForm = (props) => {
   const { host_id } = history?.location?.query;
   const [form] = Form.useForm();
 
-  // useInterval(() => {
-  //   getData();;
-  // }, isRunning ? 5000 : null);
+  useInterval(() => {
+    getData();
+  }, isRunning ? 10000 : null);
 
   useEffect(() => {
     getData();
-    console.log(history.location.query.host_id);
   }, []);
 
   const formMapRef = useRef();
@@ -99,30 +90,31 @@ const StepForm = (props) => {
     localStorage.setItem('hostStep', val);
   };
   const getData = async () => {
-    const taskId = localStorage.getItem('offlineTask_id') || '62972194759b7432c4000001';
+    const taskId = localStorage.getItem('host_task_id');
     const res = await getTemporaryMigrationTask({ id: taskId });
     if (res.data.length) {
+      const {status} = JSON.parse(res?.data[0]?.sub_task[0]?.platform_info) || {}; //第五步，虚拟机状态
+      const threeData = res.data[0].sub_task[0];
       const fourData = JSON.parse(res.data[0].sub_task[0].image_info);
       const fiveData = JSON.parse(res.data[0].sub_task[0].platform_info);
       // const fourState = res.data[0].sub_task[0].current_step;
       // const fourState = res.data[0].sub_task[0].current_step;
-      console.log(fiveData);
       setData({ ...res.data[0] });
       setFourData({ ...fourData });
       setFiveData({ ...fiveData });
       //镜像上传中或者失败下一步不可点击
+      // setThreeNextBt
+      // JSON.stringify(fourData) === '{}'
+      if(fourData) {
+        // setThreeNextBt(true);
+        setThreeNextBt(false);
+      }
       if (fourData?.status === 'IMAGE_UPLOADING' || fourData?.status === 'IMAGE_UPLOAD_FAILED') {
         setFourNextBt(true);
       }
       if (fourData?.status === 'IMAGE_UPLOADED') {
         setFourNextBt(false);
       }
-      // if(fourData.status === 'IMAGE_UPLOADED') {
-      //   setIsRunning(false);
-      // }
-      // if(fourData.status === 'IMAGE_UPLOAD_FAILED') {
-      //   console.log('上传失败');
-      // }
       //虚拟机创建中或者失败下一步不可点击
       if (
         fiveData?.status === 'OPENSTACK_VM_CREATING' ||
@@ -132,6 +124,9 @@ const StepForm = (props) => {
       }
       if (fiveData?.status === 'OPENSTACK_VM_CREATED') {
         setFiveNextBt(false);
+      }
+      if(status === "OPENSTACK_VM_CREATED") {
+        setIsRunning(false);
       }
     }
   };
@@ -148,7 +143,6 @@ const StepForm = (props) => {
       // console.log('这是第二步', twoFormRef?.current?.validateFields());
       const obj = await twoFormRef?.current?.validateFieldsReturnFormatValue();
       setTemporaryButton(false);
-      console.log(obj);
       obj.source_host_ids = '629743c71e90bc07b4000001'; //临时写死
       obj.migration_method = 'block';
       obj.migration_type = 'offline';
@@ -181,8 +175,7 @@ const StepForm = (props) => {
   };
   const handleSubmit = async (props) => {
     const { step } = props;
-    const taskId = localStorage.getItem('offlineTask_id');
-    console.log(step);
+    const taskId = localStorage.getItem('host_task_id');
     // console.log(formMapRef.current);
     // console.log(props.form.getFieldValue());
     let Arr = [];
@@ -197,19 +190,32 @@ const StepForm = (props) => {
         obj[j] = i[j];
       }
     }
-    console.log(obj);
     // console.log(props.step);
     if (step === 1) {
       // console.log('这是第二步', twoFormRef?.current?.validateFields());
       const obj = await twoFormRef?.current?.validateFieldsReturnFormatValue();
+      delete obj["checkbox-group1"]
+      delete obj["checkbox-group2"]
       obj.migration_method = 'block';
       obj.migration_type = 'offline';
       obj.migration_category = 'full';
       obj.migration_status = 'RUNNING';
       obj.id = taskId;
       obj.source_host_ids = host_id;
-      const res = await createMigrationTask(obj);
-      console.log(res);
+      obj.extra = {
+        system_disk:obj.system_disk,
+        data_disk:obj.data_disk
+      }
+      for (let i in obj) {
+        if (obj.extra && obj.extra[i]) {
+          delete obj[i];
+        }
+      }
+      obj.extra = JSON.stringify(obj.extra);
+      const {code} = await createMigrationTask(obj);
+      if(code !== 200) {
+        return false;
+      }
     }
     props.onSubmit?.();
     // console.log(props.form.getFieldValue());
@@ -264,7 +270,7 @@ const StepForm = (props) => {
       <Prompt
         message={(location) => {
           localStorage.removeItem('hostStep');
-          localStorage.removeItem('offlineTask_id');
+          localStorage.removeItem('host_task_id');
         }}
       />
       <Card bordered={false} className={styles.spacrFrom}>
@@ -311,37 +317,40 @@ const StepForm = (props) => {
                   </Button>,
                 ];
               }
+              if (props.step === 2) {
+                return ButtonArray(props, threeNextBt);
+              }
               if (props.step === 3) {
                 return ButtonArray(props, fourNextBt);
               }
               if (props.step === 4) {
                 return ButtonArray(props, fiveNextBt);
               }
-              if (props.step < 6) {
-                return [
-                  <Button key="pre1" style={{ marginTop: 35 }} onClick={() => props.onPre?.()}>
-                    上一步
-                  </Button>,
-                  // <Button
-                  //   type="primary"
-                  //   style={{ marginTop: 35 }}
-                  //   key="goToTree"
-                  //   onClick={() => handleSubmitZanCun(props)}
-                  //   loading={temporaryButton}
-                  // >
-                  //   暂存
-                  // </Button>,
-                  <Button
-                    type="primary"
-                    style={{ marginTop: 35 }}
-                    key="goToTree3"
-                    onClick={() => handleSubmit(props)}
-                  >
-                    下一步
-                  </Button>,
-                ];
-              }
-              if (props.step === 6) {
+              // if (props.step < 6) {
+              //   return [
+              //     <Button key="pre1" style={{ marginTop: 35 }} onClick={() => props.onPre?.()}>
+              //       上一步
+              //     </Button>,
+              //     // <Button
+              //     //   type="primary"
+              //     //   style={{ marginTop: 35 }}
+              //     //   key="goToTree"
+              //     //   onClick={() => handleSubmitZanCun(props)}
+              //     //   loading={temporaryButton}
+              //     // >
+              //     //   暂存
+              //     // </Button>,
+              //     <Button
+              //       type="primary"
+              //       style={{ marginTop: 35 }}
+              //       key="goToTree3"
+              //       onClick={() => handleSubmit(props)}
+              //     >
+              //       下一步
+              //     </Button>,
+              //   ];
+              // }
+              if (props.step === 5) {
                 return null;
               }
               return dom;
@@ -360,7 +369,6 @@ const StepForm = (props) => {
             // wrapperCol={{span: 18}}
             // initialValues={stepData}
             onFinish={async (values) => {
-              console.log(values);
               // setStepData(values);
               return true;
             }}
@@ -414,7 +422,7 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <FourStep fourFormRef={fourFormRef} fourData={fourData} />
+            <FourStep fourFormRef={fourFormRef} fourData={fourData} fourNextBt={fourNextBt}/>
           </StepsForm.StepForm>
 
           <StepsForm.StepForm
@@ -436,20 +444,20 @@ const StepForm = (props) => {
             <FiveStep fiveFormRef={fiveFormRef} fiveData={fiveData} />
           </StepsForm.StepForm>
 
-          <StepsForm.StepForm
-            title="第六步"
-            formRef={sixFormRef}
-            stepProps={{
-              description: '应用切换',
-            }}
-            onFinish={async (values) => {
-              // console.log(values);
-              // setStepData(values);
-              return true;
-            }}
-          >
-            <SixStep sixFormRef={sixFormRef} />
-          </StepsForm.StepForm>
+          {/*<StepsForm.StepForm*/}
+          {/*  title="第六步"*/}
+          {/*  formRef={sixFormRef}*/}
+          {/*  stepProps={{*/}
+          {/*    description: '应用切换',*/}
+          {/*  }}*/}
+          {/*  onFinish={async (values) => {*/}
+          {/*    // console.log(values);*/}
+          {/*    // setStepData(values);*/}
+          {/*    return true;*/}
+          {/*  }}*/}
+          {/*>*/}
+          {/*  <SixStep sixFormRef={sixFormRef} />*/}
+          {/*</StepsForm.StepForm>*/}
 
           <StepsForm.StepForm title="完成">
             <StepResult
