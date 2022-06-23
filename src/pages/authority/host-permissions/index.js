@@ -140,15 +140,6 @@ export default (props) => {
         params={
           params
         }
-        // request={async () => {
-        //   const data = await getHostPermission(params)
-        //   return {
-        //     data: [
-        //       ...data
-        //     ],
-        //     success: true,
-        //   };
-        // }}
         request={(par) => {
           return getHostPermission(params)
         }}
@@ -156,7 +147,12 @@ export default (props) => {
         // cardProps={{ title: '用户列表', bordered: true }}
         headerTitle='主机列表'
         search={false}
-        pagination={false}
+        // pagination={false}
+        pagination={{
+          position: ['bottomCenter'],
+          showQuickJumper: true,
+          pageSize: 10,
+        }}
         toolBarRender={() => [
           <Button
             key="Schedule"

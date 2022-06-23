@@ -153,7 +153,11 @@ export default (props) => {
         }}
         headerTitle='主机列表'
         search={false}
-        pagination={false}
+        pagination={{
+          position: ['bottomCenter'],
+          showQuickJumper: true,
+          pageSize: 10,
+        }}
         revalidateOnFocus={false}
         rowSelection={{
           selectedRowKeys: selectedRowKeys,

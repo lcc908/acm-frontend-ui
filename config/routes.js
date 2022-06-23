@@ -52,7 +52,7 @@ export default [
         redirect: '/offline/source',
       },
       {
-        name: '选择源平台',
+        name: '源平台',
         icon: 'smile',
         path: '/offline/source',
         component: './offlineMigration/source',

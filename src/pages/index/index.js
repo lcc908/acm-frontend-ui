@@ -13,13 +13,6 @@ import {history} from "umi";
 const IndexPage = () => {
   const list = [
     {
-      "id": "fake-list-1",
-      "title": "业务容灾",
-      "buttonText": "应用灾备",
-      "cover": yewu,
-      "description": "对于一些企业的核心业务，大多都会建设灾备数据中心，持续地保证两地数据中心所承载的应用一致性，需要定期地将两地的应用集群和数据进行同步，也适用于私有云的应用集群敏捷地迁移到公有云或专有云平台。",
-    },
-    {
       "id": "fake-list-2",
       "title": "混合云场景",
       "buttonText": "在线迁移",
@@ -36,6 +29,13 @@ const IndexPage = () => {
       "description": "离线迁移适用于较低版本的OS迁移，操作系统及程序绑定硬件信息，对数据敏感型应用，以及不同厂商的平台，后端存储以及跨存储迁移等场景，迁移时间灵活，自动化程度高。",
     },
     {
+      "id": "fake-list-1",
+      "title": "业务容灾",
+      "buttonText": "应用灾备",
+      "cover": yewu,
+      "description": "对于一些企业的核心业务，大多都会建设灾备数据中心，持续地保证两地数据中心所承载的应用一致性，需要定期地将两地的应用集群和数据进行同步，也适用于私有云的应用集群敏捷地迁移到公有云或专有云平台。",
+    },
+    {
       "id": "fake-list-4",
       "title": "应用备份与恢复",
       "buttonText": "备份恢复",
@@ -49,7 +49,7 @@ const IndexPage = () => {
       history.push(`/onlineMigration`);
     }
     if(code === 'physical_host') {
-      history.push(`/offline/host`);
+      history.push(`/offline/source`);
     }
   }
   return (

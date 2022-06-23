@@ -69,7 +69,7 @@ export default (props) => {
 
   const requestData = async () => {
     if(!platform_id) {
-      message.error("请先选择源平台");
+      message.error("请先去源平台界面，选择一台主机")
       return [];
     }
     return await getVmWareListVm(params)

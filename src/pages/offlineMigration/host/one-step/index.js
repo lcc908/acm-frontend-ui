@@ -38,7 +38,7 @@ export default (props) => {
     if(host_id) {
       getData();
     } else {
-      message.error("请先去选择源平台界面，选择一台主机")
+      message.error("请先去源平台界面，选择一台主机")
     }
   },[]);
 
