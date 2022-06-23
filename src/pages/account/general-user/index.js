@@ -138,6 +138,7 @@ export default (props) => {
     setSelectedRowKeys([...selectedRowKeys]);
   };
 
+  // 删除用户
   const deleteData = async (ids) => {
     const res = await deleteUser({ ids: ids });
     if (res.code === 200) {
@@ -145,6 +146,9 @@ export default (props) => {
       setDeleteDisabled(true);
       reloadTable();
     }
+  };
+  const reloadTable = () => {
+    ref.current.reload();
   };
 
   return (
