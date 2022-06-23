@@ -15,7 +15,7 @@ import {getPermission,getHostData} from "@/pages/authority/platform-permissions/
 import {history} from "umi";
 
 export default (props) => {
-  const { twoFormRef, handleNextState } = props;
+  const { twoFormRef, current } = props;
   const [xitGb,setXitGb] = useState(true);
   const [sjGb,setSjGb] = useState(true);
   const [checkBox,setCheckBox] = useState([])
@@ -44,7 +44,7 @@ export default (props) => {
   }
   useEffect(()=>{
     getData();
-  },[checkBox])
+  },[current])
   const getData = async () => {
     const {host_id} = history?.location?.query;
     const {data} = await getTemporaryMigrationTask({host_id:host_id});

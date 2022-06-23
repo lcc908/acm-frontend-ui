@@ -208,7 +208,9 @@ export const BasicList = () => {
     const method = values?.id ? 'update' : 'add';
     postRun(method, values);
   };
-
+  const onChangePagination = (page, pageSize) => {
+    console.log(page, pageSize);
+  }
   return (
     <div>
       <PageContainer>
@@ -241,13 +243,19 @@ export const BasicList = () => {
               return queryFakeList(params)
             }}
             search={false}
-            pagination={false}
+            // pagination={false}
             toolBarRender={() => [
               extraContent
             ]}
             postData={(arr) => {
               setTotal(arr.length);
               return arr;
+            }}
+            pagination={{
+              position: ['bottomCenter'],
+              showQuickJumper: true,
+              onChange: onChangePagination,
+              pageSize: 10,
             }}
           />
           {/*<Card*/}

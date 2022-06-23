@@ -34,22 +34,24 @@ export default (props) => {
     const res = await postOpenstackImg(val);
     if(res.code === 200) {
       message.success('已提交上传！');
-      const res = await getTemporaryMigrationTask({id:taskId});
-      if(res.data.length) {
-        const current_step = res.data[0].sub_task[0].current_step;
-        // if(current_step === 'IMAGE_UPLOADING') {
-        //   //上传中
-        //   console.log('上传中');
-        // }
-        // if(current_step === 'IMAGE_UPLOADED') {
-        //   //上传已完成
-        //   console.log('上传已完成');
-        // }
-        // if(current_step === 'IMAGE_UPLOAD_FAILED') {
-        //   //上传已完成
-        //   console.log('上传失败');
-        // }
-        // setData({...res.data[0]})
+      if(taskId) {
+        const res = await getTemporaryMigrationTask({id:taskId});
+        if(res.data.length) {
+          const current_step = res.data[0].sub_task[0].current_step;
+          // if(current_step === 'IMAGE_UPLOADING') {
+          //   //上传中
+          //   console.log('上传中');
+          // }
+          // if(current_step === 'IMAGE_UPLOADED') {
+          //   //上传已完成
+          //   console.log('上传已完成');
+          // }
+          // if(current_step === 'IMAGE_UPLOAD_FAILED') {
+          //   //上传已完成
+          //   console.log('上传失败');
+          // }
+          // setData({...res.data[0]})
+        }
       }
     }
   }

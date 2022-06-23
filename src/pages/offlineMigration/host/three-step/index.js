@@ -55,7 +55,7 @@ export default (props) => {
     <>
       <ProCard title="数据迁移" headerBordered bordered>
         {
-          data.sub_task && data.sub_task.map((item,index) => {
+          data.sub_task ? data.sub_task.map((item,index) => {
             return (
               <Row gutter={24} align={'middle'} className={styles.threeStep}>
                 <Col span={9}>
@@ -96,7 +96,7 @@ export default (props) => {
                 </Col>
               </Row>
             )
-          })
+          }) : null
         }
       </ProCard>
     </>

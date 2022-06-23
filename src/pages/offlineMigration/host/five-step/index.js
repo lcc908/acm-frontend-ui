@@ -117,18 +117,20 @@ export default (props) => {
     if(code === 200) {
       message.success('虚拟机启动成功！');
       console.log(data);
-      const res = await getTemporaryMigrationTask({id:taskId});
-      if(res.data.length) {
-        const {status} = JSON.parse(res?.data[0]?.sub_task[0]?.platform_info) || {};
-        console.log(status);
-        if(status === "OPENSTACK_VM_CREATING") {
+      if(taskId) {
+        const res = await getTemporaryMigrationTask({id:taskId});
+        if(res.data.length) {
+          const {status} = JSON.parse(res?.data[0]?.sub_task[0]?.platform_info) || {};
+          console.log(status);
+          if(status === "OPENSTACK_VM_CREATING") {
 
-        }
-        if(status === "OPENSTACK_VM_CREATED") {
-          message.error("创建成功")
-        }
-        if(status === "OPENSTACK_VM_CREATE_FAILED") {
-          message.error("创建失败")
+          }
+          if(status === "OPENSTACK_VM_CREATED") {
+            message.error("创建成功")
+          }
+          if(status === "OPENSTACK_VM_CREATE_FAILED") {
+            message.error("创建失败")
+          }
         }
       }
       // res.data[0].sub_task[0].platform_info

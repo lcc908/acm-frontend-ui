@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Collapse, Spin, Button,Select,Empty  } from 'antd';
+import {Collapse, Spin, Button, Select, Empty} from 'antd';
 import ProForm, {
   ProFormSelect,
 } from '@ant-design/pro-form';
@@ -8,10 +8,10 @@ import ProCard from '@ant-design/pro-card'
 import {postVmwareLog, postVmwareTaskRetr} from "@/pages/offlineMigration/ware/service";
 
 const {Panel} = Collapse;
-const { Option } = Select;
+const {Option} = Select;
 
 export default (props) => {
-  const {fourFormRef,current} = props;
+  const {fourFormRef, current} = props;
   const task_id = localStorage.getItem('vm_task_id');
   const [vmNameList, setVmNameList] = useState([]);
   const [vmtaskId, setVmtaskId] = useState([]);
@@ -29,19 +29,25 @@ export default (props) => {
       />
     }
     if (data === "failed") {
-      return <CloseCircleTwoTone twoToneColor="#ff4d4f"
-                                 onClick={event => {
-                                   // If you don't want click extra trigger collapse, you can prevent this:
-                                   event.stopPropagation();
-                                 }}
-      />
+      return (
+        <CloseCircleTwoTone
+          twoToneColor="#ff4d4f"
+          onClick={event => {
+            // If you don't want click extra trigger collapse, you can prevent this:
+            event.stopPropagation();
+          }}
+        />
+      )
     }
-    return <CheckCircleTwoTone twoToneColor="#52c41a"
-                               onClick={event => {
-                                 // If you don't want click extra trigger collapse, you can prevent this:
-                                 event.stopPropagation();
-                               }}
-    />
+    return (
+      <CheckCircleTwoTone
+        twoToneColor="#52c41a"
+        onClick={event => {
+          // If you don't want click extra trigger collapse, you can prevent this:
+          event.stopPropagation();
+        }}
+      />
+    )
   };
   useEffect(() => {
     if (task_id) {
@@ -53,7 +59,7 @@ export default (props) => {
   const getData = async () => {
     setLoading(true)
     const {data: {log_info}} = await postVmwareLog({
-      migration_batch_task_id:task_id
+      migration_batch_task_id: task_id
       // migration_batch_task_id: "629ef4f055e4720a23000003"
     });
     if (Object.getOwnPropertyNames(log_info).length !== 0) {
@@ -73,7 +79,7 @@ export default (props) => {
         setLogData({...log_info[vm_name_list[0].label]});
         // fourFormRef.
         fourFormRef?.current?.setFieldsValue({
-          useMode:vm_name_list[0].value
+          useMode: vm_name_list[0].value
         });
       }
     }
@@ -81,7 +87,7 @@ export default (props) => {
   }
   useEffect(() => {
     console.log(vmNameList);
-    if(vmNameList.length) {
+    if (vmNameList.length) {
       console.log(vmNameList[0].value);
     }
   }, [vmNameList])
@@ -93,7 +99,7 @@ export default (props) => {
     const res = await postVmwareTaskRetr({migration_task_id: vmtaskId});
     console.log(res);
   }
-  const handleChange = (val,option) => {
+  const handleChange = (val, option) => {
     setSelectVal(option.label);
     setVmtaskId(val)
     setLogData({...allData[option.label]})
@@ -108,20 +114,20 @@ export default (props) => {
         <ProForm.Group>
           {
             vmNameList.length > 0 ? (
-              <ProFormSelect
-                width="md"
-                // initialValue={vmNameList[0].value}
-                options={vmNameList}
-                name="useMode"
-                label="vmName"
-                addonAfter={
-                  <Button type="primary" onClick={handleRender}>更新</Button>
-                }
-                fieldProps={{
-                  onChange: handleChange,
-                }}
-              />
-            ) :
+                <ProFormSelect
+                  width="md"
+                  // initialValue={vmNameList[0].value}
+                  options={vmNameList}
+                  name="useMode"
+                  label="vmName"
+                  addonAfter={
+                    <Button type="primary" onClick={handleRender}>更新</Button>
+                  }
+                  fieldProps={{
+                    onChange: handleChange,
+                  }}
+                />
+              ) :
               <ProFormSelect
                 width="md"
                 options={[]}
@@ -145,7 +151,7 @@ export default (props) => {
                   <p>{item.message}</p>
                 </Panel>
               )
-            }) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            }) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}/>
           }
           {/*<Panel header="This is panel header 2" key="2" extra={genExtra(2)}>*/}
           {/*  <p>{text}</p>*/}

@@ -91,6 +91,7 @@ const StepForm = (props) => {
   };
   const getData = async () => {
     const taskId = localStorage.getItem('host_task_id');
+    if(!taskId) return false;
     const res = await getTemporaryMigrationTask({ id: taskId });
     if (res.data.length) {
       const {status} = JSON.parse(res?.data[0]?.sub_task[0]?.platform_info) || {}; //第五步，虚拟机状态
@@ -391,7 +392,7 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <TwoStep twoFormRef={twoFormRef} />
+            <TwoStep twoFormRef={twoFormRef} current={current}/>
           </StepsForm.StepForm>
           <StepsForm.StepForm
             title="第三步"
@@ -405,7 +406,7 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <ThreeStep threeFormRef={threeFormRef} data={threeData} />
+            <ThreeStep threeFormRef={threeFormRef} data={threeData} current={current}/>
           </StepsForm.StepForm>
           <StepsForm.StepForm
             title="第四步"
@@ -422,7 +423,12 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <FourStep fourFormRef={fourFormRef} fourData={fourData} fourNextBt={fourNextBt}/>
+            <FourStep
+              fourFormRef={fourFormRef}
+              fourData={fourData}
+              fourNextBt={fourNextBt}
+              current={current}
+            />
           </StepsForm.StepForm>
 
           <StepsForm.StepForm
@@ -441,7 +447,11 @@ const StepForm = (props) => {
               return true;
             }}
           >
-            <FiveStep fiveFormRef={fiveFormRef} fiveData={fiveData} />
+            <FiveStep
+              fiveFormRef={fiveFormRef}
+              fiveData={fiveData}
+              current={current}
+            />
           </StepsForm.StepForm>
 
           {/*<StepsForm.StepForm*/}
