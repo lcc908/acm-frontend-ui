@@ -3,7 +3,7 @@ import {Card, Timeline, Button, Progress, Row, Col, Table, Space, Popconfirm} fr
 import ProForm, {
   ProFormText,
   ProFormSelect,
-  ProFormSwitch,
+  ProFormDateTimePicker,
   ProFormRadio, ProFormTextArea,
 } from '@ant-design/pro-form';
 import {getGenerateData} from "@/pages/onlineMigration/service";
@@ -180,7 +180,7 @@ export default (props) => {
             />
           </Col>
           <Col span={8}>
-            <ProFormText name="created_at" label="日期" disabled />
+            <ProFormDateTimePicker initialValue={Date.now()} disabled name="dateTime" label="日期" />
           </Col>
           <Col style={{display:'none'}}>
             <ProFormText name="source_host_id" />

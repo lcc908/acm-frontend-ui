@@ -270,6 +270,7 @@ const StepForm = (props) => {
             <TwoStep
               twoFormRef={twoFormRef}
               setTwoNextBt={setTwoNextBt}
+              current={current}
             />
           </StepsForm.StepForm>
           <StepsForm.StepForm

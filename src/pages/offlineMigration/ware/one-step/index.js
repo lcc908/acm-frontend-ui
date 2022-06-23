@@ -6,14 +6,15 @@ import {CloudDownloadOutlined} from '@ant-design/icons';
 import styles from './style.less'
 import {history} from "umi";
 import {getVmWareListVm} from "@/pages/offlineMigration/ware/service"
+import {ProFormDateTimePicker} from "@ant-design/pro-form";
 
 export default (props) => {
   const {platform_id} = history?.location?.query;
-  const {oneFormRef, handleNextState,onChangeDisabled} = props;
+  const {oneFormRef, handleNextState, onChangeDisabled} = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectRowsData, setSelectRowsData] = useState([]);
   const [params, setParams] = useState({
-    platform_id:platform_id,
+    platform_id: platform_id,
     vm_name: '',
     ip: '',
   })
@@ -33,14 +34,14 @@ export default (props) => {
       // hideInSearch: true,
     },
     {
-      title: 'CPU配置',
-      dataIndex: 'address',
+      title: 'cpu',
+      dataIndex: 'cpu',
       align: 'center',
       hideInSearch: true,
     },
     {
-      title: '内存配置',
-      dataIndex: 'tags',
+      title: 'mem',
+      dataIndex: 'mem',
       align: 'center',
       hideInSearch: true,
     },
@@ -49,8 +50,8 @@ export default (props) => {
       dataIndex: 'power_state',
       align: 'center',
       valueEnum: {
-        poweredOn: { text: '运行中', status: 'Success' },
-        poweredOff: { text: '已关闭', status: 'Error' },
+        poweredOn: {text: '运行中', status: 'Success'},
+        poweredOff: {text: '已关闭', status: 'Error'},
       },
       hideInSearch: true,
     },
@@ -60,15 +61,15 @@ export default (props) => {
       align: 'center',
     },
   ];
-  useEffect(()=>{
+  useEffect(() => {
     // console.log(params);
-  },[params])
+  }, [params])
   const onChangePagination = (page, pageSize) => {
     console.log(page, pageSize);
   }
 
   const requestData = async () => {
-    if(!platform_id) {
+    if (!platform_id) {
       message.error("请先去源平台界面，选择一台主机")
       return [];
     }
@@ -77,19 +78,19 @@ export default (props) => {
 
   const onSelectChange = (selectedRowKeys, selectedRows) => {
     // console.log(selectedRowKeys);
-    localStorage.setItem('vmOneStepRowKeys',JSON.stringify(selectedRowKeys));
+    localStorage.setItem('vmOneStepRowKeys', JSON.stringify(selectedRowKeys));
     setSelectRowsData([...selectedRows])
     setSelectedRowKeys([...selectedRowKeys])
-    if(selectedRowKeys.length > 0) {
-      onChangeDisabled(false,selectedRowKeys)
+    if (selectedRowKeys.length > 0) {
+      onChangeDisabled(false, selectedRowKeys)
     } else {
-      onChangeDisabled(true,[])
+      onChangeDisabled(true, [])
     }
   }
 
   const beforeSearchSubmit = (val) => {
-    const {vmname,ip} = val;
-    setParams({...params,vm_name:vmname,ip})
+    const {vmname, ip} = val;
+    setParams({...params, vm_name: vmname, ip})
   }
 
   return (
@@ -99,7 +100,7 @@ export default (props) => {
       bordered
       className={styles.oneStep}
     >
-        <ProTable
+      <ProTable
         columns={columns}
         rowKey="vmname"
         revalidateOnFocus={false}

@@ -162,12 +162,17 @@ const StepForm = (props) => {
 
   return (
     <PageContainer content="将一个冗长或用户不熟悉的表单任务分成多个步骤，指导用户完成。">
-      <RouterPrompt
-        when={true}
-        title="是否要离开页面？"
-        onOK={() => true}
-        clearLocalStorage={clearLocalStorage}
-        onCancel={() => false}
+      {/*<RouterPrompt*/}
+      {/*  when={true}*/}
+      {/*  title="是否要离开页面？"*/}
+      {/*  onOK={() => true}*/}
+      {/*  clearLocalStorage={clearLocalStorage}*/}
+      {/*  onCancel={() => false}*/}
+      {/*/>*/}
+      <Prompt
+        message={(location) => {
+          clearLocalStorage()
+        }}
       />
       <Card bordered={false} className={styles.spacrFrom}>
         <StepsForm
@@ -197,18 +202,6 @@ const StepForm = (props) => {
               if (props.step === 3 || props.step === 1) {
                 return ButtonArray(props,false)
               }
-              // if (props.step === 4) {
-              //  return [
-              //    <Button
-              //      type="primary"
-              //      style={{ marginTop: 35 }}
-              //      key="goToTree3"
-              //      onClick={() => handleSubmit(props)}
-              //    >
-              //      下一步
-              //    </Button>,
-              //  ]
-              // }
               if (props.step === 4) {
                 return null;
               }
@@ -223,13 +216,6 @@ const StepForm = (props) => {
               description: '主机列表',
             }}
             layout="horizontal"
-            // labelCol={{span: 4}}
-            // wrapperCol={{span: 18}}
-            // onFinish={async (values) => {
-            //   console.log(values);
-            //   // setStepData(values);
-            //   return true;
-            // }}
           >
             <OneStep
               oneFormRef={oneFormRef}

@@ -7,11 +7,11 @@ import ProForm, {
 } from '@ant-design/pro-form';
 import TimelinePage from '@/components/Timeline'
 import styles from '../style.less';
-import {getInstallAgentPercent, getReportAnalysis, postInstallAgent} from "@/pages/onlineMigration/service";
+import {getInstallAgentPercent, getReportAnalysis, postInstallAgent,postreportAnalysis} from "@/pages/onlineMigration/service";
 import {useInterval} from "@/utils"
 
 export default (props) => {
-  const {twoFormRef, setTwoNextBt} = props;
+  const {twoFormRef, setTwoNextBt,current} = props;
   const [lineList, setLineList] = useState([]);
   const [percent, setPercent] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -21,14 +21,17 @@ export default (props) => {
 
   useEffect(() => {
     getData()
-  }, [])
+  }, [current])
 
   const getData = async () => {
+    const onlineOneData = JSON.parse(localStorage.getItem('onlineOne'));
+    if(!onlineOneData) return;
+    const res = await postreportAnalysis(onlineOneData);
     const {data} = await getReportAnalysis({id: id});
-    const res = data.some(item => {
+    const status = data.some(item => {
       return item.status === 'running'
     })
-    if (res) {
+    if (status) {
       setLoading('加载中...')
     } else {
       setLoading('')
@@ -77,14 +80,6 @@ export default (props) => {
             style={{height: 556}}
             className={styles.leftCard}
           >
-            {/*<Timeline pending="Recording...">*/}
-            {/*<Timeline>*/}
-            {/*  {*/}
-            {/*    lineList.length > 0 && lineList.map((item, index) => {*/}
-            {/*      return <Timeline.Item key={index} color="green">{item.time} {item.description}</Timeline.Item>*/}
-            {/*    })*/}
-            {/*  }*/}
-            {/*</Timeline>*/}
             <TimelinePage loading={loading} lineList={lineList}/>
           </Card>
         </Col>

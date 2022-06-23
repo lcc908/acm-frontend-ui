@@ -9,7 +9,6 @@ import ProForm, {
   ProFormText,
   ProFormRadio,
 } from '@ant-design/pro-form';
-import { UploadOutlined } from '@ant-design/icons';
 import styles from '../style.less';
 import {getHotMigration} from "@/pages/onlineMigration/service";
 import {getPermission} from "@/pages/authority/platform-permissions/service";
@@ -19,6 +18,7 @@ export default (props) => {
   const rules = [{ required: true}];
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem('onlineOne'));
+    console.log(data);
     if(data) {
       oneFormRef?.current?.setFieldsValue({
         ...data

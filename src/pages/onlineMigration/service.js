@@ -29,6 +29,13 @@ export async function postInstallAgent(params) {
     data: { ...params},
   });
 }
+export async function postreportAnalysis(params) {
+  return request('/api/v1/hot_migration/report_analysis', {
+    method: 'POST',
+    data: { ...params},
+  });
+}
+
 //安装 Agent 进度
 // GET /api/v1/hot_migration/agent_installation
 export async function getInstallAgentPercent(params) {

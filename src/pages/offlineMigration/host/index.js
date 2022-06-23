@@ -232,15 +232,6 @@ const StepForm = (props) => {
       <Button key="pre1" style={{ marginTop: 35 }} onClick={() => props.onPre?.()}>
         上一步
       </Button>,
-      // <Button
-      //   type="primary"
-      //   style={{ marginTop: 35 }}
-      //   key="goToTree"
-      //   onClick={() => handleSubmitZanCun(props)}
-      //   loading={temporaryButton}
-      // >
-      //   暂存
-      // </Button>,
       <Button
         type="primary"
         style={{ marginTop: 35 }}
