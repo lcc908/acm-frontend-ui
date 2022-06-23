@@ -16,6 +16,7 @@ import {getPermission} from "@/pages/authority/platform-permissions/service";
 
 export default (props) => {
   const { oneFormRef, setOneDisabled, stepData } = props;
+  const rules = [{ required: true}];
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem('onlineOne'));
     if(data) {
@@ -65,8 +66,6 @@ export default (props) => {
           <Card
             title="源主机信息"
             headStyle={{ fontWeight: 'bold' }}
-            // style={{height:556}}
-            // className={styles.leftCard}
             bodyStyle={{height:460}}
             actions={[<Button type="primary" onClick={checkUp}>连通性检查</Button>]}
           >
@@ -74,18 +73,20 @@ export default (props) => {
             <ProFormSelect
               name="os_type"
               label="系统类型"
+              initialValue="Linux"
               options={[
                 { value: 'linux', label: 'Linux' },
                 { value: 'windows', label: 'Windows' },
               ]}
             />
-            <ProFormText name="ip_address" label="ip地址" />
+            <ProFormText name="ip_address" label="ip地址" rules={rules}/>
             <ProFormText
               name="username"
               label="用户名"
               fieldProps={{
                 autoComplete:"new-password"
               }}
+              rules={rules}
             />
             <ProFormText.Password
               name="password"
@@ -93,11 +94,13 @@ export default (props) => {
               fieldProps={{
                 autoComplete:"new-password"
               }}
+              rules={rules}
             />
-            <ProFormText name="port" label="端口" />
+            <ProFormText name="port" label="端口" initialValue={22} />
             <ProFormSelect
               name="connect_type"
               label="连接接类型"
+              initialValue="SSH"
               options={[
                 { value: 'ssh', label: 'SSH' },
                 { value: 'winrm', label: 'WINRM' },
