@@ -74,6 +74,8 @@ export default (props) => {
     console.log(dataSource);
   },[editableKeys])
   const getData = async () => {
+    const task_id = localStorage.getItem('onlineTask_id');
+    if(!task_id) return;
     const {code,data} = await getGenerateData({task_id:localStorage.getItem('onlineTask_id')});
     const {host} = data;
     setDataSource([...host.disk])

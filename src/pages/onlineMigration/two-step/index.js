@@ -5,35 +5,17 @@ import ProForm, {
   ProFormSwitch,
   ProFormRadio, ProFormText,
 } from '@ant-design/pro-form';
-import ProCard from '@ant-design/pro-card'
+import TimelinePage from '@/components/Timeline'
 import styles from '../style.less';
 import {getInstallAgentPercent, getReportAnalysis, postInstallAgent} from "@/pages/onlineMigration/service";
 import {useInterval} from "@/utils"
-
-// function useInterval(callback, delay) {
-//   const savedCallback = useRef();
-//
-//   useEffect(() => {
-//     savedCallback.current = callback;
-//   });
-//
-//   useEffect(() => {
-//     function tick() {
-//       savedCallback.current();
-//     }
-//
-//     if (delay !== null) {
-//       let id = setInterval(tick, delay);
-//       return () => clearInterval(id);
-//     }
-//   }, [delay]);
-// }
 
 export default (props) => {
   const {twoFormRef, setTwoNextBt} = props;
   const [lineList, setLineList] = useState([]);
   const [percent, setPercent] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [loading, setLoading] = useState('');
   const id = localStorage.getItem('onlineTask_id');
   const rules = [{ required: true}];
 
@@ -42,12 +24,16 @@ export default (props) => {
   }, [])
 
   const getData = async () => {
-
     const {data} = await getReportAnalysis({id: id});
+    const res = data.some(item => {
+      return item.status === 'running'
+    })
+    if (res) {
+      setLoading('加载中...')
+    } else {
+      setLoading('')
+    }
     setLineList([...data]);
-    // oneFormRef?.current?.setFieldsValue({
-    //   ...data
-    // });
   }
 
   const handleClickAgent = async () => {
@@ -92,20 +78,14 @@ export default (props) => {
             className={styles.leftCard}
           >
             {/*<Timeline pending="Recording...">*/}
-            <Timeline>
-              {
-                lineList.length > 0 && lineList.map((item, index) => {
-                  return <Timeline.Item key={index} color="green">{item.time} {item.description}</Timeline.Item>
-                })
-              }
-              {/*<Timeline.Item color="green">2022-03-1 10:13:15 连接目标主机成功</Timeline.Item>*/}
-              {/*<Timeline.Item color="green">2022-03-1 11:13:30  操作系统配置基线检查完成</Timeline.Item>*/}
-              {/*<Timeline.Item color="green">2022-03-2 12:13:45  目标主机硬件环境检查完成</Timeline.Item>*/}
-              {/*<Timeline.Item color="green">2022-03-3 11:13:45  网络连通性检查正常，能够访问ETL存储</Timeline.Item>*/}
-              {/*<Timeline.Item color="green">2022-03-4 12:13:45 成功状态</Timeline.Item>*/}
-              {/*<Timeline.Item color="gray">2022-03-5 14:13:11 警告状态</Timeline.Item>*/}
-              {/*<Timeline.Item color="red">2022-03-5 14:13:11 失败状态</Timeline.Item>*/}
-            </Timeline>
+            {/*<Timeline>*/}
+            {/*  {*/}
+            {/*    lineList.length > 0 && lineList.map((item, index) => {*/}
+            {/*      return <Timeline.Item key={index} color="green">{item.time} {item.description}</Timeline.Item>*/}
+            {/*    })*/}
+            {/*  }*/}
+            {/*</Timeline>*/}
+            <TimelinePage loading={loading} lineList={lineList}/>
           </Card>
         </Col>
         <Col span={12}>

@@ -197,18 +197,18 @@ const StepForm = (props) => {
               if (props.step === 3 || props.step === 1) {
                 return ButtonArray(props,false)
               }
-              if (props.step === 4) {
-               return [
-                 <Button
-                   type="primary"
-                   style={{ marginTop: 35 }}
-                   key="goToTree3"
-                   onClick={() => handleSubmit(props)}
-                 >
-                   下一步
-                 </Button>,
-               ]
-              }
+              // if (props.step === 4) {
+              //  return [
+              //    <Button
+              //      type="primary"
+              //      style={{ marginTop: 35 }}
+              //      key="goToTree3"
+              //      onClick={() => handleSubmit(props)}
+              //    >
+              //      下一步
+              //    </Button>,
+              //  ]
+              // }
               if (props.step === 4) {
                 return null;
               }

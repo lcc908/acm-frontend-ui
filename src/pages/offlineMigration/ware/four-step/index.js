@@ -143,23 +143,17 @@ export default (props) => {
           }
           <Button type="primary" onClick={handleReload}>任务重试</Button>
         </ProForm.Group>
-        <Collapse>
-          {
-            logData.logs ? logData.logs.map((item, index) => {
-              return (
+        {
+          logData.logs ? logData.logs.map((item, index) => {
+            return (
+              <Collapse>
                 <Panel header={item.step} key={index} extra={genExtra(item.result)}>
                   <p>{item.message}</p>
                 </Panel>
+              </Collapse>
               )
-            }) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}/>
-          }
-          {/*<Panel header="This is panel header 2" key="2" extra={genExtra(2)}>*/}
-          {/*  <p>{text}</p>*/}
-          {/*</Panel>*/}
-          {/*<Panel header="This is panel header 3" key="3" extra={genExtra(3)}>*/}
-          {/*  <p>{text}</p>*/}
-          {/*</Panel>*/}
-        </Collapse>
+            })
+        : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}/>}
       </ProCard>
     </Spin>
   );
