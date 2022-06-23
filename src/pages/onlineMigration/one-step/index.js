@@ -133,13 +133,9 @@ export default (props) => {
             // bordered={false}
           >
             <ProFormSelect
-              name="typeList"
+              name="target_platform_id"
               label="权限列表"
               request={request}
-              options={[
-                { value: 'SR650', label: 'SR650' },
-                { value: 'X3650M5', label: 'X3650M5' },
-              ]}
             />
             <ProFormUploadDragger
               max={1}

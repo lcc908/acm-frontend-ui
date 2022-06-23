@@ -111,19 +111,20 @@ const StepForm = (props) => {
     if(step === 0) {
       const obj = await oneFormRef?.current?.validateFieldsReturnFormatValue();
       console.log(obj);
-      obj.extra = {
-        typeList: obj.typeList,
-      }
+      // obj.extra = {
+      //   target_platform_id: obj.target_platform_id,
+      // }
       delete obj.machine_type1;
       delete obj.method;
       delete obj.encrypt;
-      delete obj.typeList;
+      // delete obj.typeList;
       obj.extra = JSON.stringify(obj.extra);
       const res = await postHotMigration(obj);
       if(res.code !== 200) {
         return false;
       }
       localStorage.setItem('onlineTask_id',res.data.id)
+      return false;
     }
     if(step === 2) {
       const val = await threeFormRef?.current?.validateFieldsReturnFormatValue();
