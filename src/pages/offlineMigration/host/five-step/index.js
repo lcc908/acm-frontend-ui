@@ -1,7 +1,7 @@
 import ProCard from '@ant-design/pro-card';
 import { ProFormSelect, ProFormText } from '@ant-design/pro-form';
 import { Button, message, Popconfirm, Timeline } from 'antd';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { getTemporaryMigrationTask, postOpenstackVm } from '@/pages/offlineMigration/host/service';
 import styles from '../style.less';
@@ -67,30 +67,6 @@ export default (props) => {
       ],
     },
   ];
-  const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: '1 Lake Park',
-      tags: 2,
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'Lake Park',
-      tags: 1,
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: '1 Lake Park',
-      tags: 3,
-    },
-  ];
-
   useEffect(() => {
     if (fiveData) {
       // console.log(fiveData);
@@ -98,6 +74,7 @@ export default (props) => {
         ...fiveData,
       });
       setState(fiveData.status);
+      console.log(fiveData.status);
     }
   }, [fiveData]);
   const handleClick = async () => {
@@ -117,19 +94,25 @@ export default (props) => {
         if (res.data.length) {
           const { status } = JSON.parse(res?.data[0]?.sub_task[0]?.platform_info) || {};
           console.log(status);
-          if (status === 'OPENSTACK_VM_CREATING') {
-          }
-          if (status === 'OPENSTACK_VM_CREATED') {
-            message.error('创建成功');
-          }
-          if (status === 'OPENSTACK_VM_CREATE_FAILED') {
-            message.error('创建失败');
-          }
+          setState(fiveData.status);
         }
       }
       // res.data[0].sub_task[0].platform_info
     }
   };
+  const CreatevmButton = (state) => {
+    console.log(state);
+    if(state === "OPENSTACK_VM_CREATING") {
+      return <Button type="primary" key="1" loading={true}>创建中</Button>
+    }
+    if(state === "OPENSTACK_VM_CREATED") {
+      return <Button type="primary" key="1" onClick={handleClick}>创建虚拟机</Button>
+    }
+    if(state === "OPENSTACK_VM_CREATE_FAILED") {
+      return <Button danger type="primary" key="1" onClick={handleClick}>点击重试</Button>
+    }
+    return <Button type="primary" key="1" onClick={handleClick}>创建虚拟机</Button>
+  }
   return (
     <>
       <ProCard
@@ -193,15 +176,16 @@ export default (props) => {
             ]}
           />
           <div style={{ textAlign: 'center' }}>
-            {state === 'OPENSTACK_VM_CREATING' ? (
-              <Button type="primary" loading={true}>
-                虚拟机创建中
-              </Button>
-            ) : (
-              <Button type="primary" key="2" onClick={handleClick}>
-                创建虚拟机
-              </Button>
-            )}
+            {CreatevmButton(state)}
+            {/*{state === 'OPENSTACK_VM_CREATING' ? (*/}
+            {/*  <Button type="primary" loading={true}>*/}
+            {/*    虚拟机创建中*/}
+            {/*  </Button>*/}
+            {/*) : (*/}
+            {/*  <Button type="primary" key="2" onClick={handleClick}>*/}
+            {/*    创建虚拟机*/}
+            {/*  </Button>*/}
+            {/*)}*/}
           </div>
           {/*<Table columns={columns} dataSource={data} pagination={false} title={() => '磁盘列表'}/>*/}
           {/*<EditableProTable*/}

@@ -60,8 +60,8 @@ export default (props) => {
     }
     if(data.length) {
       const res = data[0];
-      const {target_platform_id} = res.sub_task[0];
-      const {system_disk} = JSON.parse(res.extra);
+      const {target_platform_id} = res?.sub_task[0];
+      const {system_disk} = res.extra && JSON.parse(res.extra) || {};
       const data_disk = JSON.parse(localStorage.getItem("data_disk")) || [];
       localStorage.setItem('host_task_id',res.id)
       twoFormRef.current?.setFieldsValue({
