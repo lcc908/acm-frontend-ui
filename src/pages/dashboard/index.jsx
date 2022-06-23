@@ -1,13 +1,10 @@
 import React, {useRef, useState} from 'react';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import {
-  Avatar,
-  Button,
   Card,
   Col,
-  Dropdown,
+  message,
   Input,
-  List,
   Menu,
   Modal, Popconfirm,
   Progress,
@@ -15,8 +12,6 @@ import {
   Row,
 } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
-import { useRequest } from 'umi';
-import moment from 'moment';
 import OperationModal from './components/OperationModal';
 import { addFakeList, queryFakeList, removeFakeList, updateFakeList } from './service';
 import styles from './style.less';
@@ -34,45 +29,17 @@ const Info = ({ title, value, bordered }) => (
   </div>
 );
 
-const ListContent = ({ data: { created_by, createdAt, percent, status } }) => (
-  <div className={styles.listContent}>
-    <div className={styles.listContentItem}>
-      <span>Owner</span>
-      <p>{created_by}</p>
-    </div>
-    <div className={styles.listContentItem}>
-      <span>开始时间</span>
-      <p>{moment(createdAt).format('YYYY-MM-DD HH:mm')}</p>
-    </div>
-    <div className={styles.listContentItem}>
-      <Progress
-        percent={percent}
-        status={status}
-        strokeWidth={6}
-        style={{
-          width: 180,
-        }}
-      />
-    </div>
-  </div>
-);
-
 export const BasicList = () => {
   const [done, setDone] = useState(false);
   const [total, setTotal] = useState('');
   const [visible, setVisible] = useState(false);
   const [current, setCurrent] = useState(undefined);
-  const [params, setParams] = useState({})
-  const {
-    data: listData,
-    loading,
-    mutate,
-  } = useRequest(() => {
-    return queryFakeList({
-      // count: 7,
-    });
-  });
-  const actionRef = useRef();
+  const [editorRowData, setEditorRowData] = useState({}); //编辑数据
+  const [params, setParams] = useState({
+    name:"",
+    status:""
+  })
+  const ref = useRef();
   const columns = [
     {
       title: '任务名称',
@@ -108,7 +75,6 @@ export const BasicList = () => {
       valueType: 'option',
       render: (text, record) => [
         <a key="1" onClick={() => handleOnClickEdit(record)}>编辑</a>,
-        // <a key="2" onClick={() => handleClickDelete(record)}>删除</a>,
         <Popconfirm
           title={'确定要删除该数据吗？'}
           onConfirm={() => handleClickDelete(record)}
@@ -119,82 +85,36 @@ export const BasicList = () => {
       ],
     },
   ]
-
-  const { run: postRun } = useRequest(
-    (method, params) => {
-      if (method === 'remove') {
-        return removeFakeList(params);
-      }
-
-      if (method === 'update') {
-        return updateFakeList(params);
-      }
-
-      return addFakeList(params);
-    },
-    {
-      manual: true,
-      onSuccess: (result) => {
-        mutate(result);
-      },
-    },
-  );
-  const list = listData || [];
-  const paginationProps = {
-    showSizeChanger: true,
-    showQuickJumper: true,
-    pageSize: 5,
-    total: list.length,
-  };
-
-  const showEditModal = (item) => {
+  const handleOnClickEdit = (record) => {
     setVisible(true);
-    setCurrent(item);
-  };
-
-  const deleteItem = (id) => {
-    postRun('remove', {
-      id,
-    });
-  };
-
-  const editAndDelete = (key, currentItem) => {
-    if (key === 'edit') showEditModal(currentItem);
-    else if (key === 'delete') {
-      Modal.confirm({
-        title: '删除任务',
-        content: '确定删除该任务吗？',
-        okText: '确认',
-        cancelText: '取消',
-        onOk: () => deleteItem(currentItem.id),
-      });
+    setEditorRowData({ ...record });
+  }
+  const handleClickDelete = async ({id}) => {
+    const {code} = await removeFakeList({ids:[id]});
+    if(code === 200) {
+      message.success("删除成功");
+      reloadTable();
     }
-  };
+  }
+
+  const handleChangeRadio = (e) => {
+    setParams({...params,status:e.target.value})
+  }
+  const onSearch = (value) => setParams({...params,name:value})
 
   const extraContent = (
-    <div className={styles.extraContent}>
-      <RadioGroup defaultValue="all">
-        <RadioButton value="all">全部</RadioButton>
-        <RadioButton value="progress">进行中</RadioButton>
-        <RadioButton value="waiting">等待中</RadioButton>
+    <>
+      <RadioGroup defaultValue="" onChange={handleChangeRadio}>
+        <RadioButton value="">全部</RadioButton>
+        <RadioButton value="RUNNING">进行中</RadioButton>
+        <RadioButton value="NOT_READY">等待中</RadioButton>
       </RadioGroup>
-      <Search className={styles.extraContentSearch} placeholder="请输入" onSearch={() => ({})} />
-    </div>
-  );
-
-  const MoreBtn = ({ item }) => (
-    <Dropdown
-      overlay={
-        <Menu onClick={({ key }) => editAndDelete(key, item)}>
-          <Menu.Item key="edit">编辑</Menu.Item>
-          <Menu.Item key="delete">删除</Menu.Item>
-        </Menu>
-      }
-    >
-      <a>
-        更多 <DownOutlined />
-      </a>
-    </Dropdown>
+      <Search
+        className={styles.extraContentSearch}
+        placeholder="请输入"
+        onSearch={onSearch}
+      />
+    </>
   );
 
   const handleDone = () => {
@@ -202,14 +122,11 @@ export const BasicList = () => {
     setVisible(false);
     setCurrent({});
   };
-
-  const handleSubmit = (values) => {
-    setDone(true);
-    const method = values?.id ? 'update' : 'add';
-    postRun(method, values);
-  };
   const onChangePagination = (page, pageSize) => {
     console.log(page, pageSize);
+  }
+  const reloadTable = () => {
+    ref.current.reload();
   }
   return (
     <div>
@@ -233,7 +150,7 @@ export const BasicList = () => {
           {/*</div>*/}
           <ProTable
             headerTitle='任务列表'
-            actionRef={actionRef}
+            actionRef={ref}
             columns={columns}
             rowKey="id"
             params={
@@ -243,7 +160,6 @@ export const BasicList = () => {
               return queryFakeList(params)
             }}
             search={false}
-            // pagination={false}
             toolBarRender={() => [
               extraContent
             ]}
@@ -258,70 +174,13 @@ export const BasicList = () => {
               pageSize: 10,
             }}
           />
-          {/*<Card*/}
-          {/*  className={styles.listCard}*/}
-          {/*  bordered={false}*/}
-          {/*  title="任务列表"*/}
-          {/*  style={{*/}
-          {/*    marginTop: 24,*/}
-          {/*  }}*/}
-          {/*  bodyStyle={{*/}
-          {/*    padding: '0 32px 40px 32px',*/}
-          {/*  }}*/}
-          {/*  extra={extraContent}*/}
-          {/*>*/}
-          {/*  <List*/}
-          {/*    size="large"*/}
-          {/*    rowKey="id"*/}
-          {/*    loading={loading}*/}
-          {/*    pagination={paginationProps}*/}
-          {/*    dataSource={list}*/}
-          {/*    renderItem={(item) => (*/}
-          {/*      <List.Item*/}
-          {/*        actions={[*/}
-          {/*          <a*/}
-          {/*            key="edit"*/}
-          {/*            onClick={(e) => {*/}
-          {/*              e.preventDefault();*/}
-          {/*              showEditModal(item);*/}
-          {/*            }}*/}
-          {/*          >*/}
-          {/*            编辑*/}
-          {/*          </a>,*/}
-          {/*          <MoreBtn key="more" item={item} />,*/}
-          {/*        ]}*/}
-          {/*      >*/}
-          {/*        <List.Item.Meta*/}
-          {/*          avatar={<Avatar src={item.logo} shape="square" size="large" />}*/}
-          {/*          title={<a href={item.href}>{item.name}</a>}*/}
-          {/*          description={item.subDescription}*/}
-          {/*        />*/}
-          {/*        <ListContent data={item} />*/}
-          {/*      </List.Item>*/}
-          {/*    )}*/}
-          {/*  />*/}
-          {/*</Card>*/}
         </div>
       </PageContainer>
-      {/*<Button*/}
-      {/*  type="dashed"*/}
-      {/*  onClick={() => {*/}
-      {/*    setVisible(true);*/}
-      {/*  }}*/}
-      {/*  style={{*/}
-      {/*    width: '100%',*/}
-      {/*    marginBottom: 8,*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  <PlusOutlined />*/}
-      {/*  添加*/}
-      {/*</Button>*/}
       <OperationModal
-        done={done}
         visible={visible}
-        current={current}
-        onDone={handleDone}
-        onSubmit={handleSubmit}
+        setVisible={setVisible}
+        editData={editorRowData}
+        reloadTable={reloadTable}
       />
     </div>
   );

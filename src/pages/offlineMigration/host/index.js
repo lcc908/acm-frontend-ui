@@ -95,7 +95,7 @@ const StepForm = (props) => {
     const res = await getTemporaryMigrationTask({ id: taskId });
     if (res.data.length) {
       const {status} = JSON.parse(res?.data[0]?.sub_task[0]?.platform_info) || {}; //第五步，虚拟机状态
-      const threeData = res.data[0].sub_task[0];
+      const threeData = JSON.parse(res.data[0].sub_task[0].migration_info);
       const fourData = JSON.parse(res.data[0].sub_task[0].image_info);
       const fiveData = JSON.parse(res.data[0].sub_task[0].platform_info);
       // const fourState = res.data[0].sub_task[0].current_step;
@@ -103,13 +103,18 @@ const StepForm = (props) => {
       setData({ ...res.data[0] });
       setFourData({ ...fourData });
       setFiveData({ ...fiveData });
-      //镜像上传中或者失败下一步不可点击
       // setThreeNextBt
       // JSON.stringify(fourData) === '{}'
-      if(fourData) {
+      //数据迁移中或者失败下一步不可点击
+      if(threeData?.status === 'DATA_MIGRATED') {
         // setThreeNextBt(true);
         setThreeNextBt(false);
       }
+      if(threeData?.status === 'DATA_MIGRATING' || threeData?.status === "DATA_MIGRATE_FAILED") {
+        // setThreeNextBt(true);
+        setThreeNextBt(true);
+      }
+      //镜像上传中或者失败下一步不可点击
       if (fourData?.status === 'IMAGE_UPLOADING' || fourData?.status === 'IMAGE_UPLOAD_FAILED') {
         setFourNextBt(true);
       }

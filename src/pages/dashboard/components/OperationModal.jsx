@@ -1,121 +1,74 @@
-import {
-  ModalForm,
-  ProFormSelect,
-  ProFormDateTimePicker,
-  ProFormText,
-  ProFormTextArea,
-} from '@ant-design/pro-form';
-import styles from '../style.less';
-import { Button, Result } from 'antd';
+import React, { useEffect, useState, useRef } from 'react';
+import { Form, message } from 'antd';
+import { ModalForm, ProFormText, ProFormSwitch, ProFormSelect,ProFormTextArea } from '@ant-design/pro-form';
+import {putFakeList} from "@/pages/dashboard/service";
 
-const OperationModal = (props) => {
-  const { done, visible, current, onDone, onSubmit, children } = props;
+const waitTime = (time) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, time);
+  });
+};
 
-  if (!visible) {
-    return null;
+export default (props) => {
+  const {visible,setVisible,editData,reloadTable} = props;
+  const formRef  = useRef();
+
+  useEffect(() => {
+    // if(formType === 'Add') {
+    //   return false;
+    // }
+    formRef?.current?.resetFields();
+  }, [editData]);
+
+  const titleText = editData?.id ? '编辑表单' : '新建表单';
+
+  const onFinish = async (values) => {
+    await waitTime(1000);
+    const {code} = await putFakeList({id:editData.id,...values})
+    if(code === 200) {
+      message.success("保存成功");
+      setVisible(false);
+      reloadTable();
+    }
   }
-
+  const onInit = (values) => {
+    console.log(values);
+    console.log(editData);
+    if(editData.id) {
+      formRef?.current?.setFieldsValue({
+        ...editData,
+      });
+    }
+  }
   return (
     <ModalForm
+      title={titleText}
       visible={visible}
-      title={done ? null : `任务${current ? '编辑' : '添加'}`}
-      className={styles.standardListForm}
-      width={640}
-      onFinish={async (values) => {
-        onSubmit(values);
-      }}
-      initialValues={current}
-      submitter={{
-        render: (_, dom) => (done ? null : dom),
-      }}
-      trigger={<>{children}</>}
+      formRef={formRef}
+      onFinish={onFinish}
+      layout={'horizontal'}
+      labelCol={{ span: 4 }}
+      wrapperCol={{ span: 20 }}
+      onVisibleChange={setVisible}
       modalProps={{
-        onCancel: () => onDone(),
         destroyOnClose: true,
-        bodyStyle: done
-          ? {
-              padding: '72px 0',
-            }
-          : {},
       }}
+      onInit={(values) => onInit(values)}
     >
-      {!done ? (
-        <>
-          <ProFormText
-            name="title"
-            label="任务名称"
-            rules={[
-              {
-                required: true,
-                message: '请输入任务名称',
-              },
-            ]}
-            placeholder="请输入"
-          />
-          <ProFormDateTimePicker
-            name="createdAt"
-            label="开始时间"
-            rules={[
-              {
-                required: true,
-                message: '请选择开始时间',
-              },
-            ]}
-            fieldProps={{
-              style: {
-                width: '100%',
-              },
-            }}
-            placeholder="请选择"
-          />
-          <ProFormSelect
-            name="owner"
-            label="任务负责人"
-            rules={[
-              {
-                required: true,
-                message: '请选择任务负责人',
-              },
-            ]}
-            options={[
-              {
-                label: '付晓晓',
-                value: 'xiao',
-              },
-              {
-                label: '周毛毛',
-                value: 'mao',
-              },
-            ]}
-            placeholder="请选择管理员"
-          />
-          <ProFormTextArea
-            name="subDescription"
-            label="产品描述"
-            rules={[
-              {
-                message: '请输入至少五个字符的产品描述！',
-                min: 5,
-              },
-            ]}
-            placeholder="请输入至少五个字符"
-          />
-        </>
-      ) : (
-        <Result
-          status="success"
-          title="操作成功"
-          subTitle="一系列的信息描述，很短同样也可以带标点。"
-          extra={
-            <Button type="primary" onClick={onDone}>
-              知道了
-            </Button>
-          }
-          className={styles.formResult}
-        />
-      )}
+      <ProFormText
+        name="name"
+        label="任务名称"
+        placeholder="请输入"
+        width='xl'
+      />
+      <ProFormTextArea
+        width='xl'
+        name="description"
+        label="描述"
+        placeholder="请输入"
+      />
     </ModalForm>
   );
 };
-
-export default OperationModal;
