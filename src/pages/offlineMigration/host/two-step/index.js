@@ -18,7 +18,8 @@ export default (props) => {
   const { twoFormRef, current } = props;
   const [xitGb,setXitGb] = useState(true);
   const [sjGb,setSjGb] = useState(true);
-  const [checkBox,setCheckBox] = useState([])
+  const [systemDisk,setSystemDisk] = useState(false);
+  const [dataDisk,setDataDisk] = useState(false);
   const [hostInfo,setHostInfo] = useState({}) //源主机配置
   const [diskArray,setDiskArray] = useState([]) //磁盘信息
   const rules = [{ required: true}];
@@ -28,19 +29,18 @@ export default (props) => {
       return false;
     }
     setXitGb(true);
-    // twoFormRef.current?.setFieldsValue({
-    //   c1:null
-    // })
   }
   const handleChangeSJ = (val) => {
     if(val[0]) {
       setSjGb(false);
       return false;
     }
+    console.log(val);
     setSjGb(true);
-    // twoFormRef.current?.setFieldsValue({
-    //   c2:[]
-    // })
+  }
+  const handleChangeDisk = (val) => {
+    console.log(val);
+    localStorage.setItem("data_disk",JSON.stringify(val));
   }
   useEffect(()=>{
     getData();
@@ -60,12 +60,18 @@ export default (props) => {
     }
     if(data.length) {
       const res = data[0];
-      // handleSetTaskId(res.id)
+      const {target_platform_id} = res.sub_task[0];
+      const {system_disk} = JSON.parse(res.extra);
+      const data_disk = JSON.parse(localStorage.getItem("data_disk")) || [];
       localStorage.setItem('host_task_id',res.id)
       twoFormRef.current?.setFieldsValue({
         ...res,
-        // ...hostData
+        target_platform_id,
+        system_disk,
+        data_disk,
       })
+      if(system_disk) setSystemDisk(true)
+      if(data_disk.length) setDataDisk(true)
     }
   }
   const checkboxData = async () =>{
@@ -82,20 +88,7 @@ export default (props) => {
               rules={rules}
             />
           </Col>
-          {/*<Col span={8}>*/}
-          {/*  <ProFormText*/}
-          {/*    name="b"*/}
-          {/*    label="创建时间"*/}
-          {/*    disabled*/}
-          {/*    // rules={rules}*/}
-          {/*  />*/}
-          {/*</Col>*/}
           <Col span={8}>
-            {/*<ProFormText*/}
-            {/*  name="a"*/}
-            {/*  label="目标平台"*/}
-            {/*  // rules={rules}*/}
-            {/*/>*/}
             <ProFormSelect
               name="target_platform_id"
               label="目标平台"
@@ -117,29 +110,8 @@ export default (props) => {
               fieldProps={{
                 rows:1
               }}
-              // rules={rules}
             />
           </Col>
-          {/*<Col span={24}>*/}
-          {/*  <ProForm.Group label="自定义脚本">*/}
-          {/*    <ProFormSelect*/}
-          {/*      width="md"*/}
-          {/*      name="b"*/}
-          {/*      label="脚本类型"*/}
-          {/*      options={[*/}
-          {/*        {*/}
-          {/*          value: '1',*/}
-          {/*          label: '1',*/}
-          {/*        },*/}
-          {/*      ]}*/}
-          {/*      addonAfter={*/}
-          {/*        <div className={styles.upload}>*/}
-          {/*          <ProFormUploadButton name="upload" max={1} action="/upload.do" />*/}
-          {/*        </div>*/}
-          {/*      }*/}
-          {/*    />*/}
-          {/*  </ProForm.Group>*/}
-          {/*</Col>*/}
         </Row>
       </ProCard>
       <ProCard title="源主机配置" headerBordered bordered className={styles.lastCard}>
@@ -155,7 +127,6 @@ export default (props) => {
                   label: '系统盘',
                 },
               ]}
-              // addonAfter={<ProFormText name="c1" disabled={xitGb} />}
               addonAfter={<ProFormSelect
                 name="system_disk"
                 width="xl"
@@ -165,6 +136,7 @@ export default (props) => {
               fieldProps={{
                 onChange:handleChange
               }}
+              disabled={systemDisk}
             />
           </Col>
           <Col span={24} style={{ margin: 5 }}></Col>
@@ -177,19 +149,20 @@ export default (props) => {
                   label: '数据盘',
                 },
               ]}
-              // addonAfter={<ProFormText name="c2" disabled={sjGb} />}
               addonAfter={<ProFormSelect
                 name="data_disk"
                 width="xl"
                 options={diskArray}
                 fieldProps={{
                   mode: 'multiple',
+                  onChange:handleChangeDisk
                 }}
                 disabled={sjGb}
               />}
               fieldProps={{
                 onChange:handleChangeSJ
               }}
+              disabled={dataDisk}
             />
           </Col>
         </Row>

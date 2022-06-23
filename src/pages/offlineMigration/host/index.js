@@ -49,6 +49,7 @@ const StepResult = (props) => {
 const clearLocalStorage = () => {
   localStorage.removeItem('hostStep');
   localStorage.removeItem('host_task_id');
+  localStorage.removeItem('data_disk');
 };
 const StepForm = (props) => {
   const [stepData, setStepData] = useState({

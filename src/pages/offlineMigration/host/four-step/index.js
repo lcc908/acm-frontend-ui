@@ -37,23 +37,26 @@ export default (props) => {
       if(taskId) {
         const res = await getTemporaryMigrationTask({id:taskId});
         if(res.data.length) {
-          const current_step = res.data[0].sub_task[0].current_step;
-          // if(current_step === 'IMAGE_UPLOADING') {
-          //   //上传中
-          //   console.log('上传中');
-          // }
-          // if(current_step === 'IMAGE_UPLOADED') {
-          //   //上传已完成
-          //   console.log('上传已完成');
-          // }
-          // if(current_step === 'IMAGE_UPLOAD_FAILED') {
-          //   //上传已完成
-          //   console.log('上传失败');
-          // }
-          // setData({...res.data[0]})
+          const fourData = JSON.parse(res.data[0].sub_task[0].image_info);
+          setUpdateState(fourData.status);
         }
       }
     }
+  }
+  const renderUpdateBtm = (status) => {
+    if(status === "IMAGE_UPLOADING") {
+      return [<Button type="primary" key="1" loading={true}>上传中</Button>]
+    }
+    if(status === "IMAGE_UPLOADED") {
+      return [<Button type="primary" key="1" onClick={handleClick}>上传镜像</Button>]
+    }
+    if(status === "IMAGE_UPLOAD_FAILED") {
+      return [<Button danger type="primary" key="1" onClick={handleClick}>点击重试</Button>]
+    }
+    return [<Button type="primary" key="1" onClick={handleClick}>上传镜像</Button>]
+    // updateState === 'IMAGE_UPLOADING' ? [<Button type="primary" key="1" onClick={handleClick} loading={true}>上传中</Button>] :
+    //   [<Button type="primary" key="2" onClick={handleClick}>上传成功</Button>]
+    return []
   }
   return (
     <>
@@ -61,7 +64,7 @@ export default (props) => {
         title="目标主机配置与迁移"
         headerBordered
         bordered
-        actions={updateState === 'IMAGE_UPLOADING' ? [<Button type="primary" key="1" onClick={handleClick} loading>上传中</Button>] : [<Button type="primary" key="2" onClick={handleClick}>上传成功</Button>]}
+        actions={renderUpdateBtm(updateState)}
       >
         <Row gutter={24} justify={'center'} align={'middle'}>
           <Col span={12}>

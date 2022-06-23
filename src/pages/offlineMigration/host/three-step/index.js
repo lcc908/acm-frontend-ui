@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import { Card, Timeline, Button, Progress, Row, Col, Table, Space } from 'antd';
+import { Card, Timeline, Empty , Progress, Row, Col } from 'antd';
 import ProForm, {
   ProFormText,
   ProFormSelect,
@@ -96,7 +96,7 @@ export default (props) => {
                 </Col>
               </Row>
             )
-          }) : null
+          }) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
         }
       </ProCard>
     </>
