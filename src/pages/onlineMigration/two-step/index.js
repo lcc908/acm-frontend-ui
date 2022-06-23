@@ -131,6 +131,7 @@ export default (props) => {
                   "value": "Linuxs_salt_agent.zip"
                 }
               ]}
+              rules={rules}
             />
             <ProFormText
               name="install_path"

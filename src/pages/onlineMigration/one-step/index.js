@@ -136,6 +136,7 @@ export default (props) => {
               name="target_platform_id"
               label="权限列表"
               request={request}
+              rules={rules}
             />
             <ProFormUploadDragger
               max={1}

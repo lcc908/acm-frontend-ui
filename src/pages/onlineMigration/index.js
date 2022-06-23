@@ -124,7 +124,6 @@ const StepForm = (props) => {
         return false;
       }
       localStorage.setItem('onlineTask_id',res.data.id)
-      return false;
     }
     if(step === 2) {
       const val = await threeFormRef?.current?.validateFieldsReturnFormatValue();
