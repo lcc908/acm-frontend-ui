@@ -1,16 +1,10 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Popconfirm, Timeline, Button, Progress, Row, Col, Table, Space, message} from 'antd';
-import {
-  ProFormText,
-  ProFormSelect,
-  ProFormSwitch,
-  ProFormRadio, ProFormUploadButton,
-} from '@ant-design/pro-form';
-import ProCard from '@ant-design/pro-card'
-import { EditableProTable } from '@ant-design/pro-table';
+import ProCard from '@ant-design/pro-card';
+import { ProFormSelect, ProFormText } from '@ant-design/pro-form';
+import { Button, message, Popconfirm, Timeline } from 'antd';
+import { useEffect, useState } from 'react';
 
+import { getTemporaryMigrationTask, postOpenstackVm } from '@/pages/offlineMigration/host/service';
 import styles from '../style.less';
-import {getTemporaryMigrationTask, postOpenstackVm} from "@/pages/offlineMigration/host/service";
 
 const waitTime = (time = 1000) => {
   return new Promise((resolve) => {
@@ -20,30 +14,29 @@ const waitTime = (time = 1000) => {
   });
 };
 
-
 export default (props) => {
   const { fiveFormRef, fiveData, stepData } = props;
   const [editableKeys, setEditableRowKeys] = useState([]);
   const [dataSource, setDataSource] = useState([]);
-  const [state,setState] = useState({}); //上传状态
+  const [state, setState] = useState({}); //上传状态
   const columns = [
     {
       title: '序号',
       dataIndex: 'name',
       key: 'name',
-      readonly:true
+      readonly: true,
     },
     {
       title: '磁盘名称',
       dataIndex: 'age',
       key: 'age',
-      readonly:true
+      readonly: true,
     },
     {
       title: '挂载点',
       dataIndex: 'address',
       key: 'address',
-      readonly:true
+      readonly: true,
     },
     {
       title: '容量(GB)',
@@ -63,11 +56,14 @@ export default (props) => {
         >
           编辑
         </a>,
-        <Popconfirm title="确定删除此行数据?" onConfirm={() => {
-          setDataSource(dataSource.filter((item) => item.key !== record.key));
-        }}>
+        <Popconfirm
+          title="确定删除此行数据?"
+          onConfirm={() => {
+            setDataSource(dataSource.filter((item) => item.key !== record.key));
+          }}
+        >
           <a>删除</a>
-        </Popconfirm>
+        </Popconfirm>,
       ],
     },
   ];
@@ -96,46 +92,44 @@ export default (props) => {
   ];
 
   useEffect(() => {
-    if(fiveData) {
+    if (fiveData) {
       // console.log(fiveData);
       fiveFormRef?.current?.setFieldsValue({
-        ...fiveData
+        ...fiveData,
       });
-      setState(fiveData.status)
+      setState(fiveData.status);
     }
-
-  },[fiveData])
+  }, [fiveData]);
   const handleClick = async () => {
     // console.log('这是第四步', fiveFormRef?.current?.getFieldValue());
     await waitTime();
     const val = fiveFormRef?.current?.getFieldValue();
-    const taskId = localStorage.getItem('host_task_id')
+    const taskId = localStorage.getItem('host_task_id');
     val.task_id = taskId;
     val.flavor_name = val.flavor;
-    val.save_only = true;
-    const {code,data} = await postOpenstackVm(val);
-    if(code === 200) {
+    val.save_only = false;
+    const { code, data } = await postOpenstackVm(val);
+    if (code === 200) {
       message.success('虚拟机启动成功！');
       console.log(data);
-      if(taskId) {
-        const res = await getTemporaryMigrationTask({id:taskId});
-        if(res.data.length) {
-          const {status} = JSON.parse(res?.data[0]?.sub_task[0]?.platform_info) || {};
+      if (taskId) {
+        const res = await getTemporaryMigrationTask({ id: taskId });
+        if (res.data.length) {
+          const { status } = JSON.parse(res?.data[0]?.sub_task[0]?.platform_info) || {};
           console.log(status);
-          if(status === "OPENSTACK_VM_CREATING") {
-
+          if (status === 'OPENSTACK_VM_CREATING') {
           }
-          if(status === "OPENSTACK_VM_CREATED") {
-            message.error("创建成功")
+          if (status === 'OPENSTACK_VM_CREATED') {
+            message.error('创建成功');
           }
-          if(status === "OPENSTACK_VM_CREATE_FAILED") {
-            message.error("创建失败")
+          if (status === 'OPENSTACK_VM_CREATE_FAILED') {
+            message.error('创建失败');
           }
         }
       }
       // res.data[0].sub_task[0].platform_info
     }
-  }
+  };
   return (
     <>
       <ProCard
@@ -198,11 +192,16 @@ export default (props) => {
               },
             ]}
           />
-          <div style={{textAlign:'center'}}>
-            {
-              state === 'OPENSTACK_VM_CREATING' ? <Button type="primary" loading={true}>虚拟机创建中</Button> :
-                <Button type="primary" key="2" onClick={handleClick}>创建虚拟机</Button>
-            }
+          <div style={{ textAlign: 'center' }}>
+            {state === 'OPENSTACK_VM_CREATING' ? (
+              <Button type="primary" loading={true}>
+                虚拟机创建中
+              </Button>
+            ) : (
+              <Button type="primary" key="2" onClick={handleClick}>
+                创建虚拟机
+              </Button>
+            )}
           </div>
           {/*<Table columns={columns} dataSource={data} pagination={false} title={() => '磁盘列表'}/>*/}
           {/*<EditableProTable*/}
@@ -242,7 +241,7 @@ export default (props) => {
           <Timeline pending="loading..." className={styles.timeLine}>
             {/*<Timeline>*/}
             <Timeline.Item color="green">2022-03-1 10:13:15 连接目标主机成功</Timeline.Item>
-            <Timeline.Item color="green">2022-03-1 11:13:30  操作系统配置基线检查完成</Timeline.Item>
+            <Timeline.Item color="green">2022-03-1 11:13:30 操作系统配置基线检查完成</Timeline.Item>
             {/*<Timeline.Item color="green">2022-03-2 12:13:45  目标主机硬件环境检查完成</Timeline.Item>*/}
             {/*<Timeline.Item color="green">2022-03-3 11:13:45  网络连通性检查正常，能够访问ETL存储</Timeline.Item>*/}
             {/*<Timeline.Item color="green">2022-03-4 12:13:45 成功状态</Timeline.Item>*/}
