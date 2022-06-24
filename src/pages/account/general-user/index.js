@@ -6,6 +6,7 @@ import { message, Button, Popconfirm, Dropdown, Menu, Modal } from 'antd';
 // import { message, Button, Popconfirm, Menu, Modal } from 'antd';
 import AddAndEdit from '@/pages/account/general-user/addAndEdit';
 import { getUser, deleteUser } from '@/pages/account/general-user/service';
+import {removeFakeList} from "@/pages/dashboard/service";
 
 const waitTime = (time = 100) => {
   return new Promise((resolve) => {
@@ -15,17 +16,15 @@ const waitTime = (time = 100) => {
   });
 };
 
-export default (props) => {
+export default () => {
   const [isModalVisible, setModalVisit] = useState(false);
   const [editorRowData, setEditorRowData] = useState({}); //编辑数据
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [selectRowsData, setSelectRowsData] = useState([]);
   const [params, setParams] = useState({
     // page_number: 1,
     // page_size: 10,
     // sort: "+id",
   });
-  const actionRef = useRef();
+  const ref = useRef();
   const columns = [
     {
       title: '用户ID',
@@ -44,22 +43,6 @@ export default (props) => {
       align: 'center',
       hideInSearch: true,
     },
-    // {
-    //   title: '名称',
-    //   dataIndex: 'platform_name',
-    //   align: 'center',
-    //   hideInSearch: true,
-    // },
-    // {
-    //   title: '状态',
-    //   dataIndex: 'enabled',
-    //   align: 'center',
-    //   hideInSearch: true,
-    //   valueEnum: {
-    //     1: { text: '激活', status: 'Success' },
-    //     0: { text: '禁用', status: 'Error' },
-    //   },
-    // },
     {
       title: '创建日期',
       dataIndex: 'created_at',
@@ -80,7 +63,7 @@ export default (props) => {
           title="确认删除该数据吗？"
           okText="Yes"
           cancelText="No"
-          onConfirm={() => deleteData([record.id])}
+          onConfirm={() => deleteData(record)}
         >
           <a key="2">删除</a>
         </Popconfirm>,
@@ -88,30 +71,10 @@ export default (props) => {
     },
   ];
   const handleOnClickEdit = (record) => {
+    console.log(record);
     setModalVisit(true);
     setEditorRowData({ ...record });
   };
-  const data = [
-    {
-      id: '628ca5363cf4476053000001',
-      os_type: 'centos7',
-      ip_address: '10.122.1.1',
-      name: null,
-      common_account_id: null,
-      account: 'test',
-      password_hash: 'Decryption failed',
-      port: 22,
-      connect_type: 'SSH',
-      extra: 'ds',
-      enabled: '1',
-      description: 'sd',
-      deleted: '0',
-      created_by: 'liusl12',
-      created_at: '2022-05-24 00:00:00',
-      updated_by: 'liusl12',
-      updated_at: '2022-05-24 00:00:00',
-    },
-  ];
   /*
    * 分页*/
   const onChangePagination = (page, pageSize) => {
@@ -124,26 +87,11 @@ export default (props) => {
     setEditorRowData({});
     setModalVisit(true);
   };
-  const handleOk = () => {
-    setModalVisit(false);
-  };
-
-  const handleCancel = () => {
-    setModalVisit(false);
-  };
-
-  const onSelectChange = (selectedRowKeys, selectedRows) => {
-    // setButtonDisableds(true)
-    setSelectRowsData([...selectedRows]);
-    setSelectedRowKeys([...selectedRowKeys]);
-  };
-
   // 删除用户
-  const deleteData = async (ids) => {
-    const res = await deleteUser({ ids: ids });
-    if (res.code === 200) {
-      message.success('删除成功');
-      setDeleteDisabled(true);
+  const deleteData = async ({id}) => {
+    const {code} = await deleteUser({ids:[id]});
+    if(code === 200) {
+      message.success("删除成功");
       reloadTable();
     }
   };
@@ -154,35 +102,22 @@ export default (props) => {
   return (
     <PageContainer>
       <ProTable
-        actionRef={actionRef}
+        actionRef={ref}
         columns={columns}
         rowKey="id"
         params={params}
         request={() => {
           return getUser(params);
         }}
-        // dataSource={data}
-        // cardProps={{ title: '用户列表', bordered: true }}
         headerTitle="用户列表"
         search={false}
         pagination={false}
-        rowSelection={{
-          selectedRowKeys: selectedRowKeys,
-          onChange: onSelectChange,
-          // alwaysShowAlert:true
-        }}
         toolBarRender={() => [
           <Button key="1" type="primary" onClick={showModal}>
             添加
           </Button>,
-          <Button key="2" type="primary" danger onClick={showModal}>
-            批量禁用
-          </Button>,
-          <Button key="3" type="primary" danger onClick={showModal}>
-            批量删除
-          </Button>,
         ]}
-      ></ProTable>
+      />
       <AddAndEdit
         isModalVisible={isModalVisible}
         setModalVisit={setModalVisit}

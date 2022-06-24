@@ -18,15 +18,8 @@ const waitTime = (time) => {
 
 export default (props) => {
   const { isModalVisible, setModalVisit, editData } = props;
-  const formRef = useRef();
   const [platformType, setPlatformType] = useState('openstack');
-  useEffect(() => {
-    // if(formType === 'Add') {
-    //   return false;
-    // }
-    formRef?.current?.resetFields();
-    formRef?.current?.setFieldsValue({ ...editData });
-  }, [editData]);
+  const formRef = useRef();
 
   const titleText = editData?.id ? '编辑表单' : '新建表单';
 
@@ -37,6 +30,13 @@ export default (props) => {
       formRef?.current?.resetFields();
     }
   };
+  const onInit = (values) => {
+    if(editData.id) {
+      formRef?.current?.setFieldsValue({
+        ...editData,
+      });
+    }
+  }
   const onFinish = async (values) => {
     // await waitTime(2000);
     console.log(values);
@@ -86,6 +86,7 @@ export default (props) => {
       modalProps={{
         destroyOnClose: true,
       }}
+      onInit={(values) => onInit(values)}
     >
       <ProFormText width="xl" name="name" label="用户名" placeholder="请输入用户名" />
       <ProFormText width="xl" name="password" label="密码" placeholder="请输入密码" />
