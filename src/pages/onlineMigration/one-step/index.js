@@ -29,8 +29,8 @@ export default (props) => {
     // console.log(oneFormRef?.current.);
     const val = await oneFormRef.current?.validateFieldsReturnFormatValue();
     delete val.machine_type1;
-    console.log(val);
     const res = await getHotMigration(val);
+    console.log(res);
     if (res.code === 200) {
       message.success('连通性检查已完成！');
       localStorage.setItem('onlineOne',JSON.stringify(val));

@@ -22,18 +22,10 @@ const authHeaderInterceptor = (url, options) => {
   const baseUrl = process.env.NODE_ENV === 'development' ? '/api' : 'https://acm.lenovo.com:9001';
   const token = localStorage.getItem('userToken');
   const o = options;
-  // if (history.location.pathname !== loginPath &&　token) {
-  if (history.location.pathname !== loginPath) {
+  if (history.location.pathname !== loginPath &&　token) {
     o.headers = {
-      'username': 'liucc10',
+      'username': token,
     };
-    // o.headers = {
-    //   'username': 'liucc10',
-    // };
-    // return {
-    //   url: baseUrl + url,
-    //   options: o
-    // }
   }
   return {
     url: baseUrl + url,
@@ -58,18 +50,29 @@ const demoResponseInterceptors = async (response, options) => {
 };
 //统一错误处理
 const errorHandler = (error) =>{
-  console.log(error);
+  const { response,data } = error;
+  console.log('error!!!',error)
+  console.log('response!!!',response)
+  console.log('data!!!',data)
+
+  if (response && response.code) {
+    console.log(3);
+  } else if (!response) {
+    console.log(1);
+  }
+
+  return response;
   // const { response } = error;
   // console.log(response);
 }
 export const request = {
+  // 当后端接口不满足该规范的时候你需要通过该配置把后端接口数据转换为该格式，
+  // 该配置只是用于错误处理，不会影响最终传递给页面的数据格式
   errorConfig:{
-    // 当后端接口不满足该规范的时候你需要通过该配置把后端接口数据转换为该格式，
-    // 该配置只是用于错误处理，不会影响最终传递给页面的数据格式
     adaptor: (resData) => {
       return {
         ...resData,
-        success: resData.success,
+        success: resData.code === 200,
         errorMessage: resData.message,
       };
     },
