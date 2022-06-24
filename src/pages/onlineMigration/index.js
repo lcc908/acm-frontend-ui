@@ -144,11 +144,9 @@ const StepForm = (props) => {
         }
       }
       const res = await postGenerateData(val);
-      console.log(res);
       if(res.code !== 200) {
         return false;
       }
-      return false;
     }
     props.onSubmit?.();
   };
