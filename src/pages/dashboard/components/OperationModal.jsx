@@ -19,7 +19,11 @@ export default (props) => {
     // if(formType === 'Add') {
     //   return false;
     // }
+
     formRef?.current?.resetFields();
+    formRef?.current?.setFieldsValue({
+      ...editData,
+    });
   }, [editData]);
 
   const titleText = editData?.id ? '编辑表单' : '新建表单';

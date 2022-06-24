@@ -46,7 +46,7 @@ export default (props) => {
       return {label:item.platform_name,value:item.id}
     });
     oneFormRef?.current?.setFieldsValue({
-      typeList: arr[0].value,
+      target_platform_id: arr[0].value,
     });
     return arr;
   };

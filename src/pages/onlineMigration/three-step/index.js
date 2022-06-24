@@ -181,7 +181,12 @@ export default (props) => {
             />
           </Col>
           <Col span={8}>
-            <ProFormDateTimePicker initialValue={Date.now()} disabled name="dateTime" label="日期" />
+            <ProFormDateTimePicker
+              initialValue={Date.now()}
+              disabled name="created_at"
+              label="日期"
+              width="xl"
+            />
           </Col>
           <Col style={{display:'none'}}>
             <ProFormText name="source_host_id" />

@@ -24,18 +24,6 @@ const authHeaderInterceptor = (url, options) => {
   const o = options;
   // if (history.location.pathname !== loginPath &&　token) {
   if (history.location.pathname !== loginPath) {
-    // if(o.method === "post") {
-    //   o.headers = {
-    //     'username': 'liucc10',
-    //     'Content-Type': 'application/x-www-form-urlencoded',
-    //     ...o.headers
-    //   };
-    //   o.body = JSON.stringify(o.body);
-    // } else {
-    //   o.headers = {
-    //     'username': 'liucc10',
-    //   };
-    // }
     o.headers = {
       'username': 'liucc10',
     };
@@ -63,20 +51,6 @@ const demoResponseInterceptors = async (response, options) => {
     const {data} = res;
     // console.log(data);
     return res;
-    // if(sacpresult) {
-    //   if (sacpresult.code !== 0) {
-    //     message.error(sacpresult.message || 'Error')
-    //     return res.result.sacpresult.message;
-    //   }
-    //   if(sacpresult.total_number) {
-    //     const {total_number} = sacpresult;
-    //     sacpresult.total = total_number;
-    //   }
-    //   // console.log('响应拦截,接口数据:',sacpresult);
-    //   return data;
-    // } else {
-    //   // message.error(res.result.sacpinfo || 'Error')
-    // }
   } else {
     // message.error(res.message)
   }
@@ -90,8 +64,9 @@ const errorHandler = (error) =>{
 }
 export const request = {
   errorConfig:{
+    // 当后端接口不满足该规范的时候你需要通过该配置把后端接口数据转换为该格式，
+    // 该配置只是用于错误处理，不会影响最终传递给页面的数据格式
     adaptor: (resData) => {
-      // console.log(resData)
       return {
         ...resData,
         success: resData.success,

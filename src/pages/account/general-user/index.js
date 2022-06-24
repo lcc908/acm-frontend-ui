@@ -122,6 +122,7 @@ export default () => {
         isModalVisible={isModalVisible}
         setModalVisit={setModalVisit}
         editData={editorRowData}
+        reloadTable={reloadTable}
       />
     </PageContainer>
   );

@@ -17,7 +17,7 @@ const waitTime = (time) => {
 };
 
 export default (props) => {
-  const { isModalVisible, setModalVisit, editData } = props;
+  const { isModalVisible, setModalVisit, editData,reloadTable } = props;
   const [platformType, setPlatformType] = useState('openstack');
   const formRef = useRef();
 
@@ -70,6 +70,7 @@ export default (props) => {
       console.log(res);
     }
     message.success('提交成功');
+    reloadTable();
     return true;
   };
   return (
