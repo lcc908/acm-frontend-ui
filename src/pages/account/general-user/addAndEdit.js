@@ -7,7 +7,7 @@ import {
   ProFormSelect,
   ProFormTextArea,
 } from '@ant-design/pro-form';
-import { addUser } from './service';
+import { addUser, editorUser } from './service';
 const waitTime = (time) => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -17,7 +17,8 @@ const waitTime = (time) => {
 };
 
 export default (props) => {
-  const { isModalVisible, setModalVisit, editData,reloadTable } = props;
+  const { isModalVisible, setModalVisit, editData, reloadTable } = props;
+
   const [platformType, setPlatformType] = useState('openstack');
   const formRef = useRef();
 
@@ -31,12 +32,12 @@ export default (props) => {
     }
   };
   const onInit = (values) => {
-    if(editData.id) {
+    if (editData.id) {
       formRef?.current?.setFieldsValue({
         ...editData,
       });
     }
-  }
+  };
   const onFinish = async (values) => {
     // await waitTime(2000);
     console.log(values);
@@ -60,18 +61,30 @@ export default (props) => {
       }
     }
     console.log(obj);
+    // NOTE: handle extra to json
+    obj.extra = JSON.stringify(obj.extra);
 
+    console.log('editData?.id', editData.id);
     if (editData?.id) {
+      console.log('edit....');
+      obj.id = editData.id;
+      const res = await editorUser(obj);
+      if (res.code === 200) {
+        message.success('编辑成功');
+        return true;
+      }
     } else {
-      // NOTE: handle extra to json
-      obj.extra = JSON.stringify(obj.extra);
+      console.log('add....');
+
       // NOTE: add user
       const res = await addUser(obj);
       console.log(res);
+      if (res.code === 200) {
+        message.success('添加成功');
+        reloadTable();
+        return true;
+      }
     }
-    message.success('提交成功');
-    reloadTable();
-    return true;
   };
   return (
     <ModalForm
@@ -90,8 +103,20 @@ export default (props) => {
       onInit={(values) => onInit(values)}
     >
       <ProFormText width="xl" name="name" label="用户名" placeholder="请输入用户名" />
-      <ProFormText width="xl" name="password" label="密码" placeholder="请输入密码" />
-      <ProFormText width="xl" name="password_new" label="确认密码" placeholder="请再次确认密码" />
+
+      {/* 控制密码框是否可见。新增的时候可见；编辑的时候不可见； */}
+
+      {editData?.id ? null : (
+        <>
+          <ProFormText width="xl" name="password" label="密码" placeholder="请输入密码" />
+          <ProFormText
+            width="xl"
+            name="password_new"
+            label="确认密码"
+            placeholder="请再次确认密码"
+          />
+        </>
+      )}
       <ProFormText width="xl" name="email" label="邮箱" placeholder="请输邮箱" />
       <ProFormSwitch name="switch" label="是否激活" />
     </ModalForm>
