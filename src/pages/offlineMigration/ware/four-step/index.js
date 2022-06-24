@@ -71,7 +71,9 @@ export default (props) => {
         });
       }
       setVmNameList([...vm_name_list])
-      setVmtaskId(vm_name_list[0].value);
+      if(vm_name_list.length) {
+        setVmtaskId(vm_name_list[0].value);
+      }
       setAllData({...log_info});
       if (selectVal) {
         setLogData({...log_info[selectVal]})
