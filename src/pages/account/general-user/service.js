@@ -13,7 +13,7 @@ export async function addUser(params) {
   });
 }
 //用户列表 POST /api/v1/user
-export async function editorPermission(params) {
+export async function editorUser(params) {
   return request('/api/v1/user', {
     method: 'PUT',
     data: params,
