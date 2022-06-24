@@ -149,6 +149,7 @@ export default (props) => {
             <ProFormSelect
               name="project_name"
               label="租户名称"
+              initialValue="peko1-10.120.76"
               options={[
                 {
                   value: 'peko1-10.120.76',
