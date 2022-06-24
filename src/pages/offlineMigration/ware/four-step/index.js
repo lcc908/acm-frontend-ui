@@ -70,8 +70,8 @@ export default (props) => {
           value: log_info[i].task_id
         });
       }
-      console.log(vm_name_list);
       setVmNameList([...vm_name_list])
+      setVmtaskId(vm_name_list[0].value);
       setAllData({...log_info});
       if (selectVal) {
         setLogData({...log_info[selectVal]})
