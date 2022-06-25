@@ -16,12 +16,14 @@ export default (props) => {
   const {oneFormRef, form, stepData} = props;
   const [lineList, setLineList] = useState([]);
   const [loading, setLoading] = useState('');
-  const id = localStorage.getItem('onlineTask_id');
+  const task_id = localStorage.getItem('onlineTask_id');
   useEffect(() => {
-    getData()
+    if(task_id) {
+      getData()
+    }
   }, [])
   const getData = async () => {
-    const {data} = await getTask({task_id: localStorage.getItem('onlineTask_id')});
+    const {data} = await getTask({task_id});
     setLineList([...data]);
     const res = data.some(item => {
       return item.status === 'running'
