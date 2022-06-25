@@ -31,9 +31,6 @@ export default (props) => {
     } else {
       setLoading('')
     }
-    // oneFormRef?.current?.setFieldsValue({
-    //   ...data
-    // });
   }
   const lineColor = (status) => {
     let str = '';

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Card, Row, Col, Tag, Divider, message, Form, Timeline} from 'antd';
+import {Empty, Row, Col, Tag, Divider, message, Form, Timeline} from 'antd';
 import {
   ClockCircleOutlined,
   CheckCircleOutlined,
@@ -40,21 +40,23 @@ export default (props) => {
   }
   return (
     <>
-      <Timeline pending={loading}>
-        {
-          lineList.length > 0 && lineList.map((item, index) => {
-            return (
-              <Timeline.Item
-                key={index}
-                dot={item.status === 'timeout' ? <ClockCircleOutlined/> : null}
-                color={lineColor(item.status)}
-              >
-                {item.time} {item.description} ------ {setStatusText(item.status)}
-              </Timeline.Item>
-            )
-          })
-        }
-      </Timeline>
+      {
+        lineList.length ? <Timeline pending={loading}>
+            {
+              lineList.map((item, index) => {
+                return (
+                  <Timeline.Item
+                    key={index}
+                    dot={item.status === 'timeout' ? <ClockCircleOutlined/> : null}
+                    color={lineColor(item.status)}
+                  >
+                    {item.time} {item.description} ------ {setStatusText(item.status)}
+                  </Timeline.Item>
+                )
+              })
+            }
+          </Timeline> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      }
     </>
   );
 };

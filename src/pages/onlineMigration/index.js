@@ -47,7 +47,7 @@ const StepForm = (props) => {
   // const [current, setCurrent] = useState(4); //当前表单的步骤数，从 0 开始
   const [current, setCurrent] = useState(()=>{
     const setNum = localStorage.getItem('onlineStep');
-    return setNum ? parseInt(setNum) : 0;
+    return setNum ? parseInt(setNum) : 4;
     // return 4;
   }); //当前表单的步骤数，从 0 开始
   const [twoNextBt, setTwoNextBt] = useState(true); //2 next
@@ -158,9 +158,9 @@ const StepForm = (props) => {
       <Button key="pre1" style={{marginTop:35}} onClick={() => props.onPre?.()}>
         上一步
       </Button>,
-      <Button type="primary" style={{marginTop:35}} key="goToTree" onClick={() => handleSubmitZanCun(props)}>
-        暂存
-      </Button>,
+      // <Button type="primary" style={{marginTop:35}} key="goToTree" onClick={() => handleSubmitZanCun(props)}>
+      //   暂存
+      // </Button>,
       // <Button type="primary" key="goToTree3" onClick={() => handleSubmit2(props)}>
       <Button disabled={disabled} type="primary" style={{marginTop:35}} key="goToTree3" onClick={() => handleSubmit(props)}>
         下一步
@@ -213,9 +213,9 @@ const StepForm = (props) => {
                   <Button key="pre1" style={{marginTop:35}} onClick={() => props.onPre?.()}>
                     上一步
                   </Button>,
-                  <Button type="primary" style={{marginTop:35}} key="goToTree" onClick={() => handleSubmitZanCun(props)}>
-                    暂存
-                  </Button>,
+                  // <Button type="primary" style={{marginTop:35}} key="goToTree" onClick={() => handleSubmitZanCun(props)}>
+                  //   暂存
+                  // </Button>,
                   // <Button type="primary" key="goToTree3" onClick={() => handleSubmit2(props)}>
                   <Button type="primary" style={{marginTop:35}} key="goToTree3" onClick={() => handleSubmit(props)}>
                     下一步

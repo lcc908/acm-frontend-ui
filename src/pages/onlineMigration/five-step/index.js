@@ -33,13 +33,13 @@ const tabList = [
 ];
 export default (props) => {
   const { fiveFormRef,setFiveNextBt } = props;
-  const [activeTabKey, setActiveTabKey] = useState('tab3');
+  const [activeTabKey, setActiveTabKey] = useState('tab1');
   const [applyList, setApplyList] = useState([]);
 
   const contentList = {
     tab1: <OneTab fiveFormRef={fiveFormRef} setApplyList={setApplyList}/>,
     tab2: <TwoTab fiveFormRef={fiveFormRef}/>,
-    tab3: <ThreeTab fiveFormRef={fiveFormRef}/>,
+    tab3: <ThreeTab fiveFormRef={fiveFormRef} activeTabKey={activeTabKey}/>,
     tab4: <FourTab applyList={applyList}/>,
   };
   const onTab1Change = key => {

@@ -104,3 +104,16 @@ export async function postValidate(params) {
     data: { ...params},
   });
 }
+//目标应用启动
+export async function postHotMigrationTask(params) {
+  return request('/api/v1/hot_migration/manage_app', {
+    method: 'POST',
+    data: { ...params},
+  });
+}
+export async function getHotMigrationTask(params) {
+  return request('/api/v1/hot_migration/manage_app', {
+    params
+  });
+}
+// http://10.122.140.39:9001/api/v1/hot_migration/task

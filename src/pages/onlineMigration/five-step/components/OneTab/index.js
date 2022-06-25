@@ -16,7 +16,9 @@ export default (props) => {
   const [selectValue, setSelectValue] = useState(['a10', 'c12']);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loadings, setLoadings] = useState(false);
-  const task_id = localStorage.getItem('onlineTask_id') || '62a96668678f29a3cfe23de0';
+  const [lineList, setLineList] = useState([]);
+  const [loading, setLoading] = useState('');
+  const task_id = localStorage.getItem('onlineTask_id') || '62b57de088acba1387000001';
 
   useEffect(() => {
     // fiveFormRef?.current?.setFieldsValue({
@@ -43,12 +45,21 @@ export default (props) => {
   useEffect(() => {
     getData()
   },[])
+
   const getData = async () => {
-    const res = await getStopApp({
+    const {data} = await getStopApp({
       task_id,
-      task_type:'increase_data'
+      task_type:'stop_app'
     });
-    console.log(res);
+    setLineList([...data]);
+    const res = data.some(item => {
+      return item.status === 'running'
+    })
+    if (res) {
+      setLoading('加载中...')
+    } else {
+      setLoading('')
+    }
   }
   const handleChange = (value) => {
     setSelectValue(value)
@@ -98,16 +109,7 @@ export default (props) => {
           </Col>
         </Row>
       </div>
-      <TimelinePage lineList={[]} loading={''}/>
-      {/*<Timeline pending="loading..." className={styles.timeLine}>*/}
-      {/*  /!*<Timeline>*!/*/}
-      {/*  <Timeline.Item color="green">2022-03-1 10:13:15 连接目标主机成功</Timeline.Item>*/}
-      {/*  <Timeline.Item color="green">2022-03-1 11:13:30 操作系统配置基线检查完成</Timeline.Item>*/}
-      {/*  <Timeline.Item color="green">2022-03-2 12:13:45 目标主机硬件环境检查完成</Timeline.Item>*/}
-      {/*  <Timeline.Item color="green">2022-03-3 11:13:45 网络连通性检查正常，能够访问ETL存储</Timeline.Item>*/}
-      {/*  <Timeline.Item color="green">2022-03-4 12:13:45 成功状态</Timeline.Item>*/}
-      {/*  <Timeline.Item color="red">2022-03-5 14:13:11 失败状态</Timeline.Item>*/}
-      {/*</Timeline>*/}
+      <TimelinePage loading={loading} lineList={lineList}/>
       <ModalForm
         title="上传脚本"
         visible={isModalVisible}

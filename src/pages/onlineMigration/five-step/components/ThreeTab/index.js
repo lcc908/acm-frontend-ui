@@ -1,48 +1,62 @@
 import React, {useEffect, memo, useState} from 'react';
-import { Card, Table, Button, Progress , Row,Col, message, Form } from 'antd';
+import { Card, Table, Empty , Input , Row,Col, message, Form } from 'antd';
 import ProForm, {
   ProFormText,
 } from '@ant-design/pro-form';
 import styles from './style.less';
 import {getValidate,postValidate} from "@/pages/onlineMigration/service";
 
-const dataSource = [
-  {
-    key: '1',
-    name: '胡彦斌',
-    age: 32,
-    address: '西湖区湖底公园1号',
-  },
-  {
-    key: '2',
-    name: '胡彦祖',
-    age: 42,
-    address: '西湖区湖底公园1号',
-  },
-];
-
 const columns = [
   {
     title: '姓名',
     dataIndex: 'name',
-    key: 'name',
-    // render: text => <span style={{color:'red'}}>{text}</span>,
   },
   {
     title: '年龄',
-    dataIndex: 'age',
-    key: 'age',
+    dataIndex: 'file_amount',
   },
   {
     title: '住址',
-    dataIndex: 'address',
-    key: 'address',
+    dataIndex: 'block_size',
   },
 ];
 
 export default (props) => {
-  const { oneFormRef, form, stepData } = props;
-  const task_id = localStorage.getItem('onlineTask_id') || '62a96668678f29a3cfe23de0';
+  const { fiveFormRef, activeTabKey, stepData } = props;
+  const [source_host,setSourceHost] = useState([]);
+  const [data,setData] = useState({});
+  const task_id = localStorage.getItem('onlineTask_id') || '62b57de088acba1387000001';
+  // const data = {
+  //   "task_id":"",
+  //   "source_host":{
+  //     "ip":"10.122.18.2221",
+  //     "os_release":"centos7.9.11",
+  //     "system_disk":100,
+  //     "data_disk":[
+  //       {
+  //         "order_no": 0,
+  //         "name":"/dev/sda",
+  //         "file_amount":2047,
+  //         "block_size":2727272772
+  //       }
+  //     ]
+  //   },
+  //   "target_host":{
+  //     "ip":"10.122.18.222",
+  //     "os_release":"centos7.9.11",
+  //     "system_disk":100,
+  //     "data_disk":[
+  //       {
+  //         "order_no": 0,
+  //         "name":"/dev/sda",
+  //         "file_amount":2048,
+  //         "block_size":2727272772
+  //       }
+  //     ]
+  //   },
+  //   "status":"active"
+  // }
+
   useEffect(() => {
     getData()
   },[])
@@ -51,100 +65,163 @@ export default (props) => {
       task_id,
       task_type:"increase_data",
     })
-    console.log(res);
+    const data = res?.data[0];
+    setData({...data});
+    let arr = []
+    for (let i in data.source_host) {
+      for (let j in data.target_host) {
+        if(data.source_host[i] !== data.target_host[j]) {
+          arr.push(i)
+          // setSourceHost((val) => {
+          //   return [...val,i]
+          // })
+        }
+      }
+    }
+    setSourceHost(arr);
   }
   return (
-  <div className={styles.cardList}>
+  <div>
     <Row gutter={24}>
       <Col span={12}>
         <Card
           title="源主机"
           headStyle={{ fontWeight: 'bold' }}
-          // style={{height:300}}
           className={styles.leftCard}
         >
-          <ProFormText
-            name="ip"
-            // width="md"
-            disabled
-            label="IP地址"
-            initialValue=""
-          />
-          <ProFormText
-            name="project"
-            // width="md"
-            disabled
-            label="系统版本"
-            initialValue=""
-          />
-          <ProFormText
-            name="project"
-            // width="md"
-            disabled
-            label="系统盘文件大小"
-            initialValue=""
-          />
-          <Row>
-            <Col span="24">
-              数据盘个数和大小
-            </Col>
-            <Col span="24">
-              <Table
-                dataSource={dataSource}
-                columns={columns}
-                pagination={false}
-                showHeader={false}
+        {
+          data.source_host ? (
+            <>
+              <ProFormText
+                name="source_host_ip"
+                label="IP地址"
+                initialValue={data?.source_host?.ip}
+                className={styles.borderRed}
+                fieldProps={source_host.includes("ip") ? {
+                  status:"error",
+                  readOnly:true
+                } : {disabled:true}}
               />
-            </Col>
-          </Row>
+              <ProFormText
+                name="source_host_os_release"
+                disabled
+                label="系统版本"
+                initialValue={data?.source_host?.os_release}
+                fieldProps={source_host.includes("os_release") ? {
+                  status:"error",
+                  readOnly:true
+                } : {disabled:true}}
+              />
+              <ProFormText
+                name="source_host_system_disk"
+                disabled
+                label="系统盘文件大小"
+                initialValue={data?.source_host?.system_disk}
+                fieldProps={source_host.includes("system_disk") ? {
+                  status:"error",
+                  readOnly:true
+                } : {disabled:true}}
+              />
+              <Row>
+                <Col span="24">
+                  数据盘个数和大小
+                </Col>
+                <Col span="24">
+                  <Table
+                    className={styles.tableStyle}
+                    dataSource={data?.source_host?.data_disk}
+                    columns={columns}
+                    pagination={false}
+                    showHeader={false}
+                    rowClassName={record => {
+                      console.log(record);
+                      for (let i of data.target_host.data_disk) {
+                        if(i.order_no === record.order_no) {
+                          if(i.name !== record.name ||　i.file_amount !== record.file_amount || i.block_size !== record.block_size) {
+                            return styles.table_color_dust
+                          }
+                        }
+                      }
+                    }}
+                  />
+                </Col>
+              </Row>
+            </>
+          ) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        }
         </Card>
       </Col>
       <Col span={12}>
         <Card
           title="目标主机"
-          // style={{height:300}}
           className={styles.rightCard}
           headStyle={{ fontWeight: 'bold' }}
         >
-          <ProFormText
-            name="project"
-            // width="md"
-            disabled
-            label="IP地址"
-            initialValue=""
-          />
-          <ProFormText
-            name="project"
-            // width="md"
-            disabled
-            label="系统版本"
-            initialValue=""
-          />
-          <ProFormText
-            name="project"
-            // width="md"
-            disabled
-            label="系统盘文件大小"
-            initialValue=""
-          />
-          <Row>
-            <Col span="24">
-              数据盘个数和大小
-            </Col>
-            <Col span="24">
-              <Table
-                dataSource={dataSource}
-                columns={columns}
-                pagination={false}
-                showHeader={false}
+        {
+          data.target_host ? (
+           <>
+              <ProFormText
+                name="target_host_ip"
+                // disabled
+                label="IP地址"
+                initialValue={data?.target_host?.ip}
+                fieldProps={source_host.includes("ip") ? {
+                  status:"error",
+                  readOnly:true
+                } : {disabled:true}}
               />
-            </Col>
-          </Row>
+              <ProFormText
+                name="target_host_os_release"
+                disabled
+                label="系统版本"
+                initialValue={data?.target_host?.os_release}
+                fieldProps={source_host.includes("os_release") ? {
+                  status:"error",
+                  readOnly:true
+                } : {disabled:true}}
+              />
+              <ProFormText
+                name="target_host_system_disk"
+                // width="md"
+                disabled
+                label="系统盘文件大小"
+                initialValue={data?.target_host?.system_disk}
+                fieldProps={source_host.includes("system_disk") ? {
+                  status:"error",
+                  readOnly:true
+                } : {disabled:true}}
+              />
+              <Row>
+                <Col span="24">
+                  数据盘个数和大小
+                </Col>
+                <Col span="24">
+                  <Table
+                    className={styles.tableStyle}
+                    dataSource={data?.target_host?.data_disk}
+                    columns={columns}
+                    pagination={false}
+                    showHeader={false}
+                    rowClassName={record => {
+                      for (let i of data?.source_host?.data_disk) {
+                        if(i.order_no === record.order_no) {
+                          if(i.name !== record.name ||　i.file_amount !== record.file_amount || i.block_size !== record.block_size) {
+                            return styles.table_color_dust
+                          }
+                        }
+                      }
+                    }}
+                  />
+                </Col>
+              </Row>
+           </>
+          ) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        }
         </Card>
       </Col>
-      <Col span={24} className={styles.footButton}>
-        <Button type="primary">数据校验</Button>
-      </Col>
+      {/*<Col span={24} className={styles.footButton}>*/}
+      {/*  <Button type="primary">数据校验</Button>*/}
+      {/*</Col>*/}
     </Row>
     </div>
   );
