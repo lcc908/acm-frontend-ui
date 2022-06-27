@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, memo, useRef } from 'react';
 import { Form, message } from 'antd';
 import { ModalForm, ProFormText, ProFormSwitch, ProFormSelect,ProFormTextArea } from '@ant-design/pro-form';
 import {putFakeList} from "@/pages/dashboard/service";
@@ -11,10 +11,9 @@ const waitTime = (time) => {
   });
 };
 
-export default (props) => {
+export default memo((props) => {
   const {visible,setVisible,editData,reloadTable} = props;
   const formRef  = useRef();
-
   useEffect(() => {
     // if(formType === 'Add') {
     //   return false;
@@ -25,6 +24,10 @@ export default (props) => {
       ...editData,
     });
   }, [editData]);
+
+  useEffect(() => {
+    console.log(1);
+  },[])
 
   const titleText = editData?.id ? '编辑表单' : '新建表单';
 
@@ -75,4 +78,4 @@ export default (props) => {
       />
     </ModalForm>
   );
-};
+});

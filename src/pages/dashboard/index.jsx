@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   Card,
@@ -123,11 +123,11 @@ export const BasicList = () => {
     setCurrent({});
   };
   const onChangePagination = (page, pageSize) => {
-    console.log(page, pageSize);
+    // console.log(page, pageSize);
   }
-  const reloadTable = () => {
+  const reloadTable = useCallback(() => {
     ref.current.reload();
-  }
+  },[])
   return (
     <div>
       <PageContainer>
