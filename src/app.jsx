@@ -118,7 +118,7 @@ export const layout = ({ initialState, setInitialState }) => {
     footerRender: () => <Footer />,
     onPageChange: () => {
       const { location } = history; // 如果没有登录，重定向到 login
-      if (!localStorage.getItem('userToken')) {
+      if (!localStorage.getItem('userToken') && location.pathname !== loginPath) {
         history.push(loginPath);
       }
       // if (!initialState?.currentUser && location.pathname !== loginPath) {
@@ -129,18 +129,6 @@ export const layout = ({ initialState, setInitialState }) => {
       // type: 'group',
       locale:false,
     },
-    links: isDev
-      ? [
-          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-            <LinkOutlined />
-            <span>OpenAPI 文档</span>
-          </Link>,
-          <Link to="/~docs" key="docs">
-            <BookOutlined />
-            <span>业务组件文档</span>
-          </Link>,
-        ]
-      : [],
     menuHeaderRender: undefined,
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,

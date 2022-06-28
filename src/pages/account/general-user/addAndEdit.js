@@ -108,12 +108,22 @@ export default (props) => {
 
       {editData?.id ? null : (
         <>
-          <ProFormText width="xl" name="password" label="密码" placeholder="请输入密码" />
-          <ProFormText
+          <ProFormText.Password
+            width="xl"
+            name="password"
+            label="密码"
+            fieldProps={{
+              autoComplete: 'new-password',
+            }}
+          />
+          <ProFormText.Password
             width="xl"
             name="password_new"
             label="确认密码"
             placeholder="请再次确认密码"
+            fieldProps={{
+              autoComplete: 'new-password',
+            }}
           />
         </>
       )}

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import { Card, Result, Button, Divider, Modal, Form } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
 import { ProFormSwitch, ProFormText, StepsForm } from '@ant-design/pro-form';
@@ -91,9 +91,10 @@ const StepForm = (props) => {
     // console.log(formRef.current.getFieldValue());
   };
 
-  const handleNextState = () => {
-    setDisabled(false);
-  };
+  // const handleNextState = useCallback(() => {
+  //   console.log(1);
+  //   setDisabled(false);
+  // },[disabled]);
   const handleSubmit = async (props) => {
     // console.log(formMapRef.current);
     // console.log(props.form.getFieldValue());
@@ -139,10 +140,10 @@ const StepForm = (props) => {
     // console.log(props.form.getFieldValue());
   };
   //第一步方法：控制下一步按钮和存储选择的虚拟机
-  const onChangeDisabled = (par,selectedRowKeys) => {
+  const onChangeDisabled = useCallback((par,selectedRowKeys) => {
     setSelectedRowKeys([...selectedRowKeys])
     setDisabled(par)
-  }
+  },[disabled,selectedRowKeys])
   const ButtonArray = (props,disabled) => {
     return [
       <Button key="pre1" style={{ marginTop: 35 }} onClick={() => props.onPre?.()}>
@@ -219,7 +220,6 @@ const StepForm = (props) => {
           >
             <OneStep
               oneFormRef={oneFormRef}
-              handleNextState={handleNextState}
               onChangeDisabled={onChangeDisabled}
             />
           </StepsForm.StepForm>

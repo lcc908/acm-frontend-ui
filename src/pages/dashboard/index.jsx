@@ -128,6 +128,7 @@ export const BasicList = () => {
   const reloadTable = useCallback(() => {
     ref.current.reload();
   },[])
+
   return (
     <div>
       <PageContainer>

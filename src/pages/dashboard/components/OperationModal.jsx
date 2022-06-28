@@ -25,9 +25,7 @@ export default memo((props) => {
     });
   }, [editData]);
 
-  useEffect(() => {
-    console.log(1);
-  },[])
+  console.log(1);
 
   const titleText = editData?.id ? '编辑表单' : '新建表单';
 

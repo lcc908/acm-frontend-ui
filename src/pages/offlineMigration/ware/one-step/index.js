@@ -1,16 +1,14 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, memo, useState} from 'react';
 import {Card, Button, message, Row, Col, Popconfirm} from 'antd';
 import ProCard from '@ant-design/pro-card';
-import ProTable, {TableDropdown} from '@ant-design/pro-table';
-import {CloudDownloadOutlined} from '@ant-design/icons';
+import ProTable from '@ant-design/pro-table';
 import styles from './style.less'
 import {history} from "umi";
 import {getVmWareListVm} from "@/pages/offlineMigration/ware/service"
-import {ProFormDateTimePicker} from "@ant-design/pro-form";
 
-export default (props) => {
+export default memo((props) => {
   const {platform_id} = history?.location?.query;
-  const {oneFormRef, handleNextState, onChangeDisabled} = props;
+  const {onChangeDisabled} = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectRowsData, setSelectRowsData] = useState([]);
   const [params, setParams] = useState({
@@ -18,7 +16,7 @@ export default (props) => {
     vm_name: '',
     ip: '',
   })
-
+  console.log(1);
   const columns = [
     {
       title: 'OS类型',
@@ -77,7 +75,6 @@ export default (props) => {
   }
 
   const onSelectChange = (selectedRowKeys, selectedRows) => {
-    // console.log(selectedRowKeys);
     localStorage.setItem('vmOneStepRowKeys', JSON.stringify(selectedRowKeys));
     setSelectRowsData([...selectedRows])
     setSelectedRowKeys([...selectedRowKeys])
@@ -89,7 +86,7 @@ export default (props) => {
   }
 
   const beforeSearchSubmit = (val) => {
-    const {vmname, ip} = val;
+    const {vmname,ip} = val;
     setParams({...params, vm_name: vmname, ip})
   }
 
@@ -143,4 +140,4 @@ export default (props) => {
       />
     </ProCard>
   );
-};
+});
