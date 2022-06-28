@@ -12,14 +12,18 @@ import TimelinePage from '@/components/Timeline'
 import {getSnapshot, postSnapshot} from "@/pages/onlineMigration/service";
 
 export default (props) => {
-  const {fiveFormRef} = props;
+  const {fiveFormRef,tabTwoFormData,setTabTwoFormData} = props;
   const rules = [{required: true}];
   const [lineList, setLineList] = useState([]);
   const [loading, setLoading] = useState('');
   const task_id = localStorage.getItem('onlineTask_id') || '62b57de088acba1387000001'
   useEffect(() => {
-    getData()
-  }, [])
+    getData();
+    console.log(tabTwoFormData);
+    fiveFormRef?.current?.setFieldsValue({
+      ...tabTwoFormData
+    })
+  }, [fiveFormRef])
   const getData = async () => {
     const {data} = await getSnapshot({task_id, task_type: "snapshot"});
     setLineList([...data]);
@@ -31,7 +35,9 @@ export default (props) => {
     } else {
       setLoading('')
     }
-    console.log(res);
+  }
+  const onValuesChange = (val) => {
+    setTabTwoFormData({...fiveFormRef.current?.getFieldsFormatValue?.()})
   }
   return (
     <div className={styles.cardList}>
@@ -53,6 +59,7 @@ export default (props) => {
                   submitText: '同步数据',
                 },
               }}
+              onValuesChange={onValuesChange}
               onFinish={async (values) => {
                 await waitTime(2000);
                 const val = {...values, task_id}

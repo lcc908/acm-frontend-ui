@@ -35,11 +35,12 @@ export default (props) => {
   const { fiveFormRef,setFiveNextBt } = props;
   const [activeTabKey, setActiveTabKey] = useState('tab1');
   const [applyList, setApplyList] = useState([]);
+  const [tabTwoFormData, setTabTwoFormData] = useState({});
 
   const contentList = {
     tab1: <OneTab fiveFormRef={fiveFormRef} setApplyList={setApplyList}/>,
-    tab2: <TwoTab fiveFormRef={fiveFormRef}/>,
-    tab3: <ThreeTab fiveFormRef={fiveFormRef} activeTabKey={activeTabKey}/>,
+    tab2: <TwoTab fiveFormRef={fiveFormRef} setTabTwoFormData={setTabTwoFormData} tabTwoFormData={tabTwoFormData}/>,
+    tab3: <ThreeTab activeTabKey={activeTabKey}/>,
     tab4: <FourTab applyList={applyList}/>,
   };
   const onTab1Change = key => {
@@ -53,6 +54,9 @@ export default (props) => {
     }
   },[activeTabKey]);
 
+  useEffect(() =>{
+    console.log(tabTwoFormData);
+  },[tabTwoFormData])
   return (
     <Card
       // style={{minWidth:960,maxWidth:1200,height:556}}
@@ -60,6 +64,9 @@ export default (props) => {
       title="增量数据导入"
       // extra={<a href="#">More</a>}
       tabList={tabList}
+      tabProps={{
+        destroyInactiveTabPane:false,
+      }}
       activeTabKey={activeTabKey}
       onTabChange={key => {
         onTab1Change(key);

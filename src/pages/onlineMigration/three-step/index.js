@@ -19,7 +19,7 @@ const waitTime = (time = 1000) => {
 };
 
 export default (props) => {
-  const { threeFormRef, form, stepData } = props;
+  const { threeFormRef, current, stepData } = props;
   const rules = [{required: true}];
   const [dataSource,setDataSource] = useState([]);
   const [editableKeys, setEditableRowKeys] = useState([]);
@@ -68,10 +68,10 @@ export default (props) => {
   ];
   useEffect(() => {
     getData()
-  },[])
+  },[current])
   useEffect(() => {
-    console.log(editableKeys);
-    console.log(dataSource);
+    // console.log(editableKeys);
+    // console.log(dataSource);
   },[editableKeys])
   const getData = async () => {
     const task_id = localStorage.getItem('onlineTask_id');

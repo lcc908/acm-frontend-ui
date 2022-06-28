@@ -1,28 +1,25 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Card, Row, Col, Tag, Divider, message, Form, Timeline} from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Card, Row, Col} from 'antd';
 import styles from '../style.less';
-import {
-  ClockCircleOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  ExclamationCircleOutlined,
-  MinusCircleOutlined,
-  SyncOutlined,
-} from '@ant-design/icons';
 import {getTask} from '@/pages/onlineMigration/service'
 import TimelinePage from '@/components/Timeline'
+// import {useInterval} from "@/utils"
 
 export default (props) => {
-  const {oneFormRef, form, stepData} = props;
   const [lineList, setLineList] = useState([]);
   const [loading, setLoading] = useState('');
   const task_id = localStorage.getItem('onlineTask_id');
+  const [isRunning, setIsRunning] = useState(true);
+
+  // useInterval(() => {
+  //   getData();
+  // }, isRunning ? 10000 : null);
+
   useEffect(() => {
-    if(task_id) {
-      getData()
-    }
+    getData()
   }, [])
   const getData = async () => {
+    if(!task_id) return;
     const {data} = await getTask({task_id});
     setLineList([...data]);
     const res = data.some(item => {
@@ -33,34 +30,6 @@ export default (props) => {
     } else {
       setLoading('')
     }
-  }
-  const lineColor = (status) => {
-    let str = '';
-    if (status === 'error' || status === 'timeout') {
-      str = 'red';
-    } else if (status === 'success') {
-      str = 'green';
-    } else if (status === 'running') {
-      str = 'red';
-    }
-    return str;
-  }
-  const setStatusText = (status) => {
-    let str = '';
-    switch (status) {
-      case "error":
-        str = <Tag icon={<CloseCircleOutlined />} color="error">错误</Tag>
-        break;
-      case "timeout":
-        str = <Tag icon={<ExclamationCircleOutlined />} color="red">超时</Tag>
-        break;
-      case "running":
-        str = <Tag icon={<SyncOutlined spin />} color="processing">运行中</Tag>
-        break;
-      default:
-        str = <Tag icon={<CheckCircleOutlined />} color="success">成功</Tag>
-    }
-    return str;
   }
   return (
     <>

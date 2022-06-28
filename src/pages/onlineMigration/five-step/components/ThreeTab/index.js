@@ -26,37 +26,6 @@ export default (props) => {
   const [source_host,setSourceHost] = useState([]);
   const [data,setData] = useState({});
   const task_id = localStorage.getItem('onlineTask_id') || '62b57de088acba1387000001';
-  // const data = {
-  //   "task_id":"",
-  //   "source_host":{
-  //     "ip":"10.122.18.2221",
-  //     "os_release":"centos7.9.11",
-  //     "system_disk":100,
-  //     "data_disk":[
-  //       {
-  //         "order_no": 0,
-  //         "name":"/dev/sda",
-  //         "file_amount":2047,
-  //         "block_size":2727272772
-  //       }
-  //     ]
-  //   },
-  //   "target_host":{
-  //     "ip":"10.122.18.222",
-  //     "os_release":"centos7.9.11",
-  //     "system_disk":100,
-  //     "data_disk":[
-  //       {
-  //         "order_no": 0,
-  //         "name":"/dev/sda",
-  //         "file_amount":2048,
-  //         "block_size":2727272772
-  //       }
-  //     ]
-  //   },
-  //   "status":"active"
-  // }
-
   useEffect(() => {
     getData()
   },[])
@@ -68,13 +37,12 @@ export default (props) => {
     const data = res?.data[0];
     setData({...data});
     let arr = []
-    for (let i in data.source_host) {
-      for (let j in data.target_host) {
-        if(data.source_host[i] !== data.target_host[j]) {
-          arr.push(i)
-          // setSourceHost((val) => {
-          //   return [...val,i]
-          // })
+    if(data?.source_host) {
+      for (let i in data.source_host) {
+        for (let j in data.target_host) {
+          if(data.source_host[i] !== data.target_host[j]) {
+            arr.push(i)
+          }
         }
       }
     }

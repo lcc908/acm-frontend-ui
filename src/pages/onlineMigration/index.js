@@ -47,7 +47,7 @@ const StepForm = (props) => {
   // const [current, setCurrent] = useState(4); //当前表单的步骤数，从 0 开始
   const [current, setCurrent] = useState(()=>{
     const setNum = localStorage.getItem('onlineStep');
-    return setNum ? parseInt(setNum) : 0;
+    return setNum ? parseInt(setNum) : 3;
     // return 4;
   }); //当前表单的步骤数，从 0 开始
   const [twoNextBt, setTwoNextBt] = useState(true); //2 next
@@ -239,10 +239,7 @@ const StepForm = (props) => {
             }}
             labelCol={{span: 4}}
             wrapperCol={{span: 20}}
-            // initialValues={stepData}
             onFinish={async (values) => {
-              console.log(values);
-              // setStepData(values);
               return true;
             }}
           >
@@ -263,8 +260,6 @@ const StepForm = (props) => {
             labelCol={{span: 6}}
             wrapperCol={{span: 18}}
             onFinish={async (values) => {
-              // console.log(values);
-              // setStepData(values);
               return true;
             }}
           >
@@ -285,13 +280,12 @@ const StepForm = (props) => {
             }}
             // layout="horizontal"
             onFinish={async (values) => {
-              // console.log(values);
-              // setStepData(values);
               return true;
             }}
           >
             <ThreeStep
               threeFormRef={threeFormRef}
+              current={current}
             />
           </StepsForm.StepForm>
           <StepsForm.StepForm
@@ -300,14 +294,11 @@ const StepForm = (props) => {
             stepProps={{
               description: '任务执行',
             }}
-            // layout="horizontal"
             onFinish={async (values) => {
-              // console.log(values);
-              // setStepData(values);
               return true;
             }}
           >
-            <FourStep/>
+            <FourStep current={current}/>
           </StepsForm.StepForm>
 
           <StepsForm.StepForm
@@ -317,8 +308,6 @@ const StepForm = (props) => {
               description: '增量数据迁移',
             }}
             onFinish={async (values) => {
-              // console.log(values);
-              // setStepData(values);
               return true;
             }}
           >

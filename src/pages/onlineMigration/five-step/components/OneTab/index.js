@@ -20,13 +20,7 @@ export default (props) => {
   const [loading, setLoading] = useState('');
   const task_id = localStorage.getItem('onlineTask_id') || '62b57de088acba1387000001';
 
-  useEffect(() => {
-    // fiveFormRef?.current?.setFieldsValue({
-    //   switch: ['a10', 'c12']
-    // })
-  }, [])
   const handleClickStopButton = async () => {
-    // console.log(fiveFormRef?.current?.getFieldValue());
     console.log(selectValue);
     setLoadings(true);
     await waitTime(2000);
