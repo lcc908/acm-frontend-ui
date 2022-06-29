@@ -146,6 +146,13 @@ export default (props) => {
         </Row>
         <Row gutter={24}>
           <Col span={8}>
+            <ProFormText
+              name="target_ip"
+              label="目标主机IP"
+              rules={rules}
+            />
+          </Col>
+          <Col span={8}>
             <ProFormSelect
               name="project_name"
               label="租户名称"
@@ -180,7 +187,7 @@ export default (props) => {
               label="系统账号"
             />
           </Col>
-          <Col span={8}>
+          <Col span={8} style={{display:"none"}}>
             <ProFormDateTimePicker
               initialValue={Date.now()}
               disabled name="created_at"

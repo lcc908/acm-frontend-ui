@@ -137,6 +137,7 @@ const StepForm = (props) => {
         account:val.account,
         network_name:val.network_name,
         source_host_id:val.source_host_id,
+        target_ip:val.target_ip,
       }
       for(let i in val) {
         if(val.host &&　val.host[i]) {
