@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { Space, Table, Card } from 'antd';
 import {PageContainer} from '@ant-design/pro-layout';
 import './style.less'
+import {useModel} from "umi";
 // import {Card} from 'antd';
 // import {useIntl} from 'umi';
 // import {Pie} from '@ant-design/charts';
@@ -75,6 +76,15 @@ const data = [
 ];
 
 const Os = () => {
+  const {diskList,setDisKList} = useModel('onlineDiskList',(model) => {
+    return {
+      diskList: model.disKList,
+      setDisKList: model.setDisKList
+    }
+  });
+  useEffect(() => {
+    console.log(diskList);
+  },[])
   return (
     <PageContainer title={'日志审计记录'}>
       <Card>

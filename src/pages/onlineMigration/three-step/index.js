@@ -8,7 +8,7 @@ import ProForm, {
 } from '@ant-design/pro-form';
 import {getGenerateData} from "@/pages/onlineMigration/service";
 import { EditableProTable } from '@ant-design/pro-table';
-import styles from '../style.less';
+import { useModel } from 'umi';
 
 const waitTime = (time = 1000) => {
   return new Promise((resolve) => {
@@ -23,11 +23,12 @@ export default (props) => {
   const rules = [{required: true}];
   const [dataSource,setDataSource] = useState([]);
   const [editableKeys, setEditableRowKeys] = useState([]);
+  const {setDisKList} = useModel('onlineDiskList',model => ({ setDisKList: model.setDisKList }));
   const columns = [
     {
       title: '序号',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'name1',
+      key: 'name1',
       readonly: true,
       render:(_, record,index) => <span>{index + 1}</span>
     },
@@ -43,6 +44,14 @@ export default (props) => {
     {
       title: '容量(GB)',
       dataIndex: 'size',
+    },
+    {
+      title: '卷类型',
+      dataIndex: 'volume_type',
+    },
+    {
+      title: '可用域',
+      dataIndex: 'volume_zone ',
     },
     {
       title: '操作',
@@ -67,18 +76,19 @@ export default (props) => {
     },
   ];
   useEffect(() => {
-    getData()
+    getData();
   },[current])
-  useEffect(() => {
-    // console.log(editableKeys);
-    // console.log(dataSource);
-  },[editableKeys])
+  const handleChange = (val) => {
+    setDataSource(val);
+    setDisKList(val)
+  }
   const getData = async () => {
-    const task_id = localStorage.getItem('onlineTask_id');
+    const task_id = localStorage.getItem('onlineTask_id') ||　"62bd356930b1be0001000002";
     if(!task_id) return;
-    const {code,data} = await getGenerateData({task_id:localStorage.getItem('onlineTask_id')});
+    const {code,data} = await getGenerateData({task_id});
     const {host} = data;
-    setDataSource([...host.disk])
+    setDataSource([...host.disk]);
+    setDisKList([...host.disk]);
     threeFormRef?.current?.setFieldsValue({
       ...data,
       ...host
@@ -206,7 +216,7 @@ export default (props) => {
           columns={columns}
           value={dataSource}
           // value={dataSource}
-          onChange={setDataSource}
+          onChange={handleChange}
           editable={{
             type: 'multiple',
             editableKeys,

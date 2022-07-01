@@ -1,8 +1,7 @@
 import React, {useRef, useState} from 'react';
-import {Card, Result, Button, Divider, message, Form} from 'antd';
+import {Card, Result, Button, Divider, Form} from 'antd';
 import {PageContainer} from '@ant-design/pro-layout';
-import {ProFormSwitch, ProFormText, StepsForm} from '@ant-design/pro-form';
-// import OneStep from "@/pages/onlineMigration/components/oneStep";
+import {StepsForm} from '@ant-design/pro-form';
 import OneStep from './one-step';
 import TwoStep from './two-step';
 import ThreeStep from './three-step';
@@ -10,16 +9,7 @@ import FourStep from './four-step';
 import FiveStep from './five-step';
 import styles from './style.less';
 import {postHotMigration,postGenerateData} from "@/pages/onlineMigration/service";
-import {Prompt} from "umi";
-// import FourStep from "@/pages/onlineMigration/components/fourStep";
-
-const waitTime = (time = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
+import {Prompt,useModel} from "umi";
 
 const StepResult = (props) => {
   return (
@@ -40,11 +30,11 @@ const StepResult = (props) => {
 };
 
 const StepForm = (props) => {
-  const [stepData, setStepData] = useState({
-    id1: '5001',
+  const {diskList} = useModel('onlineDiskList',(model) => {
+    return {
+      diskList: model.disKList,
+    }
   });
-  // const [current, setCurrent] = useState(4); //当前表单的步骤数，从 0 开始
-  // const [current, setCurrent] = useState(4); //当前表单的步骤数，从 0 开始
   const [current, setCurrent] = useState(()=>{
     const setNum = localStorage.getItem('onlineStep');
     return setNum ? parseInt(setNum) : 0;
@@ -127,9 +117,9 @@ const StepForm = (props) => {
     }
     if(step === 2) {
       const val = await threeFormRef?.current?.validateFieldsReturnFormatValue();
+      // const {diskList} = useModel('onlineDiskList');
       // val.task_id = localStorage.getItem('onlineTask_id')
       val.task_id = localStorage.getItem('onlineTask_id')
-      console.log(val.created_at);
       // console.log(val.created_at.);
       val.host = {
         host_name:val.host_name,
@@ -138,6 +128,7 @@ const StepForm = (props) => {
         network_name:val.network_name,
         source_host_id:val.source_host_id,
         target_ip:val.target_ip,
+        disk:diskList
       }
       for(let i in val) {
         if(val.host &&　val.host[i]) {
