@@ -1,10 +1,10 @@
 # Ant Design Pro
 
-This project is initialized with [Ant Design Pro](https://pro.ant.design). Follow is the quick guide for how to use.
+这个项目是用Ant Design Pro初始化的。以下是如何使用的快速指南
 
-## Environment Prepare
+## 环境准备
 
-Install `node_modules`:
+安装node_modules：
 
 ```bash
 npm install
@@ -16,45 +16,35 @@ or
 yarn
 ```
 
-## Provided Scripts
-
-Ant Design Pro provides some useful script to help you quick start and build with web project, code style check and test.
-
-Scripts provided in `package.json`. It's safe to modify or add additional script:
-
-### Start project
+### 启动项目
 
 ```bash
 npm start
 ```
 
-### Build project
+### 构建项目
 
 ```bash
 npm run build
 ```
 
-### Check code style
+### 检查代码样式
 
 ```bash
 npm run lint
 ```
 
-You can also use script to auto fix some lint error:
+还可以使用脚本自动修复一些 lint 错误：:
 
 ```bash
 npm run lint:fix
 ```
 
-### Test code
+### 测试代码
 
 ```bash
 npm test
 ```
-
-## More
-
-You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).
 
 ## 问题
 创建和初始化项目的时候报错：Can't resolve 'btoa' in 'D:\myapp\node_modules\swagger-ui-react'
