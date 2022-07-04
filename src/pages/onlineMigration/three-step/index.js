@@ -83,7 +83,7 @@ export default (props) => {
     setDisKList(val)
   }
   const getData = async () => {
-    const task_id = localStorage.getItem('onlineTask_id') ||　"62bd356930b1be0001000002";
+    const task_id = localStorage.getItem('onlineTask_id');
     if(!task_id) return;
     const {code,data} = await getGenerateData({task_id});
     const {host} = data;
